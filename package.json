@@ -1,0 +1,29 @@
+{
+  "name": "dabimas-data-rebuild",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && tsc -p tsconfig.node.json --noEmit && vite build",
+    "preview": "vite preview",
+    "verify:parity": "tsx scripts/verify-parity.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "alasql": "^4.6.6",
+    "puppeteer-core": "^24.40.0",
+    "tsx": "^4.20.6",
+    "typescript": "^6.0.2",
+    "vite": "^8.0.3",
+    "vite-plugin-static-copy": "^4.0.0"
+  },
+  "dependencies": {
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "zustand": "^5.0.12"
+  }
+}

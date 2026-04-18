@@ -1,0 +1,18 @@
+export const RARE_OPTIONS = [
+  { value: "8", label: "真" },
+  { value: "7", label: "極" },
+  { value: "6", label: "驫" },
+  { value: "5", label: "5" },
+  { value: "4", label: "4" },
+  { value: "3", label: "3" },
+  { value: "2", label: "2" },
+  { value: "1", label: "1" },
+  { value: "Z", label: "券" },
+  { value: "Y", label: "名" },
+  { value: "X", label: "優" },
+  { value: "W", label: "良" },
+  { value: "V", label: "可" },
+  { value: "U", label: "無" }
+] as const;
+
+export const DEFAULT_RARE_CODES = ["8", "7", "6", "5", "4", "Z", "Y", "X"];
