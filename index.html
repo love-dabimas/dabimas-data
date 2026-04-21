@@ -6,13 +6,30 @@
     <meta name="author" content="drecomLover" />
     <meta name="description" content="Dabimas horse pedigree search." />
     <meta name="theme-color" content="#202124" />
-    <link rel="manifest" href="/manifest.json" />
-    <link rel="icon" type="image/x-icon" href="/static/favicon.ico" />
-    <link rel="apple-touch-icon" href="/static/apple-touch-icon-180x180.png" />
+    <link rel="icon" type="image/x-icon" href="./static/favicon.ico" />
+    <link rel="apple-touch-icon" href="./static/apple-touch-icon-180x180.png" />
     <title>&#12480;&#12499;&#23064;</title>
+    <script>
+      (() => {
+        const deployMode = "%VITE_DEPLOY_MODE%";
+        const basePath = "%VITE_BASE_PATH%";
+        const isArtifactRoot = deployMode === "artifact-root";
+        const isGitHubPagesHost = window.location.hostname === "love-dabimas.github.io";
+        const isDistPath = /\/dist(?:\/|$)/.test(window.location.pathname);
+        const manifestLink = document.createElement("link");
+
+        manifestLink.rel = "manifest";
+        manifestLink.href = isArtifactRoot ? `${basePath}manifest.json` : "./dist/manifest.json";
+        document.head.append(manifestLink);
+
+        if (!isArtifactRoot && isGitHubPagesHost && !isDistPath) {
+          window.location.replace(new URL("./dist/", window.location.href).toString());
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <script type="module" src="./src/main.tsx"></script>
   </body>
 </html>

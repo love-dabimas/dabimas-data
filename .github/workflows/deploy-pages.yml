@@ -39,6 +39,7 @@ jobs:
         run: npm run build
         env:
           VITE_BASE_PATH: /dabimas-data/
+          VITE_DEPLOY_MODE: artifact-root
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
