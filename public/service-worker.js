@@ -1,4 +1,4 @@
-const CACHE_NAME = "dabimas-data-v6";
+const CACHE_NAME = "dabimas-data-v7";
 
 const FACTOR_ICON_PATHS = Array.from({ length: 12 }, (_, index) => {
   const code = String(index + 1).padStart(2, "0");
