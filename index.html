@@ -6,33 +6,13 @@
     <meta name="author" content="drecomLover" />
     <meta name="description" content="Dabimas horse pedigree search." />
     <meta name="theme-color" content="#202124" />
-    <link rel="icon" type="image/x-icon" href="./static/favicon.ico" />
-    <link rel="apple-touch-icon" href="./static/apple-touch-icon-180x180.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico" />
+    <link rel="apple-touch-icon" href="/static/apple-touch-icon-180x180.png" />
     <title>&#12480;&#12499;&#23064;</title>
-    <script>
-      (() => {
-        const host = window.location.hostname;
-        const isLocalHost = host === "localhost" || host === "127.0.0.1";
-        const isGitHubPagesHost = host === "love-dabimas.github.io";
-        const isDistPath = /\/dist(?:\/|$)/.test(window.location.pathname);
-        const manifestLink = document.createElement("link");
-
-        manifestLink.rel = "manifest";
-        manifestLink.href = isDistPath ? "./manifest.json" : "./dist/manifest.json";
-        document.head.append(manifestLink);
-
-        if (!isLocalHost && isGitHubPagesHost && !isDistPath) {
-          const normalizedPath = window.location.pathname.endsWith("/")
-            ? window.location.pathname
-            : `${window.location.pathname}/`;
-          const redirectUrl = new URL(`.${normalizedPath}dist/`, window.location.origin);
-          window.location.replace(redirectUrl.toString());
-        }
-      })();
-    </script>
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="./src/main.tsx"></script>
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
