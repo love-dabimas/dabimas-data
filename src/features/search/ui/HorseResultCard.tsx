@@ -1,3 +1,4 @@
+import { useLayoutEffect, useRef, useState, type CSSProperties } from "react";
 import type { HorseRecord, PedigreeEntry } from "@/features/horses/model/types";
 import {
   createHorseCardHighlighter,
@@ -87,6 +88,7 @@ const THIN_FACTOR_HEADER_CODES = FACTOR_HEADER_CODES.filter(
 const FACTOR_INDEX_BY_CODE = Object.fromEntries(
   FACTOR_HEADER_CODES.map((code, index) => [code, index])
 ) as Record<string, number>;
+const LEGACY_CARD_WIDTH = 760;
 
 const assetUrl = (path: string) => `${import.meta.env.BASE_URL}${path}`;
 
@@ -457,14 +459,78 @@ const renderPedigreeRow = (
 export const HorseResultCard = ({ horse, criteria }: HorseResultCardProps) => {
   const [allFactorCounts, thin1FactorCounts, thin2FactorCounts] = horse.card.factorCounts;
   const highlighter = createHorseCardHighlighter(criteria, horse);
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const legacyRef = useRef<HTMLElement>(null);
+  const [legacyScale, setLegacyScale] = useState(1);
+  const [scaledHeight, setScaledHeight] = useState<number | null>(null);
   const distance =
     horse.card.stats.distanceMin && horse.card.stats.distanceMax
       ? `${horse.card.stats.distanceMin}〜${horse.card.stats.distanceMax}`
       : horse.card.stats.distanceMin || horse.card.stats.distanceMax;
+  useLayoutEffect(() => {
+    let frameId = 0;
+    const viewport = viewportRef.current;
+    const legacy = legacyRef.current;
+
+    if (!viewport || !legacy) {
+      return;
+    }
+
+    const measure = () => {
+      const availableWidth = viewport.clientWidth;
+
+      if (availableWidth <= 0) {
+        return;
+      }
+
+      const nextScale = Math.min(1, availableWidth / LEGACY_CARD_WIDTH);
+      const nextHeight = Math.ceil(legacy.offsetHeight * nextScale);
+
+      setLegacyScale((current) => (Math.abs(current - nextScale) < 0.001 ? current : nextScale));
+      setScaledHeight((current) => (current === nextHeight ? current : nextHeight));
+    };
+
+    const scheduleMeasure = () => {
+      if (frameId !== 0) {
+        return;
+      }
+
+      frameId = requestAnimationFrame(() => {
+        frameId = 0;
+        measure();
+      });
+    };
+
+    measure();
+
+    const resizeObserver = new ResizeObserver(scheduleMeasure);
+    resizeObserver.observe(viewport);
+    resizeObserver.observe(legacy);
+    window.addEventListener("resize", scheduleMeasure);
+
+    return () => {
+      if (frameId !== 0) {
+        cancelAnimationFrame(frameId);
+      }
+
+      resizeObserver.disconnect();
+      window.removeEventListener("resize", scheduleMeasure);
+    };
+  }, []);
+
   return (
     <article className="result-card">
-      <div className="result-card__viewport">
-        <section className="result-card__legacy">
+      <div
+        ref={viewportRef}
+        className="result-card__viewport"
+        style={
+          {
+            "--result-card-scale": `${legacyScale}`,
+            minHeight: scaledHeight ? `${scaledHeight}px` : undefined
+          } as CSSProperties
+        }
+      >
+        <section ref={legacyRef} className="result-card__legacy">
           <div className="horsedata2">
             <table className="horse_spec" width="100%">
               <tbody>

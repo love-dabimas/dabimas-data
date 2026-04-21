@@ -704,11 +704,10 @@ button {
 }
 
 .result-card__viewport {
-  container-type: inline-size;
+  --result-card-scale: 1;
   min-width: 0;
   max-width: 100%;
-  overflow-x: clip;
-  overflow-y: visible;
+  overflow: hidden;
   position: relative;
   width: 100%;
 }
@@ -718,9 +717,13 @@ button {
   gap: 10px;
   max-width: none;
   position: static;
+  -webkit-text-size-adjust: 100%;
+  transform: scale(var(--result-card-scale));
+  transform-origin: top left;
+  text-size-adjust: 100%;
   width: var(--legacy-card-width);
+  will-change: transform;
   z-index: 1;
-  zoom: min(1, calc(100cqw / var(--legacy-card-width)));
 }
 
 .result-card__legacy .horsedata2 {
