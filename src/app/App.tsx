@@ -171,36 +171,40 @@ export const App = () => {
   );
 
   if (loadState.status === "loading") {
-    const activeStepIndex = LOADING_STEPS.findIndex(
-      (step) => step.phase === loadState.phase
+    const activeStepIndex = Math.max(
+      LOADING_STEPS.findIndex(
+        (step) => step.phase === loadState.phase
+      ),
+      0
     );
+    const progressWidth = `${((activeStepIndex + 1) / LOADING_STEPS.length) * 100}%`;
 
     return (
       <main className="screen">
-        <section className="shell loading-card loading-card--immersive" aria-live="polite">
-          <div className="loading-card__visual" aria-hidden="true">
-            <span className="loading-card__glow"></span>
-            <span className="loading-card__ring loading-card__ring--outer"></span>
-            <span className="loading-card__ring loading-card__ring--inner"></span>
-            <span className="loading-card__orb"></span>
-            <span className="loading-card__spark loading-card__spark--a"></span>
-            <span className="loading-card__spark loading-card__spark--b"></span>
-            <span className="loading-card__spark loading-card__spark--c"></span>
-          </div>
-
-          <div className="loading-card__body">
-            <p className="eyebrow">読み込み中</p>
-            <p className="loading-card__title">検索データを読み込んでいます</p>
-            <p className="support-copy">{loadState.message}</p>
-
-            <div className="loading-card__meter" aria-hidden="true">
-              <span className="loading-card__meter-bar"></span>
+        <section className="search-overlay search-overlay--startup" aria-live="polite" aria-label="起動中">
+          <div className="search-overlay__card search-overlay__card--startup">
+            <div className="search-overlay__status">
+              <span className="search-overlay__spinner" aria-hidden="true" />
+              <span className="search-overlay__label">起動中</span>
             </div>
 
-            <div className="loading-card__steps" aria-label="読み込みステップ">
+            <div className="search-overlay__intro">
+              <p className="search-overlay__eyebrow">ダビ娘</p>
+              <h1 className="search-overlay__title">検索データを準備しています</h1>
+              <p className="search-overlay__message">{loadState.message}</p>
+            </div>
+
+            <div className="search-overlay__progress" aria-hidden="true">
+              <span
+                className="search-overlay__progress-bar"
+                style={{ width: progressWidth }}
+              ></span>
+            </div>
+
+            <div className="search-overlay__steps" aria-label="読み込みステップ">
               {LOADING_STEPS.map((step, index) => {
                 const classNames = [
-                  "loading-card__step",
+                  "search-overlay__step",
                   index < activeStepIndex ? "is-complete" : "",
                   index === activeStepIndex ? "is-active" : ""
                 ]
