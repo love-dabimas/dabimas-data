@@ -10124,6 +10124,11 @@ body,
   min-height: 100%;
 }
 
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
 body {
   background: var(--app-bg);
   color: var(--text);
@@ -11676,7 +11681,7 @@ button {
     flex: 1;
     min-width: 0;
     padding: 8px 10px;
-    font-size: 0.88rem;
+    font-size: 0.95rem;
   }
 
   .quick-tabs {
@@ -11833,7 +11838,7 @@ button {
 
   .result-card__legacy .pedigree,
   .result-card__legacy .pedigree td {
-    font-size: 17px;
+    font-size: 18px;
     line-height: 1.5;
   }
 
@@ -11852,7 +11857,7 @@ button {
   .result-card__legacy .pedigree .omoshiro_0,
   .result-card__legacy .pedigree .omoshiro_mare_0,
   .result-card__legacy .pedigree .migoto {
-    font-size: 21px;
+    font-size: 23px;
     line-height: 1.22;
   }
 
