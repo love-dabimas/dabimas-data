@@ -1,4 +1,4 @@
-const CACHE_NAME = "dabimas-data-v11";
+const CACHE_NAME = "dabimas-data-v12";
 
 // 因子アイコンは連番なので、precache 対象をプログラムで生成する。
 const FACTOR_ICON_PATHS = Array.from({ length: 12 }, (_, index) => {

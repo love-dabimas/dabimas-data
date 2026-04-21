@@ -10473,7 +10473,7 @@ button {
   color: var(--text);
   line-height: 1.45;
   padding: 9px 12px;
-  font-size: 0.94rem;
+  font-size: 16px;
 }
 
 .text-input:focus,
@@ -11280,6 +11280,7 @@ button {
   border: 0;
   background: transparent;
   box-shadow: none;
+  font-size: 16px;
   outline: none;
   padding: 0;
 }
@@ -11409,6 +11410,7 @@ button {
   border: 0;
   background: transparent;
   box-shadow: none;
+  font-size: 16px;
   outline: none;
   padding: 0;
 }
