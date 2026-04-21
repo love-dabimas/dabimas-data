@@ -526,7 +526,7 @@ export const HorseResultCard = ({ horse, criteria }: HorseResultCardProps) => {
         style={
           {
             "--result-card-scale": `${legacyScale}`,
-            minHeight: scaledHeight ? `${scaledHeight}px` : undefined
+            height: scaledHeight ? `${scaledHeight}px` : undefined
           } as CSSProperties
         }
       >
