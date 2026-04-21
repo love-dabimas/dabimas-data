@@ -65,6 +65,8 @@ FACTOR_NAMES = {
     10: "気性難",
     11: "疾走",
     12: "中距離",
+    13: "強芯",
+    14: "雷駆",
 }
 FACTOR_BADGE_LABELS = {
     "01": "短",
@@ -79,14 +81,34 @@ FACTOR_BADGE_LABELS = {
     "10": "難",
     "11": "走",
     "12": "中",
+    "13": "強",
+    "14": "雷",
 }
+FACTOR_HEADER_CODES = [
+    "01",
+    "02",
+    "03",
+    "04",
+    "11",
+    "12",
+    "13",
+    "14",
+    "09",
+    "10",
+    "05",
+    "06",
+    "07",
+    "08",
+]
+THIN_FACTOR_HEADER_CODES = [code for code in FACTOR_HEADER_CODES if code not in {"11", "12", "13", "14"}]
+FACTOR_INDEX_BY_CODE = {code: index for index, code in enumerate(FACTOR_HEADER_CODES)}
 
 SPEC_DETAILS = {1: "A", 2: "B", 3: "C"}
 DIRT_DETAILS = {1: "△", 2: "〇", 3: "◎"}
 BMS_RARE = {"X": "優", "W": "良", "V": "可", "U": "無印", "Y": "名牝"}
 BMS_RARE_CD = {5: "X", 6: "W", 7: "V", 8: "U", 9: "Y"}
 GENERATION_BY_SLOT = [2, 3, 4, 5, 5, 4, 5, 5, 3, 4, 5, 5, 4, 5, 5]
-FACTOR_ORDER = [FACTOR_NAMES[index] for index in range(1, 13)]
+FACTOR_ORDER = [FACTOR_NAMES[int(code)] for code in FACTOR_HEADER_CODES]
 
 PARENTAL_LINE_CODES = {
     "エクリプス系": "Ec",
@@ -536,6 +558,19 @@ def build_factor_counts(row: list[object]) -> tuple[list[int], list[int], list[i
     return counts_0, counts_1, counts_2
 
 
+def build_factor_header_cells(header_codes: Iterable[str]) -> str:
+    return "".join(
+        f'<th class="header01_f{code}">{FACTOR_BADGE_LABELS[code]}</th>'
+        for code in header_codes
+    )
+
+
+def build_factor_count_cells(counts: list[int], header_codes: Iterable[str]) -> str:
+    return "".join(
+        f"<td>{counts[FACTOR_INDEX_BY_CODE[code]]:02d}</td>" for code in header_codes
+    )
+
+
 def compute_horse_id(
     serial_number: str, row: list[object], url_by_serial: dict[str, str]
 ) -> str:
@@ -641,13 +676,7 @@ def build_header_detail(
     parts.append(
         '<th class="header01">底</th><th class="header01">体</th><th class="header01">適</th><th class="header01">距離</th>'
     )
-    parts.append(
-        '<th class="header01_f01">短</th><th class="header01_f02">速</th><th class="header01_f03">底</th><th class="header01_f04">長</th><th class="header01_f05">適</th>'
-    )
-    parts.append(
-        '<th class="header01_f06">丈</th><th class="header01_f07">早</th><th class="header01_f08">晩</th><th class="header01_f09">堅</th><th class="header01_f10">難</th>'
-    )
-    parts.append('<th class="header01_f11">走</th><th class="header01_f12">中</th>')
+    parts.append(build_factor_header_cells(FACTOR_HEADER_CODES))
     parts.append(f"</tr><tr><td>{running_style}</td><td>{growth}</td><td>{achievement}</td><td>{clemency}</td><td>{stable}</td>")
     parts.append(f"<td>{potential}</td><td>{health}</td><td>{dirt}</td><td>")
     if distance_min:
@@ -655,28 +684,17 @@ def build_header_detail(
         parts.append("～")
         parts.append(distance_max)
     parts.append("</td>")
-    for count in counts_0:
-        parts.append(f"<td>{count:02d}</td>")
+    parts.append(build_factor_count_cells(counts_0, FACTOR_HEADER_CODES))
     parts.append("</tr></tbody></table>")
 
-    parts.append('<table width="100%"><tbody><tr><th class="header01_01" colspan="12">１薄め</th><th class="header01_02" colspan="12">２薄め</th></tr><tr>')
     parts.append(
-        '<th class="header01_f01">短</th><th class="header01_f02">速</th><th class="header01_f03">底</th><th class="header01_f04">長</th><th class="header01_f05">ダ</th>'
+        f'<table width="100%"><tbody><tr><th class="header01_01" colspan="{len(THIN_FACTOR_HEADER_CODES)}">１薄め</th><th class="header01_02" colspan="{len(THIN_FACTOR_HEADER_CODES)}">２薄め</th></tr><tr>'
     )
-    parts.append(
-        '<th class="header01_f06">丈</th><th class="header01_f07">早</th><th class="header01_f08">晩</th><th class="header01_f09">堅</th><th class="header01_f10">難</th>'
-    )
-    parts.append(
-        '<th class="header01_f11">走</th><th class="header01_f12">中</th><th class="header01_f01">短</th><th class="header01_f02">速</th><th class="header01_f03">底</th><th class="header01_f04">長</th><th class="header01_f05">ダ</th>'
-    )
-    parts.append(
-        '<th class="header01_f06">丈</th><th class="header01_f07">早</th><th class="header01_f08">晩</th><th class="header01_f09">堅</th><th class="header01_f10">難</th>'
-    )
-    parts.append('<th class="header01_f11">走</th><th class="header01_f12">中</th></tr><tr>')
-    for count in counts_1:
-        parts.append(f"<td>{count:02d}</td>")
-    for count in counts_2:
-        parts.append(f"<td>{count:02d}</td>")
+    parts.append(build_factor_header_cells(THIN_FACTOR_HEADER_CODES))
+    parts.append(build_factor_header_cells(THIN_FACTOR_HEADER_CODES))
+    parts.append("</tr><tr>")
+    parts.append(build_factor_count_cells(counts_1, THIN_FACTOR_HEADER_CODES))
+    parts.append(build_factor_count_cells(counts_2, THIN_FACTOR_HEADER_CODES))
     parts.append("</tr></tbody></table></div>")
     return "".join(parts)
 

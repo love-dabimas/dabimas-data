@@ -1306,6 +1306,36 @@ height:720px;
   /* 文字の影 */
 }
 
+/*強*/
+.header01_f13 {
+  color: #000000;
+  background: #3e3b5c;
+  text-shadow:
+    1px 1px 0px #ffffff,
+    -1px 1px 0px #ffffff,
+    1px -1px 0px #ffffff,
+    -1px -1px 0px #ffffff,
+    1px 0px 0px #ffffff,
+    0px 1px 0px #ffffff,
+    -1px 0px 0px #ffffff,
+    0px -1px 0px #ffffff;
+}
+
+/*雷*/
+.header01_f14 {
+  color: #000000;
+  background: #c64562;
+  text-shadow:
+    1px 1px 0px #ffffff,
+    -1px 1px 0px #ffffff,
+    1px -1px 0px #ffffff,
+    -1px -1px 0px #ffffff,
+    1px 0px 0px #ffffff,
+    0px 1px 0px #ffffff,
+    -1px 0px 0px #ffffff,
+    0px -1px 0px #ffffff;
+}
+
 /*交換券*/
 .header01_Z{
   color     : #fbffcd;            /* 文字の色 */

@@ -46,16 +46,67 @@ const PEDIGREE_SLOTS: PedigreeSlot[] = [
   "hhht"
 ];
 
-const FACTOR_HEADER_CODES = Array.from({ length: 12 }, (_, index) =>
-  String(index + 1).padStart(2, "0")
+const FACTOR_HEADER_CODES = [
+  "01",
+  "02",
+  "03",
+  "04",
+  "11",
+  "12",
+  "13",
+  "14",
+  "09",
+  "10",
+  "05",
+  "06",
+  "07",
+  "08"
+];
+const FACTOR_BADGE_LABELS: Record<string, string> = {
+  "01": "短",
+  "02": "速",
+  "03": "底",
+  "04": "長",
+  "05": "適",
+  "06": "丈",
+  "07": "早",
+  "08": "晩",
+  "09": "堅",
+  "10": "難",
+  "11": "走",
+  "12": "中",
+  "13": "強",
+  "14": "雷"
+};
+const IMAGE_FACTOR_CODES = new Set(
+  Array.from({ length: 12 }, (_, index) => String(index + 1).padStart(2, "0"))
 );
+const THIN_FACTOR_HEADER_CODES = FACTOR_HEADER_CODES.filter(
+  (code) => !["11", "12", "13", "14"].includes(code)
+);
+const FACTOR_INDEX_BY_CODE = Object.fromEntries(
+  FACTOR_HEADER_CODES.map((code, index) => [code, index])
+) as Record<string, number>;
 
 const assetUrl = (path: string) => `${import.meta.env.BASE_URL}${path}`;
 
 const factorIcon = (code: string) => assetUrl(`static/img/icn/icn_factor_${code}.png`);
 
-const renderFactorImage = (code: string) =>
-  code ? <img src={factorIcon(code)} alt="" /> : null;
+const renderFactorImage = (code: string) => {
+  if (!code) {
+    return null;
+  }
+
+  if (!IMAGE_FACTOR_CODES.has(code)) {
+    return (
+      <span className={`result-card__factor-fallback header01_f${code}`}>
+        {FACTOR_BADGE_LABELS[code] ?? ""}
+      </span>
+    );
+  }
+
+  return <img src={factorIcon(code)} alt="" />;
+};
 
 const renderPedigreeFactorCells = (
   kind: "horse" | "migoto" | "omoshiro" | "omoshiro_mare",
@@ -76,20 +127,27 @@ const renderPedigreeFactorCells = (
   ));
 };
 
-const renderCountHeaderCells = (keyPrefix: string) =>
-  FACTOR_HEADER_CODES.map((code, index) => (
+const renderCountHeaderCells = (keyPrefix: string, headerCodes = FACTOR_HEADER_CODES) =>
+  headerCodes.map((code) => (
     <th
       key={`${keyPrefix}-factor-header-${code}`}
-      className={`result-card__factor-header header01_f${String(index + 1).padStart(2, "0")}`}
+      className={`result-card__factor-header header01_f${code}`}
     >
-      <span className="result-card__factor-header-icon">{renderFactorImage(code)}</span>
+      <span className="result-card__factor-header-text">{FACTOR_BADGE_LABELS[code] ?? ""}</span>
     </th>
   ));
 
-const renderCountValueCells = (counts: number[], keyPrefix: string) =>
-  counts.map((count, index) => (
-    <td key={`${keyPrefix}-factor-count-${index}`}>{String(count).padStart(2, "0")}</td>
-  ));
+const renderCountValueCells = (
+  counts: number[],
+  keyPrefix: string,
+  headerCodes = FACTOR_HEADER_CODES
+) =>
+  headerCodes.map((code) => {
+    const count = counts[FACTOR_INDEX_BY_CODE[code]] ?? 0;
+    return (
+      <td key={`${keyPrefix}-factor-count-${code}`}>{String(count).padStart(2, "0")}</td>
+    );
+  });
 
 const getPedigreeEntry = (horse: HorseRecord, index: number): PedigreeEntry =>
   horse.card.pedigree[index] ?? ["", "", "", []];
@@ -499,20 +557,28 @@ export const HorseResultCard = ({ horse, criteria }: HorseResultCardProps) => {
             <table width="100%">
               <tbody>
                 <tr>
-                  <th className="header01_01" colSpan={12}>
+                  <th className="header01_01" colSpan={THIN_FACTOR_HEADER_CODES.length}>
                     1薄め
                   </th>
-                  <th className="header01_02" colSpan={12}>
+                  <th className="header01_02" colSpan={THIN_FACTOR_HEADER_CODES.length}>
                     2薄め
                   </th>
                 </tr>
                 <tr>
-                  {renderCountHeaderCells("thin1")}
-                  {renderCountHeaderCells("thin2")}
+                  {renderCountHeaderCells("thin1", THIN_FACTOR_HEADER_CODES)}
+                  {renderCountHeaderCells("thin2", THIN_FACTOR_HEADER_CODES)}
                 </tr>
                 <tr>
-                  {renderCountValueCells(thin1FactorCounts, "thin1")}
-                  {renderCountValueCells(thin2FactorCounts, "thin2")}
+                  {renderCountValueCells(
+                    thin1FactorCounts,
+                    "thin1",
+                    THIN_FACTOR_HEADER_CODES
+                  )}
+                  {renderCountValueCells(
+                    thin2FactorCounts,
+                    "thin2",
+                    THIN_FACTOR_HEADER_CODES
+                  )}
                 </tr>
               </tbody>
             </table>

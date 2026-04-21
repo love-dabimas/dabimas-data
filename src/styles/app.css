@@ -732,7 +732,7 @@ button {
 }
 
 .result-card__distance-value {
-  font-size: 0.92em;
+  font-size: 0.98em;
   letter-spacing: -0.04em;
   white-space: nowrap;
   word-break: keep-all;
@@ -750,6 +750,26 @@ button {
   display: flex;
   justify-content: center;
   min-height: 23px;
+}
+
+.result-card__factor-header-text {
+  align-items: center;
+  display: flex;
+  font-size: 20px;
+  justify-content: center;
+  line-height: 1;
+  min-height: 23px;
+}
+
+.result-card__factor-fallback {
+  align-items: center;
+  display: inline-flex;
+  font-size: 18px;
+  height: 22px;
+  justify-content: center;
+  line-height: 1;
+  vertical-align: middle;
+  width: 22px;
 }
 
 .result-card__factor-header img {
@@ -1765,7 +1785,7 @@ button {
   }
 
   .result-card__distance-value {
-    font-size: 0.86em;
+    font-size: 0.92em;
   }
 
   .result-card__factor-header {
@@ -1774,6 +1794,17 @@ button {
 
   .result-card__factor-header-icon {
     min-height: 21px;
+  }
+
+  .result-card__factor-header-text {
+    font-size: 18px;
+    min-height: 21px;
+  }
+
+  .result-card__factor-fallback {
+    font-size: 16px;
+    height: 20px;
+    width: 20px;
   }
 
   .result-card__factor-header img {

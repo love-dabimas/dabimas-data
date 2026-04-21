@@ -1,4 +1,4 @@
-const CACHE_NAME = "dabimas-data-v3";
+const CACHE_NAME = "dabimas-data-v6";
 
 const FACTOR_ICON_PATHS = Array.from({ length: 12 }, (_, index) => {
   const code = String(index + 1).padStart(2, "0");
@@ -6,21 +6,21 @@ const FACTOR_ICON_PATHS = Array.from({ length: 12 }, (_, index) => {
 });
 
 const CATEGORY_ICON_PATHS = [
-  "Ec",
-  "Fa",
-  "Ha",
-  "He",
-  "Hi",
-  "Ma",
-  "Na",
+  "Ro",
   "Ne",
   "Ns",
-  "Ph",
-  "Ro",
+  "Na",
+  "Ha",
   "St",
-  "Sw",
+  "He",
   "Te",
-  "To"
+  "Ph",
+  "Ma",
+  "Hi",
+  "Sw",
+  "Fa",
+  "To",
+  "Ec"
 ].map((code) => `static/img/category/${code}.png`);
 
 const CORE_PATHS = [

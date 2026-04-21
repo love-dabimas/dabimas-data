@@ -1,19 +1,19 @@
 export const PARENT_LINE_OPTIONS = [
-  { value: "Ec", label: "Ec", fullLabel: "Eclipse" },
-  { value: "Fa", label: "Fa", fullLabel: "Fairway" },
-  { value: "Ha", label: "Ha", fullLabel: "Hampton" },
-  { value: "He", label: "He", fullLabel: "Herod" },
-  { value: "Hi", label: "Hi", fullLabel: "Himyar" },
-  { value: "Ma", label: "Ma", fullLabel: "Matchem" },
-  { value: "Na", label: "Na", fullLabel: "Native Dancer" },
+  { value: "Ro", label: "Ro", fullLabel: "Royal Charger" },
   { value: "Ne", label: "Ne", fullLabel: "Nearctic" },
   { value: "Ns", label: "Ns", fullLabel: "Nasrullah" },
-  { value: "Ph", label: "Ph", fullLabel: "Phalaris" },
-  { value: "Ro", label: "Ro", fullLabel: "Royal Charger" },
+  { value: "Na", label: "Na", fullLabel: "Native Dancer" },
+  { value: "Ha", label: "Ha", fullLabel: "Hampton" },
   { value: "St", label: "St", fullLabel: "St.Simon" },
-  { value: "Sw", label: "Sw", fullLabel: "Swynford" },
+  { value: "He", label: "He", fullLabel: "Herod" },
   { value: "Te", label: "Te", fullLabel: "Teddy" },
-  { value: "To", label: "To", fullLabel: "Tom Fool" }
+  { value: "Ph", label: "Ph", fullLabel: "Phalaris" },
+  { value: "Ma", label: "Ma", fullLabel: "Matchem" },
+  { value: "Hi", label: "Hi", fullLabel: "Himyar" },
+  { value: "Sw", label: "Sw", fullLabel: "Swynford" },
+  { value: "Fa", label: "Fa", fullLabel: "Fairway" },
+  { value: "To", label: "To", fullLabel: "Tom Fool" },
+  { value: "Ec", label: "Ec", fullLabel: "Eclipse" }
 ] as const;
 
 export const ANCESTOR_POSITION_OPTIONS = [
