@@ -2,11 +2,11 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import { viteStaticCopy } from "vite-plugin-static-copy";
+import { viteStaticCopy, type Target } from "vite-plugin-static-copy";
 
 const base = process.env.VITE_BASE_PATH ?? "/";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const staticCopyTargets = [
+const staticCopyTargets: Target[] = [
   { src: "static/img/**/*", dest: "static", rename: { stripBase: 1 } },
   { src: "static/apple-touch-icon*", dest: "static", rename: { stripBase: 1 } },
   { src: "static/favicon.ico", dest: "static", rename: { stripBase: 1 } },

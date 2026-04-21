@@ -85,7 +85,7 @@ const matchesAncestor = (horse: HorseRecord, criteria: SearchCriteria) => {
   }
 
   const pattern = criteria.ancestorPositions
-    .map((position) => `[${position}${ancestorName}]`)
+    .map((position: string) => `[${position}${ancestorName}]`)
     .join("|");
 
   return legacyRegexTest(pattern, horse.Ped_All);
