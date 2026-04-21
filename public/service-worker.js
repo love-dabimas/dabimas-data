@@ -1,10 +1,12 @@
 const CACHE_NAME = "dabimas-data-v11";
 
+// 因子アイコンは連番なので、precache 対象をプログラムで生成する。
 const FACTOR_ICON_PATHS = Array.from({ length: 12 }, (_, index) => {
   const code = String(index + 1).padStart(2, "0");
   return `static/img/icn/icn_factor_${code}.png`;
 });
 
+// 親系統バッジ画像も同様に一覧化しておく。
 const CATEGORY_ICON_PATHS = [
   "Ro",
   "Ne",
@@ -23,6 +25,7 @@ const CATEGORY_ICON_PATHS = [
   "Ec"
 ].map((code) => `static/img/category/${code}.png`);
 
+// 画面の初回表示に必須なファイルをここで定義して install 時に温める。
 const CORE_PATHS = [
   "./",
   "index.html",
@@ -41,10 +44,13 @@ const CORE_PATHS = [
   ...CATEGORY_ICON_PATHS
 ];
 
+// scope 配下の相対パスを service worker 基準の絶対 URL に直す。
 const scopedUrl = (path) => new URL(path, self.registration.scope).toString();
 
+// 他オリジンのリクエストはこの worker の担当外にする。
 const isSameOrigin = (url) => url.origin === self.location.origin;
 
+// 正常応答だけを cache へ保存し、エラー応答は残さない。
 const putInCache = async (request, response) => {
   if (!response || response.status !== 200) {
     return;
@@ -54,6 +60,7 @@ const putInCache = async (request, response) => {
   await cache.put(request, response.clone());
 };
 
+// 任意 URL を「取れたら cache へ入れる」という安全な補助関数。
 const cacheUrl = async (url) => {
   try {
     const request = new Request(url, { cache: "reload" });
@@ -66,6 +73,7 @@ const cacheUrl = async (url) => {
   }
 };
 
+// index.html からローカル配信の script / link / img を抜き出す。
 const extractLocalAssets = (html) => {
   const urls = new Set();
   const pattern = /\b(?:href|src)="([^"]+)"/g;
@@ -81,6 +89,7 @@ const extractLocalAssets = (html) => {
   return [...urls];
 };
 
+// CSS 内の url(...) も拾って、フォントや画像の取りこぼしを防ぐ。
 const extractCssAssets = async (cssUrl, response) => {
   if (!response) {
     return [];
@@ -106,6 +115,7 @@ const extractCssAssets = async (cssUrl, response) => {
   return [...urls];
 };
 
+// install 時に HTML 本体、そこから参照される asset、固定ファイル群をまとめて cache する。
 const precache = async () => {
   const cache = await caches.open(CACHE_NAME);
   const indexRequest = new Request(scopedUrl("index.html"), { cache: "reload" });
@@ -134,10 +144,12 @@ const precache = async () => {
   await Promise.all(CORE_PATHS.map((path) => cacheUrl(scopedUrl(path))));
 };
 
+// 新しい worker が入ったら即座に待機を抜けて次の activate へ進む。
 self.addEventListener("install", (event) => {
   event.waitUntil(precache().then(() => self.skipWaiting()));
 });
 
+// activate 時には古い版 cache を消し、現在ページも新 worker 配下へ取り込む。
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches
@@ -153,6 +165,7 @@ self.addEventListener("activate", (event) => {
   );
 });
 
+// JSON のように鮮度が大事なものは network-first で取り、失敗時だけ cache に戻す。
 const networkFirst = async (request) => {
   try {
     const response = await fetch(request);
@@ -167,6 +180,7 @@ const networkFirst = async (request) => {
   }
 };
 
+// 静的 asset はまず cache を返し、裏で新しい版を取りに行く。
 const staleWhileRevalidate = async (request) => {
   const cached = await caches.match(request);
   const fetchAndCache = fetch(request)
@@ -183,6 +197,7 @@ const staleWhileRevalidate = async (request) => {
   return (await fetchAndCache) || Response.error();
 };
 
+// 画面遷移は index.html へフォールバックできるよう特別扱いする。
 const navigationFallback = async (request) => {
   try {
     const response = await fetch(request);
@@ -198,6 +213,7 @@ const navigationFallback = async (request) => {
 self.addEventListener("fetch", (event) => {
   const { request } = event;
 
+  // GET 以外の変更系リクエストは browser 標準処理へ任せる。
   if (request.method !== "GET") {
     return;
   }
@@ -207,11 +223,13 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
+  // SPA の画面遷移は index.html を返せるよう専用 fallback を通す。
   if (request.mode === "navigate") {
     event.respondWith(navigationFallback(request));
     return;
   }
 
+  // 検索データ JSON は更新を拾いやすくするため network-first。
   if (
     url.pathname.endsWith("/json/horselist.json") ||
     url.pathname.endsWith("/json/factor.json")
@@ -220,5 +238,6 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
+  // それ以外の静的 asset は cache 優先で体感を軽くする。
   event.respondWith(staleWhileRevalidate(request));
 });

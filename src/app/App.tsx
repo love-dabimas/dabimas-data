@@ -10,6 +10,7 @@ import { SearchPage } from "@/features/search/ui/SearchPage";
 import { useSearchStore } from "@/features/search/store/useSearchStore";
 import { PARENT_LINE_OPTIONS } from "@/shared/constants/parentLines";
 
+// 起動直後は「読み込み中」、成功時は「ready」、失敗時は「error」の 3 状態で画面を切り替える。
 type LoadState =
   | {
       status: "loading";
@@ -34,6 +35,7 @@ const PARENT_LINE_LABELS = new Map<string, string>(
   PARENT_LINE_OPTIONS.map((option) => [option.value, option.fullLabel])
 );
 
+// 馬データから子系統候補を一意に集め、親系統の表示順に並べ直してオートコンプリートに渡す。
 const getUniqueSortedChildLineOptions = (
   horses: HorseRecord[],
   lineField: "Category" | "Category_ht",
@@ -81,6 +83,7 @@ const INITIAL_PROGRESS: LoadProgress = {
 };
 
 export const App = () => {
+  // 検索画面を開くたびに前回条件が残らないよう、アプリ起動時に条件を初期化する。
   const resetCriteria = useSearchStore((state) => state.resetCriteria);
   const [loadState, setLoadState] = useState<LoadState>({
     status: "loading",
@@ -94,6 +97,7 @@ export const App = () => {
   useEffect(() => {
     let cancelled = false;
 
+    // 読み込み関数から流れてくる進捗を、そのままローディング UI へ反映する。
     const updateProgress = (progress: LoadProgress) => {
       if (cancelled) {
         return;
@@ -109,6 +113,7 @@ export const App = () => {
       );
     };
 
+    // 初回表示時に JSON を読み込み、成功したら検索画面へ切り替える。
     const run = async () => {
       try {
         const result = await loadHorseData(updateProgress);
@@ -142,10 +147,12 @@ export const App = () => {
     void run();
 
     return () => {
+      // アンマウント後に state 更新しないよう、非同期処理の結果を破棄する。
       cancelled = true;
     };
   }, []);
 
+  // 自身の子系統候補を ready 状態になったタイミングだけで作り直す。
   const lineOptions = useMemo(
     () =>
       loadState.status === "ready"
@@ -158,6 +165,7 @@ export const App = () => {
     [loadState]
   );
 
+  // 母父の子系統候補も同じルールで別フィールドから生成する。
   const lineHtOptions = useMemo(
     () =>
       loadState.status === "ready"
@@ -171,6 +179,7 @@ export const App = () => {
   );
 
   if (loadState.status === "loading") {
+    // 読み込みフェーズをカード風 UI の進捗バーへ変換する。
     const activeStepIndex = Math.max(
       LOADING_STEPS.findIndex(
         (step) => step.phase === loadState.phase
@@ -225,6 +234,7 @@ export const App = () => {
   }
 
   if (loadState.status === "error") {
+    // エラー時は読み込みを中断し、再読込だけに導線を絞る。
     return (
       <main className="screen">
         <section className="shell loading-card">
@@ -243,6 +253,7 @@ export const App = () => {
     );
   }
 
+  // ここまで来たら必要な検索データは揃っているので、通常の検索 UI を表示する。
   return (
     <SearchPage
       horses={loadState.horses}

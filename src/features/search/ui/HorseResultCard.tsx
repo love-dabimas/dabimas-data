@@ -12,6 +12,7 @@ interface HorseResultCardProps {
   criteria: SearchCriteria;
 }
 
+// 旧 HTML テーブルの血統位置を React 化した都合で、スロット名は既存構造を踏襲している。
 type PedigreeSlot =
   | "t"
   | "tt"
@@ -88,12 +89,16 @@ const THIN_FACTOR_HEADER_CODES = FACTOR_HEADER_CODES.filter(
 const FACTOR_INDEX_BY_CODE = Object.fromEntries(
   FACTOR_HEADER_CODES.map((code, index) => [code, index])
 ) as Record<string, number>;
+
+// 旧カードの基準幅。モバイルではこの幅を基準に縮小率を計算する。
 const LEGACY_CARD_WIDTH = 760;
 
 const assetUrl = (path: string) => `${import.meta.env.BASE_URL}${path}`;
 
+// 因子アイコンも Pages の配信パスを考慮して組み立てる。
 const factorIcon = (code: string) => assetUrl(`static/img/icn/icn_factor_${code}.png`);
 
+// 数字系コードは画像、補助コードはフォールバック文字で描画する。
 const renderFactorImage = (code: string) => {
   if (!code) {
     return null;
@@ -110,6 +115,7 @@ const renderFactorImage = (code: string) => {
   return <img src={factorIcon(code)} alt="" />;
 };
 
+// 血統表末尾の因子欄は最大 2 個だけ見せる仕様なので、空欄込みで 2 セルへそろえる。
 const renderPedigreeFactorCells = (
   kind: "horse" | "migoto" | "omoshiro" | "omoshiro_mare",
   factorCodes: string[]
@@ -129,6 +135,7 @@ const renderPedigreeFactorCells = (
   ));
 };
 
+// 因子カウント表のヘッダーをコード配列から機械的に組み立てる。
 const renderCountHeaderCells = (keyPrefix: string, headerCodes = FACTOR_HEADER_CODES) =>
   headerCodes.map((code) => (
     <th
@@ -139,6 +146,7 @@ const renderCountHeaderCells = (keyPrefix: string, headerCodes = FACTOR_HEADER_C
     </th>
   ));
 
+// 実際の件数も同じコード順でセル化し、見出しとの対応を保つ。
 const renderCountValueCells = (
   counts: number[],
   keyPrefix: string,
@@ -151,11 +159,14 @@ const renderCountValueCells = (
     );
   });
 
+// 血統データが欠けている行は空行タプルで補い、描画側を単純化する。
 const getPedigreeEntry = (horse: HorseRecord, index: number): PedigreeEntry =>
   horse.card.pedigree[index] ?? ["", "", "", []];
 
+// React 側のハイライト描画関数へ小さく別名を付けて読みやすくする。
 const renderText = (value: string, terms: string[]) => renderHighlightedText(value, terms);
 
+// 旧テーブルごとの colspan / rowSpan を維持したまま、スロット別に 1 行ずつ描画する。
 const renderPedigreeRow = (
   slot: PedigreeSlot,
   [name, childLine, lineCode, factorCodes]: PedigreeEntry,
@@ -169,6 +180,7 @@ const renderPedigreeRow = (
   const renderLineCode = (value: string) =>
     renderText(value, highlighter.pedigreeLineCodeTerms(slot));
 
+  // slot ごとに行構造が違うため、ここでは既存マークアップを素直に分岐で再現する。
   switch (slot) {
     case "t":
       return (
@@ -457,16 +469,21 @@ const renderPedigreeRow = (
 };
 
 export const HorseResultCard = ({ horse, criteria }: HorseResultCardProps) => {
+  // all / 1薄 / 2薄 の因子カウントを上段表へ分けて表示する。
   const [allFactorCounts, thin1FactorCounts, thin2FactorCounts] = horse.card.factorCounts;
   const highlighter = createHorseCardHighlighter(criteria, horse);
   const viewportRef = useRef<HTMLDivElement>(null);
   const legacyRef = useRef<HTMLElement>(null);
   const [legacyScale, setLegacyScale] = useState(1);
   const [scaledHeight, setScaledHeight] = useState<number | null>(null);
+
+  // 距離は min/max 両方ある時だけレンジ表記にする。
   const distance =
     horse.card.stats.distanceMin && horse.card.stats.distanceMax
       ? `${horse.card.stats.distanceMin}〜${horse.card.stats.distanceMax}`
       : horse.card.stats.distanceMin || horse.card.stats.distanceMax;
+
+  // モバイルでは旧カードを transform で縮小し、その見た目高さを親へ同期する。
   useLayoutEffect(() => {
     let frameId = 0;
     const viewport = viewportRef.current;
@@ -483,6 +500,7 @@ export const HorseResultCard = ({ horse, criteria }: HorseResultCardProps) => {
         return;
       }
 
+      // 基準幅より狭い時だけ縮小し、広い画面では等倍表示のままにする。
       const nextScale = Math.min(1, availableWidth / LEGACY_CARD_WIDTH);
       const nextHeight = Math.ceil(legacy.offsetHeight * nextScale);
 
@@ -501,6 +519,7 @@ export const HorseResultCard = ({ horse, criteria }: HorseResultCardProps) => {
       });
     };
 
+    // 初回表示とリサイズの両方で高さを再計算する。
     measure();
 
     const resizeObserver = new ResizeObserver(scheduleMeasure);
@@ -530,8 +549,10 @@ export const HorseResultCard = ({ horse, criteria }: HorseResultCardProps) => {
           } as CSSProperties
         }
       >
+        {/* 旧 HTML に寄せた中身は絶対配置し、親 viewport 側が実高さを持つ。 */}
         <section ref={legacyRef} className="result-card__legacy">
           <div className="horsedata2">
+            {/* 上段: 馬名、因子、非凡、能力値などの概要表。 */}
             <table className="horse_spec" width="100%">
               <tbody>
                 <tr>
@@ -562,6 +583,7 @@ export const HorseResultCard = ({ horse, criteria }: HorseResultCardProps) => {
               </tbody>
             </table>
 
+            {/* 中段: 能力値と全因子カウント。 */}
             <table width="100%">
               <tbody>
                 <tr>
@@ -620,6 +642,7 @@ export const HorseResultCard = ({ horse, criteria }: HorseResultCardProps) => {
               </tbody>
             </table>
 
+            {/* 下段: 1 薄 / 2 薄の因子カウント。 */}
             <table width="100%">
               <tbody>
                 <tr>
@@ -651,6 +674,7 @@ export const HorseResultCard = ({ horse, criteria }: HorseResultCardProps) => {
           </div>
 
           <div className="detail">
+            {/* 血統表本体。スロット配列順に 1 行ずつ差し込む。 */}
             <table className="pedigree" width="100%">
               <tbody>
                 {PEDIGREE_SLOTS.map((slot, index) =>

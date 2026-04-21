@@ -1,5 +1,6 @@
 import { Fragment, type ReactNode } from "react";
 
+// 複数の入力元からハイライト語を集め、重複除去したうえで長い語を優先する。
 export const collectHighlightTerms = (...groups: Array<string | string[] | undefined>) => {
   const terms = groups
     .flatMap((group) => {
@@ -21,6 +22,7 @@ export const renderHighlightedText = (
   value: string,
   terms: string[]
 ): ReactNode => {
+  // 空文字や条件なしなら React ノードを分解せず、そのまま返す。
   if (!value) {
     return value;
   }
@@ -33,6 +35,7 @@ export const renderHighlightedText = (
   let remaining = value;
   let key = 0;
 
+  // 文字列を前から走査し、ヒット部分だけ mark 要素へ分割する。
   while (remaining.length > 0) {
     const match = terms
       .map((term) => ({

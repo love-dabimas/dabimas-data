@@ -1,3 +1,4 @@
+/* アプリ全体で共有する色・余白・影などの設計トークン。 */
 :root {
   color-scheme: light;
   --app-bg: linear-gradient(180deg, #f2eadc 0%, #f7f4ee 48%, #ebe3d3 100%);
@@ -61,6 +62,7 @@ button {
   margin: 0 auto;
 }
 
+/* 起動時 / エラー時に使う汎用カード。 */
 .loading-card {
   display: grid;
   gap: 12px;
@@ -558,7 +560,7 @@ button {
   gap: 0;
 }
 
-/* ─── Results ─────────────────────────────────── */
+/* 結果エリア全体のレイアウト。タブと一覧を上下に積む。 */
 
 .results-stack {
   display: grid;
@@ -690,6 +692,7 @@ button {
   pointer-events: none;
 }
 
+/* 旧 HTML カードを React から安全に縮小表示するためのレイヤー構造。 */
 .result-card {
   content-visibility: auto;
   contain-intrinsic-size: 760px;
@@ -868,7 +871,7 @@ button {
   outline-offset: 3px;
 }
 
-/* ─── 検索中オーバーレイ（全画面） ────────────────── */
+/* 検索中と起動中で使うオーバーレイ UI。 */
 
 .search-overlay {
   position: fixed;
@@ -1083,6 +1086,7 @@ button {
   }
 }
 
+/* 検索前 / 該当なし の案内表示。 */
 .empty-state {
   align-content: start;
   display: grid;
@@ -1092,7 +1096,7 @@ button {
   padding: 20px 16px;
 }
 
-/* ─── Modal ───────────────────────────────────── */
+/* 詳細条件を編集するモーダル。 */
 
 .modal-backdrop {
   position: fixed;
@@ -1669,6 +1673,7 @@ button {
 
 /* ─── Mobile: ≤ 900px ─────────────────────────── */
 
+/* 900px 以下では条件 UI と結果カードをタッチ前提で詰め直す。 */
 @media (max-width: 900px) {
   .screen {
     padding: 8px;
@@ -1810,6 +1815,7 @@ button {
 
 /* ─── Very small screens (iPhone SE = 375px) ─── */
 
+/* 極小画面では余白と文字をさらに詰め、横溢れを抑える。 */
 @media (max-width: 390px) {
   .screen {
     padding: 6px;

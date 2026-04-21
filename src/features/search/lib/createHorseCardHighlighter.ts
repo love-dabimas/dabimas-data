@@ -3,6 +3,7 @@ import type { SearchCriteria } from "@/features/search/model/searchCriteria";
 import { collectHighlightTerms } from "@/features/search/lib/renderHighlightedText";
 import { ANCESTOR_POSITION_OPTIONS } from "@/shared/constants/parentLines";
 
+// 結果カード内で使う血統スロット名。既存テーブル構造の位置関係をそのまま表している。
 type PedigreeSlot =
   | "t"
   | "tt"
@@ -29,6 +30,7 @@ export interface HorseCardHighlighter {
   pedigreeNameTerms: (slot: PedigreeSlot) => string[];
 }
 
+// 祖先位置の指定と血統表の行番号を結びつけるための定数。
 const FATHER_SLOT: PedigreeSlot = "t";
 const FATHER_FATHER_SLOT: PedigreeSlot = "tt";
 const DAM_SIRE_SLOT: PedigreeSlot = "ht";
@@ -50,10 +52,12 @@ export const createHorseCardHighlighter = (
   criteria: SearchCriteria,
   horse: HorseRecord
 ): HorseCardHighlighter => {
+  // 通常のキーワードは名前・系統・能力など広く使い回す。
   const keywordTerms = collectHighlightTerms(criteria.keyword);
   const ancestorTerm = criteria.ancestorName.trim();
   const selectedPositions = new Set(criteria.ancestorPositions);
 
+  // 祖先検索は選ばれた位置だけ赤字になるよう、スロット単位で用語を返す。
   const getAncestorTermsForSlot = (slot: PedigreeSlot) => {
     if (!ancestorTerm) {
       return [];
@@ -91,6 +95,7 @@ export const createHorseCardHighlighter = (
     return collectHighlightTerms(terms);
   };
 
+  // 行コード欄は親系統条件・見事条件・1 薄条件の一致を見せる用途。
   const getLineCodeTermsForSlot = (slot: PedigreeSlot) =>
     collectHighlightTerms(
       keywordTerms,
@@ -99,6 +104,7 @@ export const createHorseCardHighlighter = (
       MIGOTO_SLOTS.has(slot) ? criteria.migotoLines : []
     );
 
+  // 子系統欄は自身と母父の補助条件だけをハイライト対象にする。
   const getChildLineTermsForSlot = (slot: PedigreeSlot) =>
     collectHighlightTerms(
       keywordTerms,
@@ -106,6 +112,7 @@ export const createHorseCardHighlighter = (
       slot === DAM_SIRE_SLOT ? criteria.damSireChildLine : ""
     );
 
+  // UI 側は「どこを光らせるか」だけ知ればよいので、スロット別関数として返す。
   return {
     defaultTerms: keywordTerms,
     horseNameTerms: collectHighlightTerms(

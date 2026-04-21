@@ -22,8 +22,10 @@ interface ChildLineGroup {
   options: ChildLineOption[];
 }
 
+// 入力値比較は大文字小文字や前後空白の揺れを吸収して行う。
 const normalize = (value: string) => value.trim().toLocaleLowerCase("ja");
 
+// 並び順はそのままに、同じ親系統が連続する候補を 1 グループへまとめる。
 const groupChildLineOptions = (options: ChildLineOption[]) => {
   const groups: ChildLineGroup[] = [];
 
@@ -56,16 +58,19 @@ export const ChildLineAutocomplete = ({
   value,
   onChange
 }: ChildLineAutocompleteProps) => {
+  // 入力欄と候補一覧の外側クリック判定に使う。
   const rootRef = useRef<HTMLDivElement>(null);
   const listboxId = useId();
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState(value);
 
   useEffect(() => {
+    // 親コンポーネントから値が変わったときは入力表示も追従させる。
     setInputValue(value);
   }, [value]);
 
   useEffect(() => {
+    // 候補一覧を開いている間だけ外側クリック監視を有効にする。
     if (!isOpen) {
       return;
     }
@@ -83,11 +88,13 @@ export const ChildLineAutocomplete = ({
     };
   }, [isOpen]);
 
+  // 完全一致した候補があれば prefix バッジに親系統コードを出す。
   const resolvedOption = useMemo(
     () => options.find((option) => option.value === value.trim()) ?? null,
     [options, value]
   );
 
+  // 入力文字列に一致する候補だけへ絞り込み、表示用グループへ再構成する。
   const filteredGroups = useMemo(() => {
     const query = normalize(inputValue);
 
@@ -112,12 +119,14 @@ export const ChildLineAutocomplete = ({
 
   const hasMatches = filteredGroups.some((group) => group.options.length > 0);
 
+  // 候補クリックや Enter 選択時は入力欄表示・親 state・開閉状態を同時に更新する。
   const handleSelect = (nextValue: string) => {
     setInputValue(nextValue);
     onChange(nextValue);
     setIsOpen(false);
   };
 
+  // Escape で閉じ、Enter で先頭候補を採用する最低限のキーボード操作を用意する。
   const handleInputKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Escape") {
       setIsOpen(false);
@@ -155,6 +164,7 @@ export const ChildLineAutocomplete = ({
           value={inputValue}
           onChange={(event) => {
             const nextValue = event.target.value;
+            // 自由入力中も即座に親へ伝え、検索条件表示などへ反映できるようにする。
             setInputValue(nextValue);
             onChange(nextValue);
             setIsOpen(true);
@@ -195,6 +205,7 @@ export const ChildLineAutocomplete = ({
                   <span className="line-autocomplete__group-badge">
                     {group.parentCode}
                   </span>
+                  {/* グループ見出しには親系統の正式名を出して文脈を補う。 */}
                   <span>{group.parentLabel}</span>
                 </header>
 

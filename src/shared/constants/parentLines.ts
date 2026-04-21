@@ -1,3 +1,4 @@
+// 画面で使う親系統コード一覧。表示順もこの配列順をそのまま採用する。
 export const PARENT_LINE_OPTIONS = [
   { value: "Ro", label: "Ro", fullLabel: "Royal Charger" },
   { value: "Ne", label: "Ne", fullLabel: "Nearctic" },
@@ -16,6 +17,7 @@ export const PARENT_LINE_OPTIONS = [
   { value: "Ec", label: "Ec", fullLabel: "Eclipse" }
 ] as const;
 
+// 祖先検索で指定できる位置候補。既存データの表記に合わせて全角を維持している。
 export const ANCESTOR_POSITION_OPTIONS = [
   { value: "自身", label: "自身" },
   { value: "１父", label: "１父" },

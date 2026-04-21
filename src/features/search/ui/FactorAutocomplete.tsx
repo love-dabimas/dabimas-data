@@ -17,6 +17,7 @@ interface FactorAutocompleteProps {
   onChange: (value: string) => void;
 }
 
+// 祖先検索も余分な空白や大小文字差を無視して候補を探す。
 const normalize = (value: string) => value.trim().toLocaleLowerCase("ja");
 
 export const FactorAutocomplete = ({
@@ -26,16 +27,19 @@ export const FactorAutocomplete = ({
   value,
   onChange
 }: FactorAutocompleteProps) => {
+  // 候補一覧の外クリックで閉じるための基準要素。
   const rootRef = useRef<HTMLDivElement>(null);
   const listboxId = useId();
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState(value);
 
   useEffect(() => {
+    // 外部から値が変わったら表示文字列も合わせる。
     setInputValue(value);
   }, [value]);
 
   useEffect(() => {
+    // メニューを開いているときだけ外側クリック監視を行う。
     if (!isOpen) {
       return;
     }
@@ -53,6 +57,7 @@ export const FactorAutocomplete = ({
     };
   }, [isOpen]);
 
+  // id・表示名・バッジ文字のどれで打っても候補へたどり着けるようにする。
   const filteredOptions = useMemo(() => {
     const query = normalize(inputValue);
 
@@ -73,6 +78,7 @@ export const FactorAutocomplete = ({
     });
   }, [inputValue, options]);
 
+  // 現在値から完全一致の候補を逆引きし、選択済みバッジ表示に使う。
   const resolvedOption = useMemo(
     () =>
       options.find(
@@ -81,12 +87,14 @@ export const FactorAutocomplete = ({
     [options, value]
   );
 
+  // 選択時は祖先 id を正として親へ返す。
   const handleSelect = (nextOption: FactorOption) => {
     setInputValue(nextOption.id);
     onChange(nextOption.id);
     setIsOpen(false);
   };
 
+  // キーボードでは Escape / Enter のみ対応し、最初の候補を素早く選べるようにする。
   const handleInputKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Escape") {
       setIsOpen(false);
@@ -117,6 +125,7 @@ export const FactorAutocomplete = ({
           value={inputValue}
           onChange={(event) => {
             const nextValue = event.target.value;
+            // 入力途中でも祖先名をそのまま親 state へ返し、モーダル内表示を同期する。
             setInputValue(nextValue);
             onChange(nextValue);
             setIsOpen(true);
@@ -126,6 +135,7 @@ export const FactorAutocomplete = ({
         />
 
         {resolvedOption?.badges && resolvedOption.badges.length > 0 ? (
+          // 選択済み候補の因子バッジを入力欄横へ出し、内容を即確認できるようにする。
           <div className="factor-autocomplete__selected-badges" aria-hidden="true">
             {resolvedOption.badges.map((badge, index) => (
               <FactorBadge
@@ -157,6 +167,7 @@ export const FactorAutocomplete = ({
         <div id={listboxId} className="factor-autocomplete__menu" role="listbox">
           {filteredOptions.length > 0 ? (
             filteredOptions.map((option) => {
+              // 選択中の候補は入力値と id / name のどちらで一致しても強調表示する。
               const isSelected =
                 option.id === value.trim() || option.name === value.trim();
 
@@ -176,6 +187,7 @@ export const FactorAutocomplete = ({
                       {option.name}
                     </span>
                     {option.badges && option.badges.length > 0 ? (
+                      // 候補一覧でも因子バッジを見せて選び間違いを減らす。
                       <span className="factor-autocomplete__badges">
                         {option.badges.map((badge, index) => (
                           <FactorBadge

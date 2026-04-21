@@ -13,6 +13,7 @@ interface FilterSectionProps {
   onToggle: (value: string) => void;
 }
 
+// 親系統・レア条件など、同じ UI パターンのチップ群をまとめて描画する。
 export const FilterSection = ({
   title,
   subtitle,
@@ -27,6 +28,7 @@ export const FilterSection = ({
     </div>
     <div className="chip-row">
       {options.map((option) => {
+        // 選択状態は受け取った selectedValues だけで判定し、表示側は極力 stateless に保つ。
         const active = selectedValues.includes(option.value);
 
         return (

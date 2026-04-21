@@ -10,6 +10,7 @@ import { ResultsPanel } from "@/features/search/ui/ResultsPanel";
 import { PARENT_LINE_OPTIONS } from "@/shared/constants/parentLines";
 import { RARE_OPTIONS } from "@/shared/constants/rareCodes";
 
+// 検索画面は、元データと補助マスタをすべて受け取って自己完結で描画する。
 interface SearchPageProps {
   horses: HorseRecord[];
   factors: FactorOption[];
@@ -24,9 +25,11 @@ const RARE_LABEL_BY_VALUE = new Map<string, string>(
   RARE_OPTIONS.map(({ value, label }) => [value, label])
 );
 
+// レアコードは画面で見慣れたラベルへ変換して表示する。
 const formatRareCodes = (rareCodes: string[]) =>
   rareCodes.map((code) => RARE_LABEL_BY_VALUE.get(code) ?? code).join(", ");
 
+// 開いている検索条件を「確認」欄へ自然文で並べる。
 const buildActiveSummaries = (
   criteria: ReturnType<typeof useSearchStore.getState>["criteria"]
 ) => {
@@ -71,6 +74,7 @@ export const SearchPage = ({
   lineOptions,
   lineHtOptions
 }: SearchPageProps) => {
+  // 検索条件と UI 状態は zustand ストアから個別に取り出して再描画を最小化する。
   const criteria = useSearchStore((state) => state.criteria);
   const toggleFatherLine = useSearchStore((state) => state.toggleFatherLine);
   const toggleDamSireLine = useSearchStore((state) => state.toggleDamSireLine);
@@ -92,6 +96,7 @@ export const SearchPage = ({
   const stallionSentinelRef = useRef<HTMLDivElement>(null);
   const broodmareSentinelRef = useRef<HTMLDivElement>(null);
 
+  // 入力直後の state と、実際に検索へ使う state を少しずらして重さを和らげる。
   const deferredCriteria = useDeferredValue(criteria);
   const isSearchUpdating = deferredCriteria !== criteria;
   const criteriaKey = useMemo(() => JSON.stringify(criteria), [criteria]);
@@ -105,6 +110,7 @@ export const SearchPage = ({
     activeTab === "0" ? stallionSentinelRef : broodmareSentinelRef;
   const activeVisibleCount = visibleCounts[activeTab];
 
+  // 上段のクイック条件タブは、ラベル・件数・本体パネルをセットで持つ。
   const quickTabItems = [
     {
       id: "father" as const,
@@ -185,6 +191,7 @@ export const SearchPage = ({
   };
 
   useEffect(() => {
+    // 一定量スクロールしたらページ先頭へ戻るボタンを出す。
     const updateScrollTopVisibility = () => {
       const shouldShow = window.scrollY > SCROLL_TOP_BUTTON_THRESHOLD;
       setIsScrollTopVisible((current) => (current === shouldShow ? current : shouldShow));
@@ -199,10 +206,12 @@ export const SearchPage = ({
   }, []);
 
   useEffect(() => {
+    // 条件が変わったら、無限読み込み件数も最初からに戻す。
     resetVisibleCounts();
   }, [criteriaKey, resetVisibleCounts]);
 
   useEffect(() => {
+    // 現在タブの末尾 sentinel を監視し、見えたら表示件数を追加する。
     const node = activeSentinelRef.current;
 
     if (!node || !results.hasActivePrimaryFilters) {
@@ -239,6 +248,7 @@ export const SearchPage = ({
   return (
     <main className="screen">
       <div className="shell app-shell">
+        {/* 上段は検索条件操作エリア。 */}
         <section className="control-panel control-panel--compact">
           <div className="control-panel__header control-panel__header--compact">
             <h2>基本条件</h2>
@@ -268,6 +278,7 @@ export const SearchPage = ({
               placeholder="キーワード検索"
               value={criteria.keyword}
               onChange={(event) => {
+                // 入力値はそのままストアへ流し、下の検索結果が追随する。
                 const v = event.target.value;
                 setKeyword(v);
               }}
@@ -295,6 +306,7 @@ export const SearchPage = ({
           <details className="condition-accordion">
             <summary>検索条件の確認</summary>
             <div className="condition-accordion__body">
+              {/* 現在の条件をタグ状に見せて、何を掛けているかをすぐ確認できるようにする。 */}
               {activeSummaries.length > 0 ? (
                 <div className="chip-row">
                   {activeSummaries.map((summary) => (
@@ -313,6 +325,7 @@ export const SearchPage = ({
         </section>
 
         <div className="results-stack">
+          {/* ここから下は検索結果表示エリア。 */}
           <section className="results-tabs-shell">
             <div className="tab-strip" role="tablist" aria-label="検索対象タブ">
               <button
@@ -358,6 +371,7 @@ export const SearchPage = ({
       </div>
 
       {isSearchUpdating ? (
+        // useDeferredValue により計算が追いついていない間だけ薄いオーバーレイを出す。
         <div className="search-overlay" aria-live="polite" aria-label="検索中">
           <div className="search-overlay__card" aria-hidden="true">
             <span className="search-overlay__spinner" />
@@ -367,6 +381,7 @@ export const SearchPage = ({
       ) : null}
 
       {isScrollTopVisible ? (
+        // 長い結果一覧でも上へ戻りやすいよう、右下固定ボタンを出す。
         <button
           aria-label="ページ先頭へ戻る"
           className="scroll-top-button"
@@ -377,6 +392,7 @@ export const SearchPage = ({
         </button>
       ) : null}
 
+      {/* 詳細条件は常に描画しておき、open の切り替えだけで表示制御する。 */}
       <AncestorModal
         open={isModalOpen}
         factors={factors}

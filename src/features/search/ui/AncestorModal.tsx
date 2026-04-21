@@ -22,6 +22,7 @@ interface DraftState {
   ancestorPositions: string[];
 }
 
+// ストアへ反映する前に、モーダル内で安全に編集するための下書き状態を複製する。
 const createDraft = (value: DraftState): DraftState => ({
   ownChildLine: value.ownChildLine,
   damSireChildLine: value.damSireChildLine,
@@ -36,6 +37,7 @@ export const AncestorModal = ({
   lineHtOptions,
   onClose
 }: AncestorModalProps) => {
+  // モーダル内では store を直接書き換えず、最後に「反映する」でまとめて適用する。
   const criteria = useSearchStore((state) => state.criteria);
   const applyAdvancedFilters = useSearchStore((state) => state.applyAdvancedFilters);
 
@@ -47,6 +49,7 @@ export const AncestorModal = ({
   });
 
   useEffect(() => {
+    // 開いた瞬間に最新の検索条件を下書きへ写し、前回編集途中の残骸を持ち込まない。
     if (!open) {
       return;
     }
@@ -67,6 +70,7 @@ export const AncestorModal = ({
     criteria.ownChildLine
   ]);
 
+  // 祖先入力は id と表示名のどちらでも入ってくるので、候補情報へ解決しておく。
   const resolvedFactor = useMemo(
     () =>
       factors.find(
@@ -81,6 +85,7 @@ export const AncestorModal = ({
     return null;
   }
 
+  // 祖先位置は複数選択なので、チップのトグルで配列を組み替える。
   const togglePosition = (position: string) =>
     setDraft((current) => ({
       ...current,
@@ -89,6 +94,7 @@ export const AncestorModal = ({
         : [...current.ancestorPositions, position]
     }));
 
+  // 因子候補へ一致した場合は id に正規化して保存し、検索式を安定させる。
   const handleApply = () => {
     const resolvedName = draft.ancestorName.trim();
 
@@ -101,6 +107,7 @@ export const AncestorModal = ({
     onClose();
   };
 
+  // モーダル内の条件だけを消す。画面全体の reset とは役割を分けている。
   const handleReset = () =>
     setDraft({
       ownChildLine: "",
@@ -110,6 +117,7 @@ export const AncestorModal = ({
     });
 
   return (
+    // backdrop クリックで閉じられるようにしつつ、カード内部クリックでは伝播を止める。
     <div className="modal-backdrop" role="presentation" onClick={onClose}>
       <section
         aria-modal="true"
@@ -132,6 +140,7 @@ export const AncestorModal = ({
             <label className="field-label" htmlFor="own-child-line">
               自身の子系統
             </label>
+            {/* 自身の子系統候補は Category / Paternal_t 由来の一覧を使う。 */}
             <ChildLineAutocomplete
               id="own-child-line"
               options={lineOptions}
@@ -150,6 +159,7 @@ export const AncestorModal = ({
             <label className="field-label" htmlFor="dam-sire-child-line">
               母父の子系統
             </label>
+            {/* 母父の子系統候補は Category_ht / Paternal_ht 由来の一覧を使う。 */}
             <ChildLineAutocomplete
               id="dam-sire-child-line"
               options={lineHtOptions}
@@ -168,6 +178,7 @@ export const AncestorModal = ({
             <label className="field-label" htmlFor="ancestor-name">
               祖先指定
             </label>
+            {/* 祖先名は factor マスタから補完し、候補の因子バッジも見せる。 */}
             <FactorAutocomplete
               id="ancestor-name"
               options={factors}

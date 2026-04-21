@@ -3,6 +3,7 @@ import type { HorseRecord } from "@/features/horses/model/types";
 import type { SearchCriteria } from "@/features/search/model/searchCriteria";
 import { HorseResultCard } from "@/features/search/ui/HorseResultCard";
 
+// 結果一覧は、表示配列と無限読み込みの監視用 ref だけ受け取れば成立する。
 interface ResultsPanelProps {
   records: HorseRecord[];
   criteria: SearchCriteria;
@@ -18,10 +19,11 @@ const EMPTY_RESULTS_HEADING =
   "\u8a72\u5f53\u3059\u308b\u99ac\u304c\u898b\u3064\u304b\u308a\u307e\u305b\u3093\u3067\u3057\u305f";
 const EMPTY_RESULTS_BODY =
   "\u6761\u4ef6\u3092\u5e83\u3052\u308b\u304b\u3001\u30ec\u30a2\u6761\u4ef6\u306e\u7d5e\u308a\u8fbc\u307f\u3092\u898b\u76f4\u3057\u3066\u304f\u3060\u3055\u3044\u3002";
-const APPLYING_LABEL = "\u6761\u4ef6\u3092\u53cd\u6620\u4e2d\u2026";
 const SENTINEL_LABEL = "\u3055\u3089\u306b\u8aad\u307f\u8fbc\u307f\u4e2d\u2026";
 const SUMMARY_SUFFIX = "\u4ef6\u3092\u8868\u793a";
 const SUMMARY_MIDDLE = "\u4ef6\u4e2d";
+
+// メモ化しやすいように本体を別名で定義してから export 側で memo する。
 const ResultsPanelBase = ({
   records,
   criteria,
@@ -29,11 +31,13 @@ const ResultsPanelBase = ({
   visibleCount,
   sentinelRef
 }: ResultsPanelProps) => {
+  // 実際に描画する件数は UI 側の visibleCount に合わせて先頭から切り出す。
   const visibleRecords = hasActivePrimaryFilters ? records.slice(0, visibleCount) : [];
   const isEmpty = !hasActivePrimaryFilters || records.length === 0;
 
   return (
     <section className={`results-panel ${isEmpty ? "results-panel--empty" : ""}`}>
+      {/* 検索中に何件ヒットし、そのうち今は何件見えているかを上に出す。 */}
       {hasActivePrimaryFilters ? (
         <div className="results-panel__summary">
           <p>
@@ -46,6 +50,7 @@ const ResultsPanelBase = ({
         <>
           <div className="results-list">
             {visibleRecords.map((horse) => (
+              // 既存データに同名があり得るため、HorseId と SerialNumber を合わせて key にする。
               <HorseResultCard
                 key={`${horse.HorseId}-${horse.SerialNumber}`}
                 horse={horse}
@@ -55,6 +60,7 @@ const ResultsPanelBase = ({
           </div>
 
           {visibleRecords.length < records.length ? (
+            // 画面下端で交差したら親コンポーネント側が件数を増やす。
             <div ref={sentinelRef} className="result-sentinel">
               {SENTINEL_LABEL}
             </div>
@@ -70,4 +76,5 @@ const ResultsPanelBase = ({
   );
 };
 
+// 条件や件数が変わらない限り結果パネル全体の再描画を抑える。
 export const ResultsPanel = memo(ResultsPanelBase);

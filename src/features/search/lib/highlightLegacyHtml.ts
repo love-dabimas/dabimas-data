@@ -1,5 +1,6 @@
 import type { SearchCriteria } from "@/features/search/model/searchCriteria";
 
+// HTML 文字列を直接扱う場面用に、ハイライト対象語を 1 か所で集約する。
 const collectTerms = (criteria: SearchCriteria) => {
   const terms = [
     criteria.keyword.trim(),
@@ -18,10 +19,12 @@ const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\
 export const highlightLegacyHtml = (html: string, criteria: SearchCriteria) => {
   const terms = collectTerms(criteria);
 
+  // 条件がなければ DOM を触らず、そのまま返す。
   if (terms.length === 0) {
     return html;
   }
 
+  // 一度 DOM 化してからテキストノードだけを書き換え、既存タグ構造は壊さない。
   const parser = new DOMParser();
   const documentNode = parser.parseFromString(`<div id="root">${html}</div>`, "text/html");
   const root = documentNode.getElementById("root");
@@ -33,6 +36,7 @@ export const highlightLegacyHtml = (html: string, criteria: SearchCriteria) => {
   const walker = documentNode.createTreeWalker(root, NodeFilter.SHOW_TEXT);
   const textNodes: Text[] = [];
 
+  // script / style を除くテキストノードだけを先に収集する。
   while (walker.nextNode()) {
     const node = walker.currentNode;
     const parent = node.parentElement;
@@ -46,6 +50,7 @@ export const highlightLegacyHtml = (html: string, criteria: SearchCriteria) => {
     }
   }
 
+  // 収集済みノードを前から順に分割し、ヒット部分だけ mark タグへ差し替える。
   for (const textNode of textNodes) {
     const value = textNode.textContent ?? "";
     const fragment = documentNode.createDocumentFragment();
