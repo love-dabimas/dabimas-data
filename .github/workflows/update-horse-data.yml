@@ -40,6 +40,7 @@ jobs:
         run: >
           python -m tools.horse_data.scrape_source
           --output ./data/source/workbook.json
+          --site-metadata-output ./data/source/site_metadata.json
           --existing-source-json ./data/source/workbook.json
           --max-workers 8
 
@@ -47,6 +48,7 @@ jobs:
         run: >
           python tools/horse_data/generate_horselist.py
           --source-json ./data/source/workbook.json
+          --site-metadata ./data/source/site_metadata.json
           --output ./json/horselist.json
           --factor-output ./json/factor.json
 
@@ -61,13 +63,13 @@ jobs:
 
       - name: Commit generated data
         run: |
-          if [ -z "$(git status --porcelain data/source/workbook.json json/horselist.json json/factor.json dist)" ]; then
+          if [ -z "$(git status --porcelain data/source/workbook.json data/source/site_metadata.json json/horselist.json json/factor.json dist)" ]; then
             echo "No generated data changes."
             exit 0
           fi
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/source/workbook.json json/horselist.json json/factor.json dist
+          git add data/source/workbook.json data/source/site_metadata.json json/horselist.json json/factor.json dist
           git commit -m "Update generated horse data"
           git push

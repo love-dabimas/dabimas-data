@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState, type CSSProperties } from "react";
+﻿import { useLayoutEffect, useRef, useState, type CSSProperties } from "react";
 import type { HorseRecord, PedigreeEntry } from "@/features/horses/model/types";
 import {
   createHorseCardHighlighter,
@@ -165,6 +165,35 @@ const getPedigreeEntry = (horse: HorseRecord, index: number): PedigreeEntry =>
 
 // React 側のハイライト描画関数へ小さく別名を付けて読みやすくする。
 const renderText = (value: string, terms: string[]) => renderHighlightedText(value, terms);
+
+const renderTheoryMarks = (horse: HorseRecord) => {
+  const theory = horse.card.theory;
+  if (!theory) {
+    return null;
+  }
+
+  const items = [
+    ["完璧", theory.canPerfect],
+    ["超完璧", theory.canSuperPerfect],
+    ["奇跡", theory.canMiracle],
+    ["至高", theory.canShiho]
+  ] as const;
+
+  return (
+    <span className="result-card__theory-panel" aria-label="配合理論">
+      <span className="result-card__theory-grid">
+        {items.map(([label, enabled]) => (
+          <span key={label} className="result-card__theory-cell">
+            <span className="result-card__theory-label">{label}</span>
+            <span className={enabled ? "result-card__theory-value is-enabled" : "result-card__theory-value"}>
+              {enabled ? "○" : "－"}
+            </span>
+          </span>
+        ))}
+      </span>
+    </span>
+  );
+};
 
 // 旧テーブルごとの colspan / rowSpan を維持したまま、スロット別に 1 行ずつ描画する。
 const renderPedigreeRow = (
@@ -559,26 +588,27 @@ export const HorseResultCard = ({ horse, criteria }: HorseResultCardProps) => {
                   <th className={horse.card.rareBadgeClass} style={{ width: "10%" }}>
                     {horse.card.rareBadgeLabel || "\u00a0"}
                   </th>
-                  <td width="60%">
-                    <label>
-                      {renderText(horse.card.name, highlighter.horseNameTerms)}
-                      <div className="factor_02_img">
-                        {horse.card.selfFactorCodes.map((code, index) => (
-                          <img
-                            key={`self-factor-${index}-${code}`}
-                            src={factorIcon(code)}
-                            alt=""
-                          />
-                        ))}
-                        &nbsp;
-                        {renderText(horse.Category, highlighter.horseCategoryTerms)}
-                      </div>
-                    </label>
+                  <td colSpan={3}>
+                    <div className="result-card__summary-cell">
+                      <label className="result-card__summary-main">
+                        <span className="result-card__horse-name">
+                          {renderText(horse.card.name, highlighter.horseNameTerms)}
+                        </span>
+                        <span className="factor_02_img">
+                          {horse.card.selfFactorCodes.map((code, index) => (
+                            <img
+                              key={`self-factor-${index}-${code}`}
+                              src={factorIcon(code)}
+                              alt=""
+                            />
+                          ))}
+                          &nbsp;
+                          {renderText(horse.Category, highlighter.horseCategoryTerms)}
+                        </span>
+                      </label>
+                      {renderTheoryMarks(horse)}
+                    </div>
                   </td>
-                  <th className="header01" style={{ width: "10%" }}>
-                    非凡
-                  </th>
-                  <td>{renderText(horse.card.ability || "なし", highlighter.defaultTerms)}</td>
                 </tr>
               </tbody>
             </table>

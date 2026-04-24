@@ -23,10 +23,44 @@ export type PedigreeEntry = [
   factorCodes: string[]
 ];
 
+export interface HorseSkillDetailTab {
+  label: string;
+  effects: string[];
+  conditions: string[];
+  targets: string[];
+  probability: string[];
+}
+
+export interface HorseSkillData {
+  name: string;
+  description: string[];
+  detailUrl: string;
+  detailTabs: HorseSkillDetailTab[];
+}
+
+export interface HorseTheoryData {
+  canPerfect: boolean;
+  canSuperPerfect: boolean;
+  canMiracle: boolean;
+  canShiho: boolean;
+  omoshiroCount: number;
+  pattern: string;
+  factorCount: number;
+  factors: string[];
+  miracleMotherSireCandidates: {
+    id: string;
+    name: string;
+    matchedCrossHorse: string;
+  }[];
+}
+
 // 1 枚の結果カードを描画するのに必要な派生済みデータ群。
 export interface HorseCardData {
   name: string;
   ability: string;
+  abilityData?: HorseSkillData | null;
+  temperamentData?: HorseSkillData | null;
+  theory?: HorseTheoryData;
   rareBadgeClass: string;
   rareBadgeLabel: string;
   selfFactorCodes: string[];

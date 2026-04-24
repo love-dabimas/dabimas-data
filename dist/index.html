@@ -6,13 +6,13 @@
     <meta name="author" content="drecomLover" />
     <meta name="description" content="Dabimas horse pedigree search." />
     <meta name="theme-color" content="#202124" />
-    <link rel="icon" type="image/x-icon" href="/dabimas-data/dist/assets/favicon-CqaiPdcs.ico" />
-    <link rel="apple-touch-icon" href="/dabimas-data/dist/assets/apple-touch-icon-180x180-CM3RKuWg.png" />
+    <link rel="icon" type="image/x-icon" href="/assets/favicon-CqaiPdcs.ico" />
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon-180x180-CM3RKuWg.png" />
     <title>&#12480;&#12499;&#23064;</title>
     <script>
       (() => {
-        const deployMode = "artifact-root";
-        const basePath = "/dabimas-data/dist/";
+        const deployMode = "%VITE_DEPLOY_MODE%";
+        const basePath = "%VITE_BASE_PATH%";
         const isArtifactRoot = deployMode === "artifact-root";
         const isGitHubPagesHost = window.location.hostname === "love-dabimas.github.io";
         const isDistPath = /\/dist(?:\/|$)/.test(window.location.pathname);
@@ -27,8 +27,8 @@
         }
       })();
     </script>
-    <script type="module" crossorigin src="/dabimas-data/dist/assets/index-CbQI12Kj.js"></script>
-    <link rel="stylesheet" crossorigin href="/dabimas-data/dist/assets/index-CX8UzCl1.css">
+    <script type="module" crossorigin src="/assets/index-D0Ck5D9I.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-tf1CJaJT.css">
   </head>
   <body>
     <div id="root"></div>

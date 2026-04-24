@@ -1,6 +1,7 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import argparse
+import re
 import sys
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -51,6 +52,10 @@ from tools.horse_data.generate_horselist import (
     serialize_source_json,
     write_text,
 )
+from tools.horse_data.site_metadata import (
+    DEFAULT_SITE_METADATA_PATH,
+    serialize_site_metadata,
+)
 
 
 DEFAULT_BASE_URL = "https://dabimas.jp"
@@ -60,6 +65,14 @@ USER_AGENT = (
     "Mozilla/5.0 (compatible; dabimasDataBot/1.0; "
     "+https://github.com/yanaifarm/dabimasData)"
 )
+SKILL_SECTION_KEYS = {
+    "非凡な才能": "extraordinaryAbility",
+    "天性": "innateTalent",
+}
+
+
+def text_value(value: object) -> str:
+    return value if isinstance(value, str) else ""
 
 
 def text(element: Tag | None) -> str | None:
@@ -80,6 +93,19 @@ def src(element: Tag | None) -> str | None:
 
 def set_col(row: list[object], column: int, value: object) -> None:
     row[column - 1] = None if value == "" else value
+
+
+def direct_tag_children(root: Tag) -> list[Tag]:
+    return [child for child in root.children if isinstance(child, Tag)]
+
+
+def next_tag_sibling(node: Tag) -> Tag | None:
+    sibling = node.next_sibling
+    while sibling is not None:
+        if isinstance(sibling, Tag):
+            return sibling
+        sibling = sibling.next_sibling
+    return None
 
 
 def select_tables(soup: BeautifulSoup) -> list[Tag]:
@@ -119,6 +145,58 @@ def direct_cell_text(cell: Tag | None) -> str | None:
         return text(paragraph)
 
     return text(cell)
+
+
+def text_lines(element: Tag | None) -> list[str]:
+    if element is None:
+        return []
+    return [value for value in (text_value(item).strip() for item in element.stripped_strings) if value]
+
+
+def summary_description_lines(root: Tag | None) -> list[str]:
+    if root is None:
+        return []
+    paragraphs = root.find_all("p", recursive=False)
+    if len(paragraphs) < 2:
+        return []
+    return text_lines(paragraphs[1])
+
+
+def skill_summary_from_anchor(anchor: Tag, base_url: str) -> dict[str, object] | None:
+    href = anchor.get("href")
+    if not isinstance(href, str) or not href:
+        return None
+
+    info = anchor.select_one(".ability_info")
+    if not isinstance(info, Tag):
+        return None
+
+    name = text(info.select_one("p.large"))
+    if not name or name == "非凡な才能はありません":
+        return None
+
+    return {
+        "name": name,
+        "description": summary_description_lines(info),
+        "detailUrl": normalize_path(base_url, href),
+    }
+
+
+def parse_stallion_skill_summaries(
+    soup: BeautifulSoup, base_url: str
+) -> dict[str, dict[str, object]]:
+    skills: dict[str, dict[str, object]] = {}
+    for header in soup.find_all("h4"):
+        header_text = text(header)
+        if header_text not in SKILL_SECTION_KEYS:
+            continue
+        anchor = next_tag_sibling(header)
+        if anchor is None or anchor.name != "a":
+            continue
+        summary = skill_summary_from_anchor(anchor, base_url)
+        if summary is not None:
+            skills[SKILL_SECTION_KEYS[header_text]] = summary
+    return skills
 
 
 def horse_cells(table: Tag | None) -> list[str | None]:
@@ -184,15 +262,13 @@ def rare_count(summary_table: Tag) -> int | None:
     return count or None
 
 
-def ability_name(soup: BeautifulSoup) -> str | None:
-    ability = soup.select_one(".ability_info")
-    if ability is None:
+def ability_name(skills: dict[str, dict[str, object]]) -> str | None:
+    skill = skills.get("extraordinaryAbility")
+    if not isinstance(skill, dict):
         return None
 
-    values = list(ability.stripped_strings)
-    if not values or values[0] == "非凡な才能はありません":
-        return None
-    return values[0]
+    name = text_value(skill.get("name")).strip()
+    return name or None
 
 
 def build_empty_row(serial_number: int, gender: str) -> list[object]:
@@ -203,7 +279,9 @@ def build_empty_row(serial_number: int, gender: str) -> list[object]:
     return row
 
 
-def parse_stallion_detail(html: str, serial_number: int) -> list[object]:
+def parse_stallion_detail(
+    html: str, serial_number: int, base_url: str
+) -> tuple[list[object], dict[str, dict[str, object]]]:
     soup = BeautifulSoup(html, "html.parser")
     tables = select_tables(soup)
     if len(tables) < 4:
@@ -212,6 +290,7 @@ def parse_stallion_detail(html: str, serial_number: int) -> list[object]:
     summary = tables[0]
     spec = soup.select_one("table.horse_spec")
     pedigree_tables = soup.select("table.pedigree")
+    skills = parse_stallion_skill_summaries(soup, base_url)
     row = build_empty_row(serial_number, "0")
 
     self_factor_icons = img_srcs(summary, "icn_factor_")[:3]
@@ -221,7 +300,7 @@ def parse_stallion_detail(html: str, serial_number: int) -> list[object]:
     set_col(row, COL_HORSE_NAME, text(summary.select_one("span.large")))
     set_col(row, COL_PARENT_LINE, text(summary.select_one(".category")))
     set_col(row, COL_ICON, first_img_src(summary, "list_icn_cat"))
-    set_col(row, COL_ABILITY, ability_name(soup))
+    set_col(row, COL_ABILITY, ability_name(skills))
 
     if isinstance(spec, Tag):
         spec_rows = spec.find_all("tr")
@@ -244,7 +323,7 @@ def parse_stallion_detail(html: str, serial_number: int) -> list[object]:
         set_col(row, COL_STABLE, detail_stat_img(second_row_cells[3] if len(second_row_cells) > 3 else None))
 
     fill_pedigree(row, pedigree_tables)
-    return row
+    return row, skills
 
 
 def parse_broodmare_detail(html: str, serial_number: int) -> list[object]:
@@ -289,6 +368,11 @@ def normalize_path(base_url: str, href: str) -> str:
     return parsed.path
 
 
+def horse_id_from_path(path: str) -> str:
+    match = re.search(r"/([0-9]+)\.html$", path)
+    return match.group(1) if match else ""
+
+
 def scrape_list_urls(base_url: str, path: str, selector: str, timeout: float) -> list[str]:
     html = fetch_text(urljoin(base_url, path), timeout=timeout, retries=2)
     soup = BeautifulSoup(html, "html.parser")
@@ -319,12 +403,13 @@ def scrape_detail_row(
     serial_number: int,
     timeout: float,
     retries: int,
-) -> list[object]:
+) -> tuple[list[object], dict[str, dict[str, object]] | None]:
     html = fetch_text(urljoin(base_url, path), timeout=timeout, retries=retries)
     if "/stallions/" in path:
-        return parse_stallion_detail(html, serial_number)
+        row, skills = parse_stallion_detail(html, serial_number, base_url)
+        return row, skills
     if "/broodmares/" in path:
-        return parse_broodmare_detail(html, serial_number)
+        return parse_broodmare_detail(html, serial_number), None
     raise ValueError(f"Unknown horse URL type: {path}")
 
 
@@ -335,8 +420,9 @@ def scrape_rows(
     max_workers: int,
     timeout: float,
     retries: int,
-) -> list[list[object]]:
+) -> tuple[list[list[object]], dict[str, dict[str, object]]]:
     rows: list[list[object] | None] = [None] * len(urls)
+    horses: dict[str, dict[str, object]] = {}
 
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         futures = {
@@ -354,12 +440,16 @@ def scrape_rows(
         completed = 0
         for future in as_completed(futures):
             index, path = futures[future]
-            rows[index] = future.result()
+            row, skills = future.result()
+            rows[index] = row
+            horse_id = horse_id_from_path(path)
+            if horse_id and skills:
+                horses[horse_id] = skills
             completed += 1
             if completed % 100 == 0 or completed == len(urls):
                 print(f"scraped {completed}/{len(urls)}: {path}", flush=True)
 
-    return [row for row in rows if row is not None]
+    return [row for row in rows if row is not None], horses
 
 
 def load_existing_special_rare(path: Path) -> list[list[object]]:
@@ -378,7 +468,7 @@ def scrape_source(
     max_workers: int,
     timeout: float,
     retries: int,
-) -> dict[str, list[list[object]]]:
+) -> tuple[dict[str, list[list[object]]], dict[str, dict[str, object]]]:
     stallion_urls = scrape_list_urls(
         base_url, STALLION_LIST_PATH, ".stallion_list_panel", timeout
     )
@@ -396,7 +486,7 @@ def scrape_source(
     )
     print(f"scraping {len(urls)} detail pages", flush=True)
 
-    rows = scrape_rows(
+    rows, horses = scrape_rows(
         base_url,
         urls,
         max_workers=max_workers,
@@ -404,11 +494,14 @@ def scrape_source(
         retries=retries,
     )
 
-    return {
-        SOURCE_HORSE_LIST_KEY: [[path] for path in urls],
-        SOURCE_ALL_KEY: rows,
-        SOURCE_SPECIAL_RARE_KEY: load_existing_special_rare(existing_source_json),
-    }
+    return (
+        {
+            SOURCE_HORSE_LIST_KEY: [[path] for path in urls],
+            SOURCE_ALL_KEY: rows,
+            SOURCE_SPECIAL_RARE_KEY: load_existing_special_rare(existing_source_json),
+        },
+        horses,
+    )
 
 
 def parse_args() -> argparse.Namespace:
@@ -420,6 +513,12 @@ def parse_args() -> argparse.Namespace:
         type=Path,
         default=DEFAULT_SOURCE_JSON_PATH,
         help=f"Source JSON output path. Defaults to {DEFAULT_SOURCE_JSON_PATH}.",
+    )
+    parser.add_argument(
+        "--site-metadata-output",
+        type=Path,
+        default=DEFAULT_SITE_METADATA_PATH,
+        help=f"Site metadata output path. Defaults to {DEFAULT_SITE_METADATA_PATH}.",
     )
     parser.add_argument(
         "--existing-source-json",
@@ -461,7 +560,7 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> int:
     args = parse_args()
-    source = scrape_source(
+    source, site_metadata = scrape_source(
         base_url=args.base_url,
         existing_source_json=args.existing_source_json,
         limit=args.limit,
@@ -470,6 +569,7 @@ def main() -> int:
         retries=args.retries,
     )
     write_text(args.output, serialize_source_json(source))
+    write_text(args.site_metadata_output, serialize_site_metadata(site_metadata))
     return 0
 
 
