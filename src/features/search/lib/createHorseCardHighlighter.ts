@@ -30,6 +30,17 @@ export interface HorseCardHighlighter {
   pedigreeNameTerms: (slot: PedigreeSlot) => string[];
 }
 
+export interface HorseCardHighlightCriteria {
+  keyword: SearchCriteria["keyword"];
+  ancestorName: SearchCriteria["ancestorName"];
+  ancestorPositions: SearchCriteria["ancestorPositions"];
+  damSireLines: SearchCriteria["damSireLines"];
+  thinLines: SearchCriteria["thinLines"];
+  migotoLines: SearchCriteria["migotoLines"];
+  ownChildLine: SearchCriteria["ownChildLine"];
+  damSireChildLine: SearchCriteria["damSireChildLine"];
+}
+
 // 祖先位置の指定と血統表の行番号を結びつけるための定数。
 const FATHER_SLOT: PedigreeSlot = "t";
 const FATHER_FATHER_SLOT: PedigreeSlot = "tt";
@@ -48,8 +59,21 @@ const [
   otherPosition
 ] = ANCESTOR_POSITION_OPTIONS.map((option) => option.value);
 
+export const pickHorseCardHighlightCriteria = (
+  criteria: SearchCriteria
+): HorseCardHighlightCriteria => ({
+  keyword: criteria.keyword,
+  ancestorName: criteria.ancestorName,
+  ancestorPositions: criteria.ancestorPositions,
+  damSireLines: criteria.damSireLines,
+  thinLines: criteria.thinLines,
+  migotoLines: criteria.migotoLines,
+  ownChildLine: criteria.ownChildLine,
+  damSireChildLine: criteria.damSireChildLine
+});
+
 export const createHorseCardHighlighter = (
-  criteria: SearchCriteria,
+  criteria: HorseCardHighlightCriteria,
   horse: HorseRecord
 ): HorseCardHighlighter => {
   // 通常のキーワードは名前・系統・能力など広く使い回す。

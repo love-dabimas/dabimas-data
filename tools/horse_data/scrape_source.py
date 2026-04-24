@@ -69,6 +69,12 @@ SKILL_SECTION_KEYS = {
     "非凡な才能": "extraordinaryAbility",
     "天性": "innateTalent",
 }
+SKILL_DETAIL_SECTION_KEYS = {
+    "発揮効果": "effects",
+    "発揮条件": "conditions",
+    "発揮対象": "targets",
+    "発揮確率": "probability",
+}
 
 
 def text_value(value: object) -> str:
@@ -197,6 +203,110 @@ def parse_stallion_skill_summaries(
         if summary is not None:
             skills[SKILL_SECTION_KEYS[header_text]] = summary
     return skills
+
+
+def skill_detail_tab_label(header_text: str) -> str:
+    if "：" in header_text:
+        return header_text.split("：", 1)[1].strip() or "詳細"
+    if ":" in header_text:
+        return header_text.split(":", 1)[1].strip() or "詳細"
+    return "詳細"
+
+
+def parse_skill_description(soup: BeautifulSoup) -> list[str]:
+    header = next(
+        (item for item in soup.find_all("h4") if text(item) == "説明"),
+        None,
+    )
+    if not isinstance(header, Tag):
+        return []
+
+    description = next_tag_sibling(header)
+    return text_lines(description) if isinstance(description, Tag) else []
+
+
+def parse_skill_detail_tab(header: Tag) -> dict[str, object] | None:
+    header_text = text(header)
+    if not header_text or not header_text.startswith("才能詳細"):
+        return None
+
+    container = next_tag_sibling(header)
+    if not isinstance(container, Tag):
+        return None
+
+    sections: dict[str, list[str]] = {
+        "effects": [],
+        "conditions": [],
+        "targets": [],
+        "probability": [],
+    }
+    current_key: str | None = None
+
+    for node in container.descendants:
+        if not isinstance(node, Tag):
+            continue
+
+        class_names = node.get("class", [])
+        if node.name == "div" and "th" in class_names:
+            current_key = SKILL_DETAIL_SECTION_KEYS.get(text(node) or "")
+            continue
+
+        if node.name == "p" and "small" in class_names and current_key:
+            value = text(node)
+            if value:
+                sections[current_key].append(value)
+
+    return {
+        "label": skill_detail_tab_label(header_text),
+        **sections,
+    }
+
+
+def parse_skill_detail(html: str) -> dict[str, object]:
+    soup = BeautifulSoup(html, "html.parser")
+    tabs = [
+        tab
+        for tab in (
+            parse_skill_detail_tab(header)
+            for header in soup.find_all("h4")
+            if isinstance(header, Tag)
+        )
+        if tab is not None
+    ]
+    return {
+        "description": parse_skill_description(soup),
+        "detailTabs": tabs,
+    }
+
+
+def enrich_skill_details(
+    skills: dict[str, dict[str, object]],
+    base_url: str,
+    timeout: float,
+    retries: int,
+) -> dict[str, dict[str, object]]:
+    enriched: dict[str, dict[str, object]] = {}
+
+    for key, skill in skills.items():
+        next_skill = dict(skill)
+        detail_url = text_value(next_skill.get("detailUrl")).strip()
+
+        if detail_url:
+            try:
+                detail = parse_skill_detail(
+                    fetch_text(urljoin(base_url, detail_url), timeout, retries)
+                )
+                next_skill.update(detail)
+            except Exception as error:  # pragma: no cover - network dependent fallback.
+                print(
+                    f"warning: failed to fetch skill detail {detail_url}: {error}",
+                    file=sys.stderr,
+                    flush=True,
+                )
+
+        enriched[key] = next_skill
+
+    return enriched
 
 
 def horse_cells(table: Tag | None) -> list[str | None]:
@@ -407,7 +517,7 @@ def scrape_detail_row(
     html = fetch_text(urljoin(base_url, path), timeout=timeout, retries=retries)
     if "/stallions/" in path:
         row, skills = parse_stallion_detail(html, serial_number, base_url)
-        return row, skills
+        return row, enrich_skill_details(skills, base_url, timeout, retries)
     if "/broodmares/" in path:
         return parse_broodmare_detail(html, serial_number), None
     raise ValueError(f"Unknown horse URL type: {path}")
@@ -450,6 +560,45 @@ def scrape_rows(
                 print(f"scraped {completed}/{len(urls)}: {path}", flush=True)
 
     return [row for row in rows if row is not None], horses
+
+
+def load_existing_stallion_urls(path: Path) -> list[str]:
+    source = load_source_json(path)
+    urls: list[str] = []
+
+    for row in source[SOURCE_HORSE_LIST_KEY]:
+        if not row:
+            continue
+
+        value = text_value(row[0]).strip()
+        if "/stallions/" in value:
+            urls.append(value)
+
+    return urls
+
+
+def scrape_site_metadata_from_existing_source(
+    *,
+    base_url: str,
+    existing_source_json: Path,
+    limit: int | None,
+    max_workers: int,
+    timeout: float,
+    retries: int,
+) -> dict[str, dict[str, object]]:
+    urls = load_existing_stallion_urls(existing_source_json)
+    if limit is not None:
+        urls = urls[:limit]
+
+    print(f"scraping {len(urls)} existing stallion pages for site metadata", flush=True)
+    _, horses = scrape_rows(
+        base_url,
+        urls,
+        max_workers=max_workers,
+        timeout=timeout,
+        retries=retries,
+    )
+    return horses
 
 
 def load_existing_special_rare(path: Path) -> list[list[object]]:
@@ -527,6 +676,11 @@ def parse_args() -> argparse.Namespace:
         help="Existing source JSON used to preserve special_rare overrides.",
     )
     parser.add_argument(
+        "--metadata-only",
+        action="store_true",
+        help="Only scrape stallion skill metadata from the existing source JSON, without rewriting the source JSON.",
+    )
+    parser.add_argument(
         "--base-url",
         default=DEFAULT_BASE_URL,
         help=f"Base URL to scrape. Defaults to {DEFAULT_BASE_URL}.",
@@ -560,6 +714,18 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> int:
     args = parse_args()
+    if args.metadata_only:
+        site_metadata = scrape_site_metadata_from_existing_source(
+            base_url=args.base_url,
+            existing_source_json=args.existing_source_json,
+            limit=args.limit,
+            max_workers=args.max_workers,
+            timeout=args.timeout,
+            retries=args.retries,
+        )
+        write_text(args.site_metadata_output, serialize_site_metadata(site_metadata))
+        return 0
+
     source, site_metadata = scrape_source(
         base_url=args.base_url,
         existing_source_json=args.existing_source_json,

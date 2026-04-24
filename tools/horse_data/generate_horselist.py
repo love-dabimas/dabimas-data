@@ -116,6 +116,25 @@ BMS_RARE = {"X": "優", "W": "良", "V": "可", "U": "無印", "Y": "名牝"}
 BMS_RARE_CD = {5: "X", 6: "W", 7: "V", 8: "U", 9: "Y"}
 GENERATION_BY_SLOT = [2, 3, 4, 5, 5, 4, 5, 5, 3, 4, 5, 5, 4, 5, 5]
 FACTOR_ORDER = [FACTOR_NAMES[int(code)] for code in FACTOR_HEADER_CODES]
+FACTOR_LABEL_BY_CODE = {code: FACTOR_NAMES[int(code)] for code in FACTOR_HEADER_CODES}
+
+SUFFIX_RE = re.compile(r"^(.+?)-[^-]+-$")
+ALIAS_MAP: dict[str, str] = {
+    "Hail to Reason": "ヘイルトゥリーズン",
+    "Mr.Prospector": "ミスタープロスペクター",
+    "Mr. Prospector": "ミスタープロスペクター",
+}
+
+SLOT_T = 0
+SLOT_TTT = 2
+SLOT_TTHT = 4
+SLOT_THT = 5
+SLOT_THHT = 7
+SLOT_HT = 8
+SLOT_HTT = 9
+SLOT_HTHT = 11
+SLOT_HHT = 12
+SLOT_HHHT = 14
 
 PARENTAL_LINE_CODES = {
     "エクリプス系": "Ec",
@@ -710,6 +729,246 @@ def compact_factor_codes(factor_codes: tuple[str, str, str]) -> list[str]:
     return [code for code in factor_codes if code]
 
 
+def normalize_base_name(name: str) -> str:
+    stripped = name.strip()
+    match = SUFFIX_RE.match(stripped)
+    return match.group(1) if match else stripped
+
+
+def canonical_horse_name(name: str) -> str:
+    base_name = normalize_base_name(name)
+    return ALIAS_MAP.get(base_name, base_name)
+
+
+def same_horse(left: str, right: str) -> bool:
+    return canonical_horse_name(left) == canonical_horse_name(right)
+
+
+def pedigree_entry_name(record: dict[str, object], slot: int) -> str:
+    card = record.get("card")
+    if not isinstance(card, dict):
+        return ""
+    pedigree = card.get("pedigree")
+    if not isinstance(pedigree, list) or slot >= len(pedigree):
+        return ""
+    entry = pedigree[slot]
+    return text(entry[0]).strip() if isinstance(entry, list) and entry else ""
+
+
+def pedigree_entry_line(record: dict[str, object], slot: int) -> str:
+    card = record.get("card")
+    if not isinstance(card, dict):
+        return ""
+    pedigree = card.get("pedigree")
+    if not isinstance(pedigree, list) or slot >= len(pedigree):
+        return ""
+    entry = pedigree[slot]
+    return text(entry[2]).strip() if isinstance(entry, list) and len(entry) >= 3 else ""
+
+
+def self_factor_set(record: dict[str, object]) -> set[str]:
+    card = record.get("card")
+    if not isinstance(card, dict):
+        return set()
+    codes = card.get("selfFactorCodes")
+    if not isinstance(codes, list):
+        return set()
+    return {
+        FACTOR_LABEL_BY_CODE[code]
+        for code in (text(code).strip() for code in codes)
+        if code in FACTOR_LABEL_BY_CODE
+    }
+
+
+def sorted_factor_names(factors: set[str]) -> list[str]:
+    order = {name: index for index, name in enumerate(FACTOR_ORDER)}
+    return sorted(factors, key=lambda value: (order.get(value, 999), value))
+
+
+def get_omoshiro_lines(record: dict[str, object]) -> list[str]:
+    return [
+        text(record.get("Paternal_t")).strip(),
+        pedigree_entry_line(record, SLOT_THT),
+        text(record.get("Paternal_ht")).strip(),
+        pedigree_entry_line(record, SLOT_HHT),
+    ]
+
+
+def get_migoto_lines(record: dict[str, object]) -> list[str]:
+    return [
+        pedigree_entry_line(record, SLOT_TTHT),
+        pedigree_entry_line(record, SLOT_THHT),
+        pedigree_entry_line(record, SLOT_HTHT),
+        pedigree_entry_line(record, SLOT_HHHT),
+    ]
+
+
+def get_miracle_cross_names(record: dict[str, object]) -> list[str]:
+    return [
+        pedigree_entry_name(record, SLOT_TTT),
+        pedigree_entry_name(record, SLOT_THT),
+        pedigree_entry_name(record, SLOT_HTT),
+        pedigree_entry_name(record, SLOT_HHT),
+    ]
+
+
+def build_perfect_theory(record: dict[str, object]) -> dict[str, object]:
+    combined_lines = [
+        line for line in get_omoshiro_lines(record) + get_migoto_lines(record) if line
+    ]
+    unique_count = len(set(combined_lines))
+    return {
+        "canPerfect": unique_count >= 7,
+        "canSuperPerfect": unique_count >= 8,
+        "omoshiroCount": unique_count,
+    }
+
+
+def record_name(record: dict[str, object]) -> str:
+    card = record.get("card")
+    return text(card.get("name")).strip() if isinstance(card, dict) else ""
+
+
+def find_miracle_mother_sire_candidates(
+    record: dict[str, object], candidate_index: dict[str, list[dict[str, object]]]
+) -> list[dict[str, str]]:
+    target_name = record_name(record)
+    required_lines = {line for line in get_migoto_lines(record) if line}
+    candidates: list[dict[str, str]] = []
+
+    for cross_name in (name for name in get_miracle_cross_names(record) if name):
+        for candidate in candidate_index.get(canonical_horse_name(cross_name), []):
+            candidate_name = record_name(candidate)
+            if not candidate_name or same_horse(candidate_name, target_name):
+                continue
+            candidate_line = text(candidate.get("Paternal_t")).strip()
+            if candidate_line not in required_lines:
+                continue
+            candidates.append(
+                {
+                    "id": text(candidate.get("HorseId")).strip(),
+                    "name": candidate_name,
+                    "matchedCrossHorse": cross_name,
+                }
+            )
+
+    seen: set[tuple[str, str]] = set()
+    unique_candidates: list[dict[str, str]] = []
+    for candidate in candidates:
+        key = (candidate["id"], candidate["matchedCrossHorse"])
+        if key in seen:
+            continue
+        seen.add(key)
+        unique_candidates.append(candidate)
+    return unique_candidates
+
+
+def is_variant_record(record: dict[str, object]) -> bool:
+    name = record_name(record)
+    return bool(name) and name != normalize_base_name(name)
+
+
+def find_factor_union(
+    records: list[dict[str, object]],
+    min_records: int,
+    min_factor_kinds: int,
+    required_names: set[str] | None = None,
+) -> set[str] | None:
+    if len(records) < min_records:
+        return None
+    if required_names is not None and not any(record_name(record) in required_names for record in records):
+        return None
+
+    factor_set: set[str] = set()
+    for record in records:
+        factor_set |= self_factor_set(record)
+    return factor_set if len(factor_set) >= min_factor_kinds else None
+
+
+def build_shiho_lookup(records: list[dict[str, object]]) -> dict[str, dict[str, object]]:
+    groups: dict[str, list[dict[str, object]]] = {}
+    pedigree_seen_base_names: set[str] = set()
+
+    for record in records:
+        if record.get("Gender") != "0":
+            continue
+        name = record_name(record)
+        if name:
+            groups.setdefault(canonical_horse_name(name), []).append(record)
+        card = record.get("card")
+        pedigree = card.get("pedigree") if isinstance(card, dict) else None
+        if isinstance(pedigree, list):
+            for entry in pedigree:
+                if isinstance(entry, list) and entry:
+                    pedigree_seen_base_names.add(canonical_horse_name(text(entry[0])))
+
+    lookup: dict[str, dict[str, object]] = {}
+    for group in groups.values():
+        variants = [record for record in group if is_variant_record(record)]
+        result: dict[str, object] | None = None
+        factor_set = find_factor_union(variants, 3, 6)
+        if factor_set is not None:
+            result = {
+                "canShiho": True,
+                "pattern": "A",
+                "factorCount": len(factor_set),
+                "factors": sorted_factor_names(factor_set),
+            }
+        else:
+            existing = [
+                record
+                for record in group
+                if record_name(record) == normalize_base_name(record_name(record))
+                and canonical_horse_name(record_name(record)) in pedigree_seen_base_names
+            ]
+            required_names = {record_name(record) for record in existing}
+            factor_set = find_factor_union(variants + existing, 4, 6, required_names)
+            if factor_set is not None:
+                result = {
+                    "canShiho": True,
+                    "pattern": "B",
+                    "factorCount": len(factor_set),
+                    "factors": sorted_factor_names(factor_set),
+                }
+        if result is None:
+            result = {"canShiho": False, "pattern": "", "factorCount": 0, "factors": []}
+        for record in group:
+            horse_id = text(record.get("HorseId")).strip()
+            if horse_id:
+                lookup[horse_id] = result
+    return lookup
+
+
+def attach_theory(records: list[dict[str, object]]) -> None:
+    shiho_lookup = build_shiho_lookup(records)
+    candidate_index: dict[str, list[dict[str, object]]] = {}
+    for record in records:
+        if record.get("Gender") != "0":
+            continue
+        name = record_name(record)
+        if name:
+            candidate_index.setdefault(canonical_horse_name(name), []).append(record)
+
+    for record in records:
+        if record.get("Gender") != "0":
+            continue
+        card = record.get("card")
+        if not isinstance(card, dict):
+            continue
+        perfect = build_perfect_theory(record)
+        miracle_candidates = find_miracle_mother_sire_candidates(record, candidate_index)
+        shiho = shiho_lookup.get(
+            text(record.get("HorseId")).strip(),
+            {"canShiho": False, "pattern": "", "factorCount": 0, "factors": []},
+        )
+        card["theory"] = {
+            **perfect,
+            "canMiracle": bool(perfect["canPerfect"] and miracle_candidates),
+            "miracleMotherSireCandidates": miracle_candidates,
+            **shiho,
+        }
+
+
 def build_rare_badge(gender: str, rare_cd: str, icon_value: object) -> tuple[str, str]:
     icon_code = digits(icon_value)
 
@@ -1267,15 +1526,36 @@ def build_records_from_source(
         }
         records.append(record)
 
+    attach_theory(records)
     return records
 
 
-def build_records(workbook_path: Path) -> list[dict[str, object]]:
-    return build_records_from_source(load_excel_source(workbook_path))
+def build_records(
+    workbook_path: Path, site_metadata_path: Path | None = None
+) -> list[dict[str, object]]:
+    resolved_site_metadata_path = (
+        site_metadata_path
+        if site_metadata_path is not None
+        else default_site_metadata_for_workbook(workbook_path)
+    )
+    return build_records_from_source(
+        load_excel_source(workbook_path),
+        load_site_metadata(resolved_site_metadata_path),
+    )
 
 
-def build_records_from_json(source_json_path: Path) -> list[dict[str, object]]:
-    return build_records_from_source(load_source_json(source_json_path))
+def build_records_from_json(
+    source_json_path: Path, site_metadata_path: Path | None = None
+) -> list[dict[str, object]]:
+    resolved_site_metadata_path = (
+        site_metadata_path
+        if site_metadata_path is not None
+        else default_site_metadata_for_source(source_json_path)
+    )
+    return build_records_from_source(
+        load_source_json(source_json_path),
+        load_site_metadata(resolved_site_metadata_path),
+    )
 
 
 def serialize_records(records: list[dict[str, object]]) -> str:
@@ -1387,6 +1667,12 @@ def parse_args() -> argparse.Namespace:
         help=f"Source JSON to read. Defaults to {DEFAULT_SOURCE_JSON_PATH} when no .xlsm workbook is found.",
     )
     parser.add_argument(
+        "--site-metadata",
+        type=Path,
+        default=None,
+        help=f"Site metadata JSON to merge. Defaults to {DEFAULT_SITE_METADATA_PATH} next to the selected source when present.",
+    )
+    parser.add_argument(
         "--export-source-json",
         type=Path,
         default=None,
@@ -1413,19 +1699,19 @@ def load_records_for_args(
     args: argparse.Namespace, cwd: Path
 ) -> tuple[list[dict[str, object]], Path]:
     if args.source_json is not None:
-        return build_records_from_json(args.source_json), cwd
+        return build_records_from_json(args.source_json, args.site_metadata), cwd
 
     if args.workbook is not None:
-        return build_records(args.workbook), args.workbook.parent
+        return build_records(args.workbook, args.site_metadata), args.workbook.parent
 
     matches = sorted(cwd.glob("*.xlsm"))
     if matches:
         workbook_path = matches[0]
-        return build_records(workbook_path), workbook_path.parent
+        return build_records(workbook_path, args.site_metadata), workbook_path.parent
 
     default_source_json = cwd / DEFAULT_SOURCE_JSON_PATH
     if default_source_json.exists():
-        return build_records_from_json(default_source_json), cwd
+        return build_records_from_json(default_source_json, args.site_metadata), cwd
 
     raise FileNotFoundError(
         f"No .xlsm workbook found and {DEFAULT_SOURCE_JSON_PATH} does not exist."

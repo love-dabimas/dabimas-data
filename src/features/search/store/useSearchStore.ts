@@ -6,6 +6,15 @@ import {
 
 // モーダル側でまとめて更新する詳細条件だけを抜き出した入力型。
 interface AdvancedFilters {
+  theory: string[];
+  runningStyle: string[];
+  growth: string[];
+  dirt: string[];
+  achievement: string[];
+  stable: string[];
+  clemency: string[];
+  potential: string[];
+  health: string[];
   ownChildLine: string;
   damSireChildLine: string;
   ancestorName: string;
@@ -85,6 +94,15 @@ export const useSearchStore = create<SearchState>((set) => ({
     set((state) => ({
       criteria: {
         ...state.criteria,
+        theory: value.theory,
+        runningStyle: value.runningStyle,
+        growth: value.growth,
+        dirt: value.dirt,
+        achievement: value.achievement,
+        stable: value.stable,
+        clemency: value.clemency,
+        potential: value.potential,
+        health: value.health,
         ownChildLine: value.ownChildLine,
         damSireChildLine: value.damSireChildLine,
         ancestorName: value.ancestorName,

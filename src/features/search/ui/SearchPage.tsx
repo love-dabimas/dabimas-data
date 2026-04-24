@@ -1,7 +1,16 @@
 import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
 import type { FactorOption, HorseRecord } from "@/features/horses/model/types";
 import type { ChildLineOption } from "@/features/search/model/childLineOption";
-import { filterHorseRecords } from "@/features/search/lib/filterHorseRecords";
+import { pickHorseCardHighlightCriteria } from "@/features/search/lib/createHorseCardHighlighter";
+import {
+  createHorseSearchIndex,
+  filterHorseRecords,
+  sortHorseRecords
+} from "@/features/search/lib/filterHorseRecords";
+import {
+  DEFAULT_VISIBLE_COUNT,
+  type SearchCriteria
+} from "@/features/search/model/searchCriteria";
 import { useSearchStore } from "@/features/search/store/useSearchStore";
 import { useUiStore } from "@/features/search/store/useUiStore";
 import { AncestorModal } from "@/features/search/ui/AncestorModal";
@@ -10,7 +19,6 @@ import { ResultsPanel } from "@/features/search/ui/ResultsPanel";
 import { PARENT_LINE_OPTIONS } from "@/shared/constants/parentLines";
 import { RARE_OPTIONS } from "@/shared/constants/rareCodes";
 
-// 検索画面は、元データと補助マスタをすべて受け取って自己完結で描画する。
 interface SearchPageProps {
   horses: HorseRecord[];
   factors: FactorOption[];
@@ -21,18 +29,41 @@ interface SearchPageProps {
 type QuickFilterTab = "father" | "damSire" | "migoto" | "thin" | "rare";
 
 const SCROLL_TOP_BUTTON_THRESHOLD = 180;
+const SEARCH_FEEDBACK_MIN_MS = 260;
 const RARE_LABEL_BY_VALUE = new Map<string, string>(
   RARE_OPTIONS.map(({ value, label }) => [value, label])
 );
+const RUNNING_STYLE_LABEL_BY_VALUE: Record<string, string> = {
+  逃: "逃げ",
+  先: "先行",
+  差: "差し",
+  追: "追込",
+  自: "自在"
+};
+const GROWTH_LABEL_BY_VALUE: Record<string, string> = {
+  早: "早熟",
+  普: "普通",
+  晩: "晩成"
+};
+const THEORY_LABEL_BY_VALUE: Record<string, string> = {
+  perfect: "完璧",
+  superPerfect: "超完璧",
+  miracle: "奇跡",
+  shiho: "至高"
+};
+const ABILITY_LABEL_BY_KEY: Partial<Record<keyof SearchCriteria, string>> = {
+  dirt: "適応力",
+  achievement: "実績",
+  stable: "安定",
+  clemency: "気性",
+  potential: "底力",
+  health: "体質"
+};
 
-// レアコードは画面で見慣れたラベルへ変換して表示する。
 const formatRareCodes = (rareCodes: string[]) =>
   rareCodes.map((code) => RARE_LABEL_BY_VALUE.get(code) ?? code).join(", ");
 
-// 開いている検索条件を「確認」欄へ自然文で並べる。
-const buildActiveSummaries = (
-  criteria: ReturnType<typeof useSearchStore.getState>["criteria"]
-) => {
+const buildActiveSummaries = (criteria: SearchCriteria) => {
   const items: string[] = [];
 
   if (criteria.fatherLines.length > 0) {
@@ -53,6 +84,35 @@ const buildActiveSummaries = (
   if (criteria.keyword.trim()) {
     items.push(`キーワード: ${criteria.keyword.trim()}`);
   }
+  if (criteria.theory.length > 0) {
+    items.push(
+      `配合理論: ${criteria.theory
+        .map((value) => THEORY_LABEL_BY_VALUE[value] ?? value)
+        .join(", ")}`
+    );
+  }
+  if (criteria.runningStyle.length > 0) {
+    items.push(
+      `脚質: ${criteria.runningStyle
+        .map((value) => RUNNING_STYLE_LABEL_BY_VALUE[value] ?? value)
+        .join(", ")}`
+    );
+  }
+  if (criteria.growth.length > 0) {
+    items.push(
+      `成長型: ${criteria.growth
+        .map((value) => GROWTH_LABEL_BY_VALUE[value] ?? value)
+        .join(", ")}`
+    );
+  }
+  (["dirt", "achievement", "stable", "clemency", "potential", "health"] as const).forEach(
+    (key) => {
+      const value = criteria[key];
+      if (value.length > 0) {
+        items.push(`${ABILITY_LABEL_BY_KEY[key]}: ${value.join(", ")}`);
+      }
+    }
+  );
   if (criteria.ownChildLine) {
     items.push(`自身の子系統: ${criteria.ownChildLine}`);
   }
@@ -74,7 +134,6 @@ export const SearchPage = ({
   lineOptions,
   lineHtOptions
 }: SearchPageProps) => {
-  // 検索条件と UI 状態は zustand ストアから個別に取り出して再描画を最小化する。
   const criteria = useSearchStore((state) => state.criteria);
   const toggleFatherLine = useSearchStore((state) => state.toggleFatherLine);
   const toggleDamSireLine = useSearchStore((state) => state.toggleDamSireLine);
@@ -91,26 +150,46 @@ export const SearchPage = ({
   const increaseVisible = useUiStore((state) => state.increaseVisible);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSearchFeedbackVisible, setIsSearchFeedbackVisible] = useState(false);
   const [isScrollTopVisible, setIsScrollTopVisible] = useState(false);
   const [activeQuickTab, setActiveQuickTab] = useState<QuickFilterTab>("father");
   const stallionSentinelRef = useRef<HTMLDivElement>(null);
   const broodmareSentinelRef = useRef<HTMLDivElement>(null);
+  const searchFeedbackStartedAtRef = useRef(0);
+  const searchFeedbackTimerRef = useRef<number | null>(null);
+  const sortedHorses = useMemo(() => sortHorseRecords(horses), [horses]);
+  const horseSearchIndex = useMemo(() => createHorseSearchIndex(sortedHorses), [sortedHorses]);
 
-  // 入力直後の state と、実際に検索へ使う state を少しずらして重さを和らげる。
   const deferredCriteria = useDeferredValue(criteria);
   const isSearchUpdating = deferredCriteria !== criteria;
   const criteriaKey = useMemo(() => JSON.stringify(criteria), [criteria]);
+  const previousCriteriaKeyRef = useRef(criteriaKey);
   const results = useMemo(
-    () => filterHorseRecords(horses, deferredCriteria),
-    [horses, deferredCriteria]
+    () => filterHorseRecords(horseSearchIndex, deferredCriteria),
+    [horseSearchIndex, deferredCriteria]
+  );
+  const highlightCriteria = useMemo(
+    () => pickHorseCardHighlightCriteria(deferredCriteria),
+    [
+      deferredCriteria.keyword,
+      deferredCriteria.ancestorName,
+      deferredCriteria.ancestorPositions,
+      deferredCriteria.damSireLines,
+      deferredCriteria.thinLines,
+      deferredCriteria.migotoLines,
+      deferredCriteria.ownChildLine,
+      deferredCriteria.damSireChildLine
+    ]
   );
   const activeSummaries = useMemo(() => buildActiveSummaries(criteria), [criteria]);
   const activeRecords = activeTab === "0" ? results.stallions : results.broodmares;
   const activeSentinelRef =
     activeTab === "0" ? stallionSentinelRef : broodmareSentinelRef;
-  const activeVisibleCount = visibleCounts[activeTab];
+  const criteriaJustChanged = previousCriteriaKeyRef.current !== criteriaKey;
+  const activeVisibleCount = criteriaJustChanged
+    ? DEFAULT_VISIBLE_COUNT
+    : visibleCounts[activeTab];
 
-  // 上段のクイック条件タブは、ラベル・件数・本体パネルをセットで持つ。
   const quickTabItems = [
     {
       id: "father" as const,
@@ -190,8 +269,17 @@ export const SearchPage = ({
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const showSearchFeedback = () => {
+    if (searchFeedbackTimerRef.current !== null) {
+      window.clearTimeout(searchFeedbackTimerRef.current);
+      searchFeedbackTimerRef.current = null;
+    }
+
+    searchFeedbackStartedAtRef.current = Date.now();
+    setIsSearchFeedbackVisible(true);
+  };
+
   useEffect(() => {
-    // 一定量スクロールしたらページ先頭へ戻るボタンを出す。
     const updateScrollTopVisibility = () => {
       const shouldShow = window.scrollY > SCROLL_TOP_BUTTON_THRESHOLD;
       setIsScrollTopVisible((current) => (current === shouldShow ? current : shouldShow));
@@ -206,19 +294,40 @@ export const SearchPage = ({
   }, []);
 
   useEffect(() => {
-    // 条件が変わったら、無限読み込み件数も最初からに戻す。
+    previousCriteriaKeyRef.current = criteriaKey;
     resetVisibleCounts();
   }, [criteriaKey, resetVisibleCounts]);
 
   useEffect(() => {
-    // 現在タブの末尾 sentinel を監視し、見えたら表示件数を追加する。
+    if (!isSearchFeedbackVisible) {
+      return;
+    }
+
+    const elapsed = Date.now() - searchFeedbackStartedAtRef.current;
+    const delay = Math.max(0, SEARCH_FEEDBACK_MIN_MS - elapsed);
+    const timerId = window.setTimeout(() => {
+      searchFeedbackTimerRef.current = null;
+      setIsSearchFeedbackVisible(false);
+    }, delay);
+
+    searchFeedbackTimerRef.current = timerId;
+
+    return () => {
+      window.clearTimeout(timerId);
+      if (searchFeedbackTimerRef.current === timerId) {
+        searchFeedbackTimerRef.current = null;
+      }
+    };
+  }, [criteriaKey, isSearchFeedbackVisible]);
+
+  useEffect(() => {
     const node = activeSentinelRef.current;
 
     if (!node || !results.hasActivePrimaryFilters) {
       return;
     }
 
-    if (visibleCounts[activeTab] >= activeRecords.length) {
+    if (activeVisibleCount >= activeRecords.length) {
       return;
     }
 
@@ -240,15 +349,14 @@ export const SearchPage = ({
     activeRecords.length,
     activeSentinelRef,
     activeTab,
+    activeVisibleCount,
     increaseVisible,
-    results.hasActivePrimaryFilters,
-    visibleCounts
+    results.hasActivePrimaryFilters
   ]);
 
   return (
     <main className="screen">
       <div className="shell app-shell">
-        {/* 上段は検索条件操作エリア。 */}
         <section className="control-panel control-panel--compact">
           <div className="control-panel__header control-panel__header--compact">
             <h2>基本条件</h2>
@@ -258,7 +366,7 @@ export const SearchPage = ({
                 type="button"
                 onClick={() => setIsModalOpen(true)}
               >
-                祖先絞込
+                絞り込み
               </button>
               <button
                 className="ghost-button"
@@ -278,9 +386,7 @@ export const SearchPage = ({
               placeholder="キーワード検索"
               value={criteria.keyword}
               onChange={(event) => {
-                // 入力値はそのままストアへ流し、下の検索結果が追随する。
-                const v = event.target.value;
-                setKeyword(v);
+                setKeyword(event.target.value);
               }}
             />
           </div>
@@ -306,7 +412,6 @@ export const SearchPage = ({
           <details className="condition-accordion">
             <summary>検索条件の確認</summary>
             <div className="condition-accordion__body">
-              {/* 現在の条件をタグ状に見せて、何を掛けているかをすぐ確認できるようにする。 */}
               {activeSummaries.length > 0 ? (
                 <div className="chip-row">
                   {activeSummaries.map((summary) => (
@@ -317,7 +422,7 @@ export const SearchPage = ({
                 </div>
               ) : (
                 <p className="support-copy">
-                  自身・母父・見事・1薄・キーワード・子系統・祖先条件のいずれかを指定すると検索できます。
+                  親系統・能力・脚質・成長型・キーワード・子系統・祖先条件のいずれかを指定すると検索できます。
                 </p>
               )}
             </div>
@@ -325,7 +430,6 @@ export const SearchPage = ({
         </section>
 
         <div className="results-stack">
-          {/* ここから下は検索結果表示エリア。 */}
           <section className="results-tabs-shell">
             <div className="tab-strip" role="tablist" aria-label="検索対象タブ">
               <button
@@ -353,12 +457,10 @@ export const SearchPage = ({
 
           <section className="results-shell">
             <div className="results-shell__panels">
-              <div
-                className="results-shell__panel is-active"
-              >
+              <div className="results-shell__panel is-active">
                 <ResultsPanel
                   key={activeTab}
-                  criteria={deferredCriteria}
+                  criteria={highlightCriteria}
                   hasActivePrimaryFilters={results.hasActivePrimaryFilters}
                   records={activeRecords}
                   sentinelRef={activeSentinelRef}
@@ -370,8 +472,7 @@ export const SearchPage = ({
         </div>
       </div>
 
-      {isSearchUpdating ? (
-        // useDeferredValue により計算が追いついていない間だけ薄いオーバーレイを出す。
+      {isSearchUpdating || isSearchFeedbackVisible ? (
         <div className="search-overlay" aria-live="polite" aria-label="検索中">
           <div className="search-overlay__card" aria-hidden="true">
             <span className="search-overlay__spinner" />
@@ -381,7 +482,6 @@ export const SearchPage = ({
       ) : null}
 
       {isScrollTopVisible ? (
-        // 長い結果一覧でも上へ戻りやすいよう、右下固定ボタンを出す。
         <button
           aria-label="ページ先頭へ戻る"
           className="scroll-top-button"
@@ -392,12 +492,12 @@ export const SearchPage = ({
         </button>
       ) : null}
 
-      {/* 詳細条件は常に描画しておき、open の切り替えだけで表示制御する。 */}
       <AncestorModal
         open={isModalOpen}
         factors={factors}
         lineOptions={lineOptions}
         lineHtOptions={lineHtOptions}
+        onApplyStart={showSearchFeedback}
         onClose={() => setIsModalOpen(false)}
       />
     </main>

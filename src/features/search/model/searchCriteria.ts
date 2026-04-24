@@ -9,6 +9,15 @@ export interface SearchCriteria {
   thinLines: string[];
   rareCodes: string[];
   keyword: string;
+  theory: string[];
+  runningStyle: string[];
+  growth: string[];
+  dirt: string[];
+  achievement: string[];
+  stable: string[];
+  clemency: string[];
+  potential: string[];
+  health: string[];
   ownChildLine: string;
   damSireChildLine: string;
   ancestorName: string;
@@ -33,6 +42,15 @@ export const createDefaultCriteria = (): SearchCriteria => ({
   thinLines: [],
   rareCodes: [...DEFAULT_RARE_CODES],
   keyword: "",
+  theory: [],
+  runningStyle: [],
+  growth: [],
+  dirt: [],
+  achievement: [],
+  stable: [],
+  clemency: [],
+  potential: [],
+  health: [],
   ownChildLine: "",
   damSireChildLine: "",
   ancestorName: "",

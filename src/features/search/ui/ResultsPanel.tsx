@@ -10,12 +10,12 @@ import {
   type RefObject
 } from "react";
 import type { HorseRecord } from "@/features/horses/model/types";
-import type { SearchCriteria } from "@/features/search/model/searchCriteria";
+import type { HorseCardHighlightCriteria } from "@/features/search/lib/createHorseCardHighlighter";
 import { HorseResultCard } from "@/features/search/ui/HorseResultCard";
 
 interface ResultsPanelProps {
   records: HorseRecord[];
-  criteria: SearchCriteria;
+  criteria: HorseCardHighlightCriteria;
   hasActivePrimaryFilters: boolean;
   visibleCount: number;
   sentinelRef: RefObject<HTMLDivElement | null>;

@@ -681,7 +681,7 @@ button {
 
 .results-list {
   display: grid;
-  gap: 14px;
+  gap: 8px;
   grid-template-columns: minmax(0, 1fr);
   min-width: 0;
   position: relative;
@@ -693,7 +693,7 @@ button {
 }
 
 .results-list__virtual-row {
-  padding-bottom: 14px;
+  padding-bottom: 8px;
 }
 
 .results-list__spacer {
@@ -753,7 +753,7 @@ button {
   align-items: stretch;
   display: grid;
   gap: 8px;
-  grid-template-columns: minmax(0, 1fr) 170px;
+  grid-template-columns: minmax(0, 1fr) 250px;
   min-height: 44px;
 }
 
@@ -773,7 +773,7 @@ button {
 
 .result-card__theory-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   line-height: 1.05;
   width: 100%;
 }
@@ -783,18 +783,15 @@ button {
   background: #ffffff;
   border: 1px solid rgba(50, 50, 50, 0.24);
   display: grid;
-  gap: 5px;
-  grid-template-columns: minmax(0, 1fr) 24px;
+  gap: 2px;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr) 28px;
   min-height: 0;
-  padding: 4px 5px;
+  padding: 4px 3px;
 }
 
-.result-card__theory-cell:nth-child(2n) {
+.result-card__theory-cell + .result-card__theory-cell {
   border-left: 0;
-}
-
-.result-card__theory-cell:nth-child(n + 3) {
-  border-top: 0;
 }
 
 .result-card__theory-label {
@@ -809,7 +806,7 @@ button {
   justify-content: center;
   line-height: 1;
   min-width: 0;
-  padding: 3px 4px;
+  padding: 4px 3px;
   text-align: center;
   white-space: nowrap;
 }
@@ -818,11 +815,84 @@ button {
   color: #767676;
   font-size: 18px;
   font-weight: 900;
+  line-height: 1;
   text-align: center;
 }
 
 .result-card__theory-value.is-enabled {
   color: #008b8b;
+  font-size: 26px;
+}
+
+.result-card__skill-summary-cell {
+  padding: 0;
+}
+
+.result-card__skill-summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  width: 100%;
+}
+
+.result-card__skill-entry {
+  align-items: stretch;
+  background: #ffffff;
+  border: 1px solid rgba(50, 50, 50, 0.28);
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr);
+  min-height: 30px;
+}
+
+.result-card__skill-entry + .result-card__skill-entry {
+  border-left: 0;
+}
+
+.result-card__skill-label {
+  align-items: center;
+  background: linear-gradient(180deg, #3b3b3b, #202020);
+  color: #ffffff;
+  display: inline-flex;
+  font-size: 17px;
+  font-weight: 800;
+  justify-content: center;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  min-width: 0;
+  padding: 4px 5px;
+  white-space: nowrap;
+}
+
+.result-card__skill-value,
+.result-card__skill-button {
+  align-items: center;
+  background: #ffffff;
+  border: 0;
+  color: #1f1b16;
+  display: inline-flex;
+  font: inherit;
+  font-size: 17px;
+  font-weight: 400;
+  justify-content: flex-start;
+  line-height: 1.2;
+  min-width: 0;
+  overflow: hidden;
+  padding: 4px 8px;
+  text-align: left;
+  text-decoration: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.result-card__skill-button {
+  cursor: pointer;
+}
+
+.result-card__skill-button:hover,
+.result-card__skill-button:focus-visible {
+  color: var(--accent-strong);
+  outline: none;
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .result-card__label-short {
@@ -1211,6 +1281,207 @@ button {
 .modal-card__group {
   display: grid;
   gap: 8px;
+}
+
+.filter-modal,
+.skill-modal {
+  gap: 0;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  max-height: min(92vh, 900px);
+  overflow: hidden;
+  padding: 0;
+}
+
+.filter-modal__header,
+.skill-modal__header {
+  border-bottom: 1px solid var(--line);
+  padding: 18px 20px 14px;
+}
+
+.filter-modal__body,
+.skill-modal__body {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 16px 20px;
+}
+
+.filter-modal__body {
+  gap: 8px;
+}
+
+.filter-modal__footer,
+.skill-modal__footer {
+  background: color-mix(in srgb, var(--panel) 92%, #ffffff);
+  border-top: 1px solid var(--line);
+  padding: 14px 20px;
+}
+
+.filter-modal__footer > .secondary-button,
+.filter-modal__footer > .primary-button {
+  min-height: 44px;
+}
+
+.skill-modal__footer > .primary-button {
+  flex: 0 1 220px;
+  margin-inline: auto;
+  min-height: 48px;
+}
+
+.filter-modal__section {
+  background: rgba(255, 255, 255, 0.56);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  display: grid;
+  gap: 9px;
+  padding: 11px 12px;
+}
+
+.filter-modal__section + .filter-modal__section {
+  margin-top: 0;
+}
+
+.filter-modal__section-header {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+}
+
+.filter-modal__section-header::before {
+  background: var(--accent);
+  border-radius: 999px;
+  content: "";
+  display: inline-block;
+  height: 10px;
+  width: 10px;
+}
+
+.filter-modal__section h3 {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.2;
+}
+
+.filter-modal__ability-list {
+  display: grid;
+  gap: 5px;
+}
+
+.filter-modal__ability-row {
+  align-items: center;
+  display: grid;
+  gap: 6px;
+  grid-template-columns: 80px minmax(0, 1fr);
+}
+
+.filter-modal__ability-label {
+  color: var(--text);
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.filter-modal__option-grid {
+  display: grid;
+  gap: 6px;
+  grid-template-columns: repeat(auto-fit, minmax(72px, 1fr));
+}
+
+.filter-modal__option-grid--ability {
+  grid-template-columns: repeat(3, minmax(54px, 1fr));
+}
+
+.filter-modal__option-grid--theory {
+  grid-template-columns: repeat(4, minmax(72px, 1fr));
+}
+
+.filter-modal__option-grid--running-style {
+  grid-template-columns: repeat(auto-fit, minmax(76px, 1fr));
+}
+
+.filter-modal__option-grid--growth {
+  grid-template-columns: repeat(3, minmax(70px, 1fr));
+}
+
+.filter-modal__choice {
+  justify-content: center;
+  min-height: 34px;
+  padding: 5px 10px;
+}
+
+.skill-modal {
+  width: min(720px, 100%);
+}
+
+.skill-modal__header h2 {
+  font-size: clamp(1.2rem, 2.2vw, 1.7rem);
+}
+
+.skill-modal__tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.skill-modal__tab {
+  background: rgba(53, 95, 65, 0.08);
+  border: 1px solid rgba(53, 95, 65, 0.18);
+  border-radius: 999px;
+  color: var(--accent-strong);
+  cursor: pointer;
+  flex: 0 0 auto;
+  font-weight: 700;
+  padding: 7px 14px;
+}
+
+.skill-modal__tab.is-active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fffdf7;
+}
+
+.skill-modal__grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.skill-modal__section {
+  background: rgba(255, 255, 255, 0.76);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.skill-modal__section:not(.skill-modal__section--compact) {
+  grid-column: 1 / -1;
+}
+
+.skill-modal__section h3 {
+  background: linear-gradient(180deg, #78bed4, #4d9ab8);
+  border-bottom: 1px solid rgba(23, 84, 105, 0.24);
+  color: #ffffff;
+  margin: 0;
+  padding: 8px 14px;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.32);
+}
+
+.skill-modal__lines {
+  display: grid;
+  gap: 7px;
+  padding: 12px 14px;
+}
+
+.skill-modal__lines p,
+.skill-modal__empty {
+  margin: 0;
+  line-height: 1.7;
+}
+
+.skill-modal__empty {
+  color: var(--muted);
+  padding: 12px 14px;
 }
 
 .line-autocomplete {
@@ -1874,7 +2145,11 @@ button {
   }
 
   .results-list {
-    gap: 10px;
+    gap: 6px;
+  }
+
+  .results-list__virtual-row {
+    padding-bottom: 6px;
   }
 
   .condition-accordion summary {
@@ -1896,6 +2171,63 @@ button {
   .modal-card {
     padding: 16px;
     gap: 14px;
+  }
+
+  .filter-modal,
+  .skill-modal {
+    gap: 0;
+    max-height: calc(100dvh - 20px);
+    padding: 0;
+  }
+
+  .filter-modal__header,
+  .skill-modal__header {
+    padding: 14px 14px 12px;
+  }
+
+  .filter-modal__body,
+  .skill-modal__body {
+    padding: 12px 14px;
+  }
+
+  .filter-modal__body {
+    gap: 8px;
+  }
+
+  .filter-modal__footer,
+  .skill-modal__footer {
+    padding: 12px 14px;
+  }
+
+  .filter-modal__section {
+    border-radius: 14px;
+    gap: 8px;
+    padding: 10px;
+  }
+
+  .filter-modal__ability-row {
+    grid-template-columns: 62px minmax(0, 1fr);
+  }
+
+  .filter-modal__ability-label {
+    font-size: 0.82rem;
+  }
+
+  .filter-modal__choice {
+    min-height: 30px;
+    padding: 4px 8px;
+  }
+
+  .filter-modal__option-grid--theory {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .skill-modal__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .skill-modal__section--compact {
+    grid-column: 1 / -1;
   }
 }
 
@@ -1991,6 +2323,41 @@ button {
   .result-card__legacy .horsedata2 th {
     padding-bottom: 2px;
     padding-top: 2px;
+  }
+
+  .result-card__skill-entry {
+    grid-template-columns: 60px minmax(0, 1fr);
+    min-height: 34px;
+  }
+
+  .result-card__skill-label,
+  .result-card__skill-value,
+  .result-card__skill-button {
+    font-size: 19px;
+  }
+
+  .result-card__summary-cell {
+    grid-template-columns: minmax(0, 1fr) 280px;
+    min-height: 54px;
+  }
+
+  .result-card__theory-cell {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) 34px;
+    padding: 5px 4px;
+  }
+
+  .result-card__theory-label {
+    font-size: 16px;
+    padding: 5px 4px;
+  }
+
+  .result-card__theory-value {
+    font-size: 20px;
+  }
+
+  .result-card__theory-value.is-enabled {
+    font-size: 32px;
   }
 
   .result-card__legacy .pedigree td {

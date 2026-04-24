@@ -1,15 +1,26 @@
 ﻿import { useLayoutEffect, useRef, useState, type CSSProperties } from "react";
-import type { HorseRecord, PedigreeEntry } from "@/features/horses/model/types";
+import { memo } from "react";
+import type {
+  HorseRecord,
+  HorseSkillData,
+  PedigreeEntry
+} from "@/features/horses/model/types";
 import {
   createHorseCardHighlighter,
-  type HorseCardHighlighter
+  type HorseCardHighlighter,
+  type HorseCardHighlightCriteria
 } from "@/features/search/lib/createHorseCardHighlighter";
-import type { SearchCriteria } from "@/features/search/model/searchCriteria";
 import { renderHighlightedText } from "@/features/search/lib/renderHighlightedText";
+import { HorseSkillModal } from "@/features/search/ui/HorseSkillModal";
 
 interface HorseResultCardProps {
   horse: HorseRecord;
-  criteria: SearchCriteria;
+  criteria: HorseCardHighlightCriteria;
+}
+
+interface ActiveSkillModalState {
+  title: string;
+  skill: HorseSkillData;
 }
 
 // 旧 HTML テーブルの血統位置を React 化した都合で、スロット名は既存構造を踏襲している。
@@ -165,6 +176,14 @@ const getPedigreeEntry = (horse: HorseRecord, index: number): PedigreeEntry =>
 
 // React 側のハイライト描画関数へ小さく別名を付けて読みやすくする。
 const renderText = (value: string, terms: string[]) => renderHighlightedText(value, terms);
+
+const canOpenSkillModal = (skill?: HorseSkillData | null) =>
+  Boolean(
+    skill &&
+      ((skill.detailTabs?.length ?? 0) > 0 ||
+        (skill.description?.length ?? 0) > 0 ||
+        skill.detailUrl)
+  );
 
 const renderTheoryMarks = (horse: HorseRecord) => {
   const theory = horse.card.theory;
@@ -497,7 +516,7 @@ const renderPedigreeRow = (
   }
 };
 
-export const HorseResultCard = ({ horse, criteria }: HorseResultCardProps) => {
+const HorseResultCardBase = ({ horse, criteria }: HorseResultCardProps) => {
   // all / 1薄 / 2薄 の因子カウントを上段表へ分けて表示する。
   const [allFactorCounts, thin1FactorCounts, thin2FactorCounts] = horse.card.factorCounts;
   const highlighter = createHorseCardHighlighter(criteria, horse);
@@ -505,12 +524,40 @@ export const HorseResultCard = ({ horse, criteria }: HorseResultCardProps) => {
   const legacyRef = useRef<HTMLElement>(null);
   const [legacyScale, setLegacyScale] = useState(1);
   const [scaledHeight, setScaledHeight] = useState<number | null>(null);
+  const [activeSkillModal, setActiveSkillModal] = useState<ActiveSkillModalState | null>(null);
+  const temperament = horse.card.temperamentData ?? null;
 
   // 距離は min/max 両方ある時だけレンジ表記にする。
   const distance =
     horse.card.stats.distanceMin && horse.card.stats.distanceMax
       ? `${horse.card.stats.distanceMin}〜${horse.card.stats.distanceMax}`
       : horse.card.stats.distanceMin || horse.card.stats.distanceMax;
+
+  const renderSkillEntry = (
+    title: string,
+    skill: HorseSkillData | null | undefined,
+    fallbackName: string | undefined
+  ) => {
+    const value = skill?.name || fallbackName || "なし";
+    const isClickable = canOpenSkillModal(skill);
+
+    return (
+      <div className="result-card__skill-entry">
+        <span className="result-card__skill-label">{title}</span>
+        {isClickable && skill ? (
+          <button
+            className="result-card__skill-button"
+            type="button"
+            onClick={() => setActiveSkillModal({ title, skill })}
+          >
+            {value}
+          </button>
+        ) : (
+          <span className="result-card__skill-value">{value}</span>
+        )}
+      </div>
+    );
+  };
 
   // モバイルでは旧カードを transform で縮小し、その見た目高さを親へ同期する。
   useLayoutEffect(() => {
@@ -567,7 +614,8 @@ export const HorseResultCard = ({ horse, criteria }: HorseResultCardProps) => {
   }, []);
 
   return (
-    <article className="result-card">
+    <>
+      <article className="result-card">
       <div
         ref={viewportRef}
         className="result-card__viewport"
@@ -607,6 +655,18 @@ export const HorseResultCard = ({ horse, criteria }: HorseResultCardProps) => {
                         </span>
                       </label>
                       {renderTheoryMarks(horse)}
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td colSpan={4} className="result-card__skill-summary-cell">
+                    <div className="result-card__skill-summary">
+                      {renderSkillEntry(
+                        "非凡",
+                        horse.card.abilityData ?? null,
+                        horse.card.ability
+                      )}
+                      {renderSkillEntry("天性", temperament, temperament?.name)}
                     </div>
                   </td>
                 </tr>
@@ -715,6 +775,17 @@ export const HorseResultCard = ({ horse, criteria }: HorseResultCardProps) => {
           </div>
         </section>
       </div>
-    </article>
+      </article>
+      {activeSkillModal ? (
+        <HorseSkillModal
+          open
+          title={activeSkillModal.title}
+          skill={activeSkillModal.skill}
+          onClose={() => setActiveSkillModal(null)}
+        />
+      ) : null}
+    </>
   );
 };
+
+export const HorseResultCard = memo(HorseResultCardBase);
