@@ -13,7 +13,7 @@ from bs4 import BeautifulSoup, Tag
 
 
 ABILITIES_URL = "https://dabimas.jp/kouryaku/abilities/"
-ABILITY_TYPE_NONORDINARY = 1
+ABILITY_TYPES_NONORDINARY = {1, 2}
 DEFAULT_RAW_HTML_PATH = Path("data/nonordinary/raw/official_search/abilities.html")
 DEFAULT_OUTPUT_PATH = Path("json/nonordinary_abilities_bundle.json")
 
@@ -430,7 +430,7 @@ def build_bundle(html: str) -> dict[str, Any]:
         official_conditions = [
             condition
             for condition in (condition_info or {}).get("conditions", [])
-            if condition.get("ability_type") == ABILITY_TYPE_NONORDINARY
+            if condition.get("ability_type") in ABILITY_TYPES_NONORDINARY
         ]
         if not official_conditions:
             continue

@@ -52,6 +52,13 @@ jobs:
           --output ./json/horselist.json
           --factor-output ./json/factor.json
 
+      - name: Generate nonordinary ability data
+        run: >
+          python tools/nonordinary_data/generate_nonordinary_bundle.py
+          --refresh
+          --source-html ./data/nonordinary/raw/official_search/abilities.html
+          --output ./json/nonordinary_abilities_bundle.json
+
       - name: Run Python tests
         run: python -m pytest
 
@@ -63,13 +70,13 @@ jobs:
 
       - name: Commit generated data
         run: |
-          if [ -z "$(git status --porcelain data/source/workbook.json data/source/site_metadata.json json/horselist.json json/factor.json dist)" ]; then
+          if [ -z "$(git status --porcelain data/source/workbook.json data/source/site_metadata.json data/nonordinary/raw/official_search/abilities.html json/horselist.json json/factor.json json/nonordinary_abilities_bundle.json dist)" ]; then
             echo "No generated data changes."
             exit 0
           fi
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/source/workbook.json data/source/site_metadata.json json/horselist.json json/factor.json dist
+          git add data/source/workbook.json data/source/site_metadata.json data/nonordinary/raw/official_search/abilities.html json/horselist.json json/factor.json json/nonordinary_abilities_bundle.json dist
           git commit -m "Update generated horse data"
           git push
