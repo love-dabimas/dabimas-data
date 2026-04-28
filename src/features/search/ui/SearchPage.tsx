@@ -1,5 +1,6 @@
-import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
 import type { FactorOption, HorseRecord } from "@/features/horses/model/types";
+import type { NonordinaryBundle } from "@/features/nonordinary/model/types";
 import type { ChildLineOption } from "@/features/search/model/childLineOption";
 import { pickHorseCardHighlightCriteria } from "@/features/search/lib/createHorseCardHighlighter";
 import {
@@ -15,6 +16,7 @@ import { useSearchStore } from "@/features/search/store/useSearchStore";
 import { useUiStore } from "@/features/search/store/useUiStore";
 import { AncestorModal } from "@/features/search/ui/AncestorModal";
 import { FilterSection } from "@/features/search/ui/FilterSection";
+import { NonordinaryModal } from "@/features/search/ui/NonordinaryModal";
 import { ResultsPanel } from "@/features/search/ui/ResultsPanel";
 import { PARENT_LINE_OPTIONS } from "@/shared/constants/parentLines";
 import { RARE_OPTIONS } from "@/shared/constants/rareCodes";
@@ -22,6 +24,7 @@ import { RARE_OPTIONS } from "@/shared/constants/rareCodes";
 interface SearchPageProps {
   horses: HorseRecord[];
   factors: FactorOption[];
+  nonordinaryBundle: NonordinaryBundle;
   lineOptions: ChildLineOption[];
   lineHtOptions: ChildLineOption[];
 }
@@ -84,6 +87,12 @@ const buildActiveSummaries = (criteria: SearchCriteria) => {
   if (criteria.keyword.trim()) {
     items.push(`キーワード: ${criteria.keyword.trim()}`);
   }
+  if (criteria.temperamentNames.length > 0) {
+    items.push(`天性: ${criteria.temperamentNames.join(", ")}`);
+  }
+  if (criteria.nonordinaryHorseIds !== null) {
+    items.push(`非凡検索: ${criteria.nonordinaryHorseIds.length}頭`);
+  }
   if (criteria.theory.length > 0) {
     items.push(
       `配合理論: ${criteria.theory
@@ -131,6 +140,7 @@ const buildActiveSummaries = (criteria: SearchCriteria) => {
 export const SearchPage = ({
   horses,
   factors,
+  nonordinaryBundle,
   lineOptions,
   lineHtOptions
 }: SearchPageProps) => {
@@ -141,6 +151,9 @@ export const SearchPage = ({
   const toggleThinLine = useSearchStore((state) => state.toggleThinLine);
   const toggleRareCode = useSearchStore((state) => state.toggleRareCode);
   const setKeyword = useSearchStore((state) => state.setKeyword);
+  const applyNonordinaryHorseIds = useSearchStore(
+    (state) => state.applyNonordinaryHorseIds
+  );
   const resetCriteria = useSearchStore((state) => state.resetCriteria);
 
   const activeTab = useUiStore((state) => state.activeTab);
@@ -150,6 +163,7 @@ export const SearchPage = ({
   const increaseVisible = useUiStore((state) => state.increaseVisible);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isNonordinaryModalOpen, setIsNonordinaryModalOpen] = useState(false);
   const [isSearchFeedbackVisible, setIsSearchFeedbackVisible] = useState(false);
   const [isScrollTopVisible, setIsScrollTopVisible] = useState(false);
   const [activeQuickTab, setActiveQuickTab] = useState<QuickFilterTab>("father");
@@ -158,6 +172,15 @@ export const SearchPage = ({
   const searchFeedbackStartedAtRef = useRef(0);
   const searchFeedbackTimerRef = useRef<number | null>(null);
   const sortedHorses = useMemo(() => sortHorseRecords(horses), [horses]);
+  const temperamentOptions = useMemo(
+    () =>
+      [...new Set(sortedHorses
+        .map((horse) => horse.card.temperamentData?.name)
+        .filter((name): name is string => Boolean(name)))]
+        .sort((left, right) => left.localeCompare(right, "ja"))
+        .map((name) => ({ value: name, label: name })),
+    [sortedHorses]
+  );
   const horseSearchIndex = useMemo(() => createHorseSearchIndex(sortedHorses), [sortedHorses]);
 
   const deferredCriteria = useDeferredValue(criteria);
@@ -279,6 +302,26 @@ export const SearchPage = ({
     setIsSearchFeedbackVisible(true);
   };
 
+  const handleApplyNonordinaryHorseIds = useCallback(
+    (horseIds: string[]) => {
+      showSearchFeedback();
+      setIsNonordinaryModalOpen(false);
+      setActiveTab("0");
+
+      const apply = () => applyNonordinaryHorseIds(horseIds);
+
+      if (typeof window === "undefined") {
+        apply();
+        return;
+      }
+
+      window.requestAnimationFrame(() => {
+        window.setTimeout(apply, 0);
+      });
+    },
+    [applyNonordinaryHorseIds, setActiveTab]
+  );
+
   useEffect(() => {
     const updateScrollTopVisibility = () => {
       const shouldShow = window.scrollY > SCROLL_TOP_BUTTON_THRESHOLD;
@@ -369,6 +412,13 @@ export const SearchPage = ({
                 絞り込み
               </button>
               <button
+                className="secondary-button"
+                type="button"
+                onClick={() => setIsNonordinaryModalOpen(true)}
+              >
+                非凡
+              </button>
+              <button
                 className="ghost-button"
                 type="button"
                 onClick={resetCriteria}
@@ -422,7 +472,7 @@ export const SearchPage = ({
                 </div>
               ) : (
                 <p className="support-copy">
-                  親系統・能力・脚質・成長型・キーワード・子系統・祖先条件のいずれかを指定すると検索できます。
+                  キーワード、系統、能力、レア度、非凡・天性などから条件を指定すると検索できます。
                 </p>
               )}
             </div>
@@ -497,8 +547,16 @@ export const SearchPage = ({
         factors={factors}
         lineOptions={lineOptions}
         lineHtOptions={lineHtOptions}
+        temperamentOptions={temperamentOptions}
         onApplyStart={showSearchFeedback}
         onClose={() => setIsModalOpen(false)}
+      />
+      <NonordinaryModal
+        bundle={nonordinaryBundle}
+        horses={horses}
+        open={isNonordinaryModalOpen}
+        onApplyHorseIds={handleApplyNonordinaryHorseIds}
+        onClose={() => setIsNonordinaryModalOpen(false)}
       />
     </main>
   );

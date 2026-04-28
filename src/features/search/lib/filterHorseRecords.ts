@@ -14,8 +14,10 @@ export interface FilterHorseRecordsResult {
 
 export interface HorseSearchIndex {
   records: HorseRecord[];
+  keywordTexts: string[];
   wordCount: number;
   allMask: Uint32Array;
+  horseIdIndexes: Map<string, Uint32Array>;
   fatherLineIndexes: Map<string, Uint32Array>;
   damSireLineIndexes: Map<string, Uint32Array>;
   migotoLineIndexes: Map<string, Uint32Array>;
@@ -30,6 +32,7 @@ export interface HorseSearchIndex {
   clemencyIndexes: Map<string, Uint32Array>;
   potentialIndexes: Map<string, Uint32Array>;
   healthIndexes: Map<string, Uint32Array>;
+  temperamentIndexes: Map<string, Uint32Array>;
 }
 
 interface CompiledCriteria {
@@ -119,6 +122,25 @@ const addParentLineCodes = (
 const rareIndexKey = (gender: HorseRecord["Gender"], rareCode: string) =>
   `${gender}:${rareCode}`;
 
+const getKeywordSearchText = (horse: HorseRecord) => {
+  const ability = horse.card.ability;
+  const abilityDataName = horse.card.abilityData?.name;
+
+  if (!ability && !abilityDataName) {
+    return horse.Ped_All;
+  }
+
+  if (!abilityDataName || abilityDataName === ability) {
+    return `${horse.Ped_All} ${ability}`;
+  }
+
+  if (!ability) {
+    return `${horse.Ped_All} ${abilityDataName}`;
+  }
+
+  return `${horse.Ped_All} ${ability} ${abilityDataName}`;
+};
+
 export const createHorseSearchIndex = (records: HorseRecord[]): HorseSearchIndex => {
   const wordCount = Math.ceil(records.length / 32);
   const allMask = new Uint32Array(wordCount);
@@ -126,8 +148,10 @@ export const createHorseSearchIndex = (records: HorseRecord[]): HorseSearchIndex
 
   const index: HorseSearchIndex = {
     records,
+    keywordTexts: records.map(getKeywordSearchText),
     wordCount,
     allMask,
+    horseIdIndexes: new Map(),
     fatherLineIndexes: new Map(),
     damSireLineIndexes: new Map(),
     migotoLineIndexes: new Map(),
@@ -141,10 +165,12 @@ export const createHorseSearchIndex = (records: HorseRecord[]): HorseSearchIndex
     stableIndexes: new Map(),
     clemencyIndexes: new Map(),
     potentialIndexes: new Map(),
-    healthIndexes: new Map()
+    healthIndexes: new Map(),
+    temperamentIndexes: new Map()
   };
 
   records.forEach((horse, itemIndex) => {
+    addIndexValue(index.horseIdIndexes, horse.HorseId, itemIndex, wordCount);
     addIndexValue(index.fatherLineIndexes, horse.Paternal_t, itemIndex, wordCount);
     addIndexValue(index.damSireLineIndexes, horse.Paternal_ht, itemIndex, wordCount);
     addParentLineCodes(index.migotoLineIndexes, horse.Paternal_mig, itemIndex, wordCount);
@@ -175,6 +201,12 @@ export const createHorseSearchIndex = (records: HorseRecord[]): HorseSearchIndex
     addIndexValue(index.clemencyIndexes, horse.card.stats.clemency, itemIndex, wordCount);
     addIndexValue(index.potentialIndexes, horse.card.stats.potential, itemIndex, wordCount);
     addIndexValue(index.healthIndexes, horse.card.stats.health, itemIndex, wordCount);
+    addIndexValue(
+      index.temperamentIndexes,
+      horse.card.temperamentData?.name ?? "",
+      itemIndex,
+      wordCount
+    );
   });
 
   return index;
@@ -195,6 +227,8 @@ const hasPrimaryCondition = (criteria: SearchCriteria) =>
   criteria.clemency.length > 0 ||
   criteria.potential.length > 0 ||
   criteria.health.length > 0 ||
+  criteria.temperamentNames.length > 0 ||
+  criteria.nonordinaryHorseIds !== null ||
   criteria.ownChildLine.length > 0 ||
   criteria.damSireChildLine.length > 0 ||
   (criteria.ancestorName.trim().length > 0 &&
@@ -287,6 +321,25 @@ const applyOptionalMask = (
   }
 };
 
+const applyNullableOptionalMask = (
+  candidateMask: Uint32Array,
+  index: HorseSearchIndex,
+  map: Map<string, Uint32Array>,
+  values: string[] | null
+) => {
+  if (values === null) {
+    return;
+  }
+
+  const mask = getUnionMask(index.wordCount, map, values);
+  if (!mask) {
+    candidateMask.fill(0);
+    return;
+  }
+
+  andInto(candidateMask, mask);
+};
+
 const applyRequiredMasks = (
   candidateMask: Uint32Array,
   map: Map<string, Uint32Array>,
@@ -328,6 +381,12 @@ const getRareMask = (index: HorseSearchIndex, rareCodes: string[]) => {
 const getIndexedCandidateMask = (index: HorseSearchIndex, criteria: SearchCriteria) => {
   const candidateMask = index.allMask.slice();
 
+  applyNullableOptionalMask(
+    candidateMask,
+    index,
+    index.horseIdIndexes,
+    criteria.nonordinaryHorseIds
+  );
   applyOptionalMask(candidateMask, index, index.fatherLineIndexes, criteria.fatherLines);
   applyOptionalMask(candidateMask, index, index.damSireLineIndexes, criteria.damSireLines);
   applyRequiredMasks(candidateMask, index.migotoLineIndexes, criteria.migotoLines);
@@ -341,6 +400,7 @@ const getIndexedCandidateMask = (index: HorseSearchIndex, criteria: SearchCriter
   applyOptionalMask(candidateMask, index, index.clemencyIndexes, criteria.clemency);
   applyOptionalMask(candidateMask, index, index.potentialIndexes, criteria.potential);
   applyOptionalMask(candidateMask, index, index.healthIndexes, criteria.health);
+  applyOptionalMask(candidateMask, index, index.temperamentIndexes, criteria.temperamentNames);
 
   const rareMask = getRareMask(index, criteria.rareCodes);
   if (rareMask) {
@@ -405,7 +465,10 @@ export const filterHorseRecords = (
         continue;
       }
 
-      if (compiled.keywordMatcher && !compiled.keywordMatcher(horse.Ped_All)) {
+      if (
+        compiled.keywordMatcher &&
+        !compiled.keywordMatcher(index.keywordTexts[candidateIndex])
+      ) {
         continue;
       }
 

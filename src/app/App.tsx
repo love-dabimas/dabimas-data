@@ -5,6 +5,7 @@ import {
   type LoadProgress
 } from "@/features/horses/api/loadHorseData";
 import type { FactorOption, HorseRecord } from "@/features/horses/model/types";
+import type { NonordinaryBundle } from "@/features/nonordinary/model/types";
 import type { ChildLineOption } from "@/features/search/model/childLineOption";
 import { SearchPage } from "@/features/search/ui/SearchPage";
 import { useSearchStore } from "@/features/search/store/useSearchStore";
@@ -21,6 +22,7 @@ type LoadState =
       status: "ready";
       horses: HorseRecord[];
       factors: FactorOption[];
+      nonordinaryBundle: NonordinaryBundle;
     }
   | {
       status: "error";
@@ -125,7 +127,8 @@ export const App = () => {
         setLoadState({
           status: "ready",
           horses: result.horses,
-          factors: result.factors
+          factors: result.factors,
+          nonordinaryBundle: result.nonordinaryBundle
         });
       } catch (error) {
         if (cancelled) {
@@ -258,6 +261,7 @@ export const App = () => {
     <SearchPage
       horses={loadState.horses}
       factors={loadState.factors}
+      nonordinaryBundle={loadState.nonordinaryBundle}
       lineOptions={lineOptions}
       lineHtOptions={lineHtOptions}
     />

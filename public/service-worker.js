@@ -1,4 +1,4 @@
-const CACHE_NAME = "dabimas-data-v12";
+const CACHE_NAME = "dabimas-data-v13";
 
 // 因子アイコンは連番なので、precache 対象をプログラムで生成する。
 const FACTOR_ICON_PATHS = Array.from({ length: 12 }, (_, index) => {
@@ -32,6 +32,7 @@ const CORE_PATHS = [
   "manifest.json",
   "json/horselist.json",
   "json/factor.json",
+  "json/nonordinary_abilities_bundle.json",
   "static/favicon.ico",
   "static/apple-touch-icon-48x48.png",
   "static/apple-touch-icon-96x96.png",
@@ -232,7 +233,8 @@ self.addEventListener("fetch", (event) => {
   // 検索データ JSON は更新を拾いやすくするため network-first。
   if (
     url.pathname.endsWith("/json/horselist.json") ||
-    url.pathname.endsWith("/json/factor.json")
+    url.pathname.endsWith("/json/factor.json") ||
+    url.pathname.endsWith("/json/nonordinary_abilities_bundle.json")
   ) {
     event.respondWith(networkFirst(request));
     return;

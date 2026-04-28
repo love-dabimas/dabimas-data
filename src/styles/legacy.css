@@ -1042,6 +1042,7 @@ height:720px;
 }
 
 .header01{
+  position: relative;
   color: #fff;
   background: #333;
   &:before{
@@ -1057,6 +1058,7 @@ height:720px;
 
 /*１薄め*/
 .header01_01{
+  position: relative;
   color: #fff;
   background: #145400;
   &:before{
@@ -1072,6 +1074,7 @@ height:720px;
 
 /*２薄め*/
 .header01_02{
+  position: relative;
   color: #fff;
   background: #001454;
   &:before{

@@ -9,9 +9,10 @@ import {
   type ReactNode,
   type RefObject
 } from "react";
-import type { HorseRecord } from "@/features/horses/model/types";
+import type { HorseRecord, HorseSkillData } from "@/features/horses/model/types";
 import type { HorseCardHighlightCriteria } from "@/features/search/lib/createHorseCardHighlighter";
 import { HorseResultCard } from "@/features/search/ui/HorseResultCard";
+import { HorseSkillModal } from "@/features/search/ui/HorseSkillModal";
 
 interface ResultsPanelProps {
   records: HorseRecord[];
@@ -34,9 +35,16 @@ interface VirtualRowProps {
   onMeasure: (index: number, height: number) => void;
 }
 
-const EMPTY_IDLE_HEADING = "検索条件を指定してください";
+interface ActiveSkillModalState {
+  title: string;
+  skill: HorseSkillData;
+}
+
+type ResultCardSkillKind = "ability" | "temperament";
+
+const EMPTY_IDLE_HEADING = "検索条件を選択してください";
 const EMPTY_IDLE_BODY =
-  "父系、母父系、見事、1薄め、キーワード、子系統、祖先検索のいずれかを指定すると検索できます。";
+  "キーワード、系統、能力、レア度、非凡・天性などから条件を指定すると、該当する馬を表示します。";
 const EMPTY_RESULTS_HEADING = "該当する馬が見つかりませんでした";
 const EMPTY_RESULTS_BODY =
   "条件を広げるか、レア条件の絞り込みを見直してください。";
@@ -44,6 +52,54 @@ const SUMMARY_SUFFIX = "件を表示";
 const SUMMARY_MIDDLE = "件中";
 const ESTIMATED_CARD_HEIGHT = 620;
 const VIRTUAL_OVERSCAN_PX = 900;
+
+const canOpenSkillModal = (skill?: HorseSkillData | null) =>
+  Boolean(
+    skill &&
+      ((skill.detailTabs?.length ?? 0) > 0 ||
+        (skill.description?.length ?? 0) > 0 ||
+        skill.detailUrl)
+  );
+
+const createFallbackSkill = (name: string): HorseSkillData => ({
+  name,
+  description: ["詳細情報はまだ取得されていません。"],
+  detailUrl: "",
+  detailTabs: []
+});
+
+const skillKindFromValue = (value: string | undefined): ResultCardSkillKind | null =>
+  value === "ability" || value === "temperament" ? value : null;
+
+const skillModalStateForHorse = (
+  horse: HorseRecord | undefined,
+  kind: ResultCardSkillKind
+): ActiveSkillModalState | null => {
+  if (!horse) {
+    return null;
+  }
+
+  const skill =
+    kind === "ability"
+      ? horse.card.abilityData ?? null
+      : horse.card.temperamentData ?? null;
+  const fallbackName =
+    kind === "ability"
+      ? horse.card.ability
+      : horse.card.temperamentData?.name;
+  const value = skill?.name || fallbackName || "なし";
+  const fallbackSkill = value !== "なし" ? createFallbackSkill(value) : null;
+  const modalSkill = skill ?? fallbackSkill;
+
+  if (!modalSkill || (!canOpenSkillModal(modalSkill) && value === "なし")) {
+    return null;
+  }
+
+  return {
+    title: kind === "ability" ? "非凡" : "天性",
+    skill: modalSkill
+  };
+};
 
 const findOffsetIndex = (offsets: number[], value: number) => {
   let low = 0;
@@ -102,6 +158,7 @@ const ResultsPanelBase = ({
   const listRef = useRef<HTMLDivElement>(null);
   const measuredHeightsRef = useRef<Map<number, number>>(new Map());
   const [measureVersion, setMeasureVersion] = useState(0);
+  const [activeSkillModal, setActiveSkillModal] = useState<ActiveSkillModalState | null>(null);
   const [viewport, setViewport] = useState(() => ({
     height: typeof window === "undefined" ? 900 : window.innerHeight,
     scrollY: typeof window === "undefined" ? 0 : window.scrollY
@@ -188,6 +245,16 @@ const ResultsPanelBase = ({
   const visibleRecords = hasActivePrimaryFilters
     ? records.slice(virtualRange.start, virtualRange.end)
     : [];
+  const horseByKey = useMemo(
+    () =>
+      new Map(
+        records.map((horse) => [
+          `${horse.HorseId}-${horse.SerialNumber}`,
+          horse
+        ])
+      ),
+    [records]
+  );
 
   const handleMeasure = useCallback((index: number, height: number) => {
     const current = measuredHeightsRef.current.get(index);
@@ -199,7 +266,59 @@ const ResultsPanelBase = ({
     setMeasureVersion((version) => version + 1);
   }, []);
 
+  const handleOpenSkillModal = useCallback((title: string, skill: HorseSkillData) => {
+    setActiveSkillModal({ title, skill });
+  }, []);
+
+  useEffect(() => {
+    const root = listRef.current;
+    if (!root) {
+      return;
+    }
+
+    const handleNativeSkillActivation = (event: Event) => {
+      const target = event.target;
+      if (!(target instanceof Element)) {
+        return;
+      }
+
+      const skillElement = target.closest<HTMLElement>("[data-result-card-skill]");
+      if (!skillElement || !root.contains(skillElement)) {
+        return;
+      }
+
+      const kind = skillKindFromValue(skillElement.dataset.resultCardSkill);
+      const horseId = skillElement.dataset.resultCardHorseId;
+      const serial = skillElement.dataset.resultCardSerial;
+
+      if (!kind || !horseId || !serial) {
+        return;
+      }
+
+      const modalState = skillModalStateForHorse(horseByKey.get(`${horseId}-${serial}`), kind);
+      if (!modalState) {
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
+      setActiveSkillModal(modalState);
+    };
+
+    root.addEventListener("click", handleNativeSkillActivation, true);
+    root.addEventListener("touchend", handleNativeSkillActivation, {
+      capture: true,
+      passive: false
+    });
+
+    return () => {
+      root.removeEventListener("click", handleNativeSkillActivation, true);
+      root.removeEventListener("touchend", handleNativeSkillActivation, true);
+    };
+  }, [horseByKey]);
+
   return (
+    <>
     <section className={`results-panel ${isEmpty ? "results-panel--empty" : ""}`}>
       {hasActivePrimaryFilters ? (
         <div className="results-panel__summary">
@@ -223,7 +342,11 @@ const ResultsPanelBase = ({
                 index={index}
                 onMeasure={handleMeasure}
               >
-                <HorseResultCard horse={horse} criteria={criteria} />
+                <HorseResultCard
+                  horse={horse}
+                  criteria={criteria}
+                  onOpenSkillModal={handleOpenSkillModal}
+                />
               </VirtualRow>
             );
           })}
@@ -239,6 +362,15 @@ const ResultsPanelBase = ({
         </div>
       )}
     </section>
+    {activeSkillModal ? (
+      <HorseSkillModal
+        open
+        title={activeSkillModal.title}
+        skill={activeSkillModal.skill}
+        onClose={() => setActiveSkillModal(null)}
+      />
+    ) : null}
+    </>
   );
 };
 

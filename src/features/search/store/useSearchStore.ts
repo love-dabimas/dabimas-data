@@ -15,6 +15,7 @@ interface AdvancedFilters {
   clemency: string[];
   potential: string[];
   health: string[];
+  temperamentNames: string[];
   ownChildLine: string;
   damSireChildLine: string;
   ancestorName: string;
@@ -30,6 +31,7 @@ interface SearchState {
   toggleRareCode: (value: string) => void;
   setKeyword: (value: string) => void;
   applyAdvancedFilters: (value: AdvancedFilters) => void;
+  applyNonordinaryHorseIds: (horseIds: string[]) => void;
   resetCriteria: () => void;
 }
 
@@ -103,10 +105,18 @@ export const useSearchStore = create<SearchState>((set) => ({
         clemency: value.clemency,
         potential: value.potential,
         health: value.health,
+        temperamentNames: value.temperamentNames,
         ownChildLine: value.ownChildLine,
         damSireChildLine: value.damSireChildLine,
         ancestorName: value.ancestorName,
         ancestorPositions: value.ancestorPositions
+      }
+    })),
+  applyNonordinaryHorseIds: (horseIds) =>
+    set((state) => ({
+      criteria: {
+        ...state.criteria,
+        nonordinaryHorseIds: [...horseIds]
       }
     })),
   // 全条件リセット時は新しい初期値オブジェクトを作り直す。

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import type { HorseSkillData, HorseSkillDetailTab } from "@/features/horses/model/types";
 
 interface HorseSkillModalProps {
@@ -22,9 +23,18 @@ const renderLines = (lines: string[]) => {
 
   return (
     <div className="skill-modal__lines">
-      {lines.map((line, index) => (
-        <p key={`${index}-${line}`}>{line}</p>
-      ))}
+      {lines.map((line, index) => {
+        const isContinuation = index > 0 && !line.trimStart().startsWith("・");
+
+        return (
+          <p
+            key={`${index}-${line}`}
+            className={isContinuation ? "skill-modal__line--continuation" : undefined}
+          >
+            {line}
+          </p>
+        );
+      })}
     </div>
   );
 };
@@ -91,11 +101,11 @@ export const HorseSkillModal = ({ open, title, skill, onClose }: HorseSkillModal
     };
   }, [open]);
 
-  if (!open || !activeTab) {
+  if (!open || !activeTab || typeof document === "undefined") {
     return null;
   }
 
-  return (
+  return createPortal(
     <div className="modal-backdrop skill-modal-backdrop" role="presentation" onClick={onClose}>
       <section
         aria-modal="true"
@@ -153,6 +163,7 @@ export const HorseSkillModal = ({ open, title, skill, onClose }: HorseSkillModal
           </button>
         </div>
       </section>
-    </div>
+    </div>,
+    document.body
   );
 };

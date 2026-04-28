@@ -18,6 +18,8 @@ export interface SearchCriteria {
   clemency: string[];
   potential: string[];
   health: string[];
+  temperamentNames: string[];
+  nonordinaryHorseIds: string[] | null;
   ownChildLine: string;
   damSireChildLine: string;
   ancestorName: string;
@@ -51,6 +53,8 @@ export const createDefaultCriteria = (): SearchCriteria => ({
   clemency: [],
   potential: [],
   health: [],
+  temperamentNames: [],
+  nonordinaryHorseIds: null,
   ownChildLine: "",
   damSireChildLine: "",
   ancestorName: "",

@@ -12,6 +12,7 @@ interface AncestorModalProps {
   factors: FactorOption[];
   lineOptions: ChildLineOption[];
   lineHtOptions: ChildLineOption[];
+  temperamentOptions: ChoiceOption[];
   onApplyStart?: () => void;
   onClose: () => void;
 }
@@ -26,6 +27,7 @@ interface DraftState {
   clemency: string[];
   potential: string[];
   health: string[];
+  temperamentNames: string[];
   ownChildLine: string;
   damSireChildLine: string;
   ancestorName: string;
@@ -84,6 +86,7 @@ const createDraft = (value: DraftState): DraftState => ({
   clemency: [...value.clemency],
   potential: [...value.potential],
   health: [...value.health],
+  temperamentNames: [...value.temperamentNames],
   ownChildLine: value.ownChildLine,
   damSireChildLine: value.damSireChildLine,
   ancestorName: value.ancestorName,
@@ -132,6 +135,7 @@ export const AncestorModal = ({
   factors,
   lineOptions,
   lineHtOptions,
+  temperamentOptions,
   onApplyStart,
   onClose
 }: AncestorModalProps) => {
@@ -148,6 +152,7 @@ export const AncestorModal = ({
     clemency: [...criteria.clemency],
     potential: [...criteria.potential],
     health: [...criteria.health],
+    temperamentNames: [...criteria.temperamentNames],
     ownChildLine: criteria.ownChildLine,
     damSireChildLine: criteria.damSireChildLine,
     ancestorName: criteria.ancestorName,
@@ -170,6 +175,7 @@ export const AncestorModal = ({
         clemency: criteria.clemency,
         potential: criteria.potential,
         health: criteria.health,
+        temperamentNames: criteria.temperamentNames,
         ownChildLine: criteria.ownChildLine,
         damSireChildLine: criteria.damSireChildLine,
         ancestorName: criteria.ancestorName,
@@ -190,6 +196,7 @@ export const AncestorModal = ({
     criteria.potential,
     criteria.runningStyle,
     criteria.stable,
+    criteria.temperamentNames,
     criteria.theory
   ]);
 
@@ -245,6 +252,7 @@ export const AncestorModal = ({
       clemency: [...draft.clemency],
       potential: [...draft.potential],
       health: [...draft.health],
+      temperamentNames: [...draft.temperamentNames],
       ownChildLine: draft.ownChildLine,
       damSireChildLine: draft.damSireChildLine,
       ancestorName: resolvedFactor?.id ?? resolvedName,
@@ -277,6 +285,7 @@ export const AncestorModal = ({
       clemency: [],
       potential: [],
       health: [],
+      temperamentNames: [],
       ownChildLine: "",
       damSireChildLine: "",
       ancestorName: "",
@@ -375,6 +384,30 @@ export const AncestorModal = ({
                 }))
               }
             />
+          </section>
+
+          <section className="filter-modal__section">
+            <div className="filter-modal__section-header">
+              <h3>天性</h3>
+            </div>
+            <select
+              aria-label="天性"
+              className="select-input"
+              value={draft.temperamentNames[0] ?? ""}
+              onChange={(event) =>
+                setDraft((current) => ({
+                  ...current,
+                  temperamentNames: event.target.value ? [event.target.value] : []
+                }))
+              }
+            >
+              <option value="">条件指定なし</option>
+              {temperamentOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
           </section>
 
           <section className="filter-modal__section">

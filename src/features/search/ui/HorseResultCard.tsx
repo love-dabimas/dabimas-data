@@ -11,17 +11,14 @@ import {
   type HorseCardHighlightCriteria
 } from "@/features/search/lib/createHorseCardHighlighter";
 import { renderHighlightedText } from "@/features/search/lib/renderHighlightedText";
-import { HorseSkillModal } from "@/features/search/ui/HorseSkillModal";
 
 interface HorseResultCardProps {
   horse: HorseRecord;
   criteria: HorseCardHighlightCriteria;
+  onOpenSkillModal: (title: string, skill: HorseSkillData) => void;
 }
 
-interface ActiveSkillModalState {
-  title: string;
-  skill: HorseSkillData;
-}
+type ResultCardSkillKind = "ability" | "temperament";
 
 // 旧 HTML テーブルの血統位置を React 化した都合で、スロット名は既存構造を踏襲している。
 type PedigreeSlot =
@@ -184,6 +181,13 @@ const canOpenSkillModal = (skill?: HorseSkillData | null) =>
         (skill.description?.length ?? 0) > 0 ||
         skill.detailUrl)
   );
+
+const createFallbackSkill = (name: string): HorseSkillData => ({
+  name,
+  description: ["詳細情報はまだ取得されていません。"],
+  detailUrl: "",
+  detailTabs: []
+});
 
 const renderTheoryMarks = (horse: HorseRecord) => {
   const theory = horse.card.theory;
@@ -516,7 +520,7 @@ const renderPedigreeRow = (
   }
 };
 
-const HorseResultCardBase = ({ horse, criteria }: HorseResultCardProps) => {
+const HorseResultCardBase = ({ horse, criteria, onOpenSkillModal }: HorseResultCardProps) => {
   // all / 1薄 / 2薄 の因子カウントを上段表へ分けて表示する。
   const [allFactorCounts, thin1FactorCounts, thin2FactorCounts] = horse.card.factorCounts;
   const highlighter = createHorseCardHighlighter(criteria, horse);
@@ -524,7 +528,6 @@ const HorseResultCardBase = ({ horse, criteria }: HorseResultCardProps) => {
   const legacyRef = useRef<HTMLElement>(null);
   const [legacyScale, setLegacyScale] = useState(1);
   const [scaledHeight, setScaledHeight] = useState<number | null>(null);
-  const [activeSkillModal, setActiveSkillModal] = useState<ActiveSkillModalState | null>(null);
   const temperament = horse.card.temperamentData ?? null;
 
   // 距離は min/max 両方ある時だけレンジ表記にする。
@@ -533,28 +536,97 @@ const HorseResultCardBase = ({ horse, criteria }: HorseResultCardProps) => {
       ? `${horse.card.stats.distanceMin}〜${horse.card.stats.distanceMax}`
       : horse.card.stats.distanceMin || horse.card.stats.distanceMax;
 
-  const renderSkillEntry = (
-    title: string,
+  const getModalSkill = (
     skill: HorseSkillData | null | undefined,
     fallbackName: string | undefined
   ) => {
     const value = skill?.name || fallbackName || "なし";
-    const isClickable = canOpenSkillModal(skill);
+    const fallbackSkill = value !== "なし" ? createFallbackSkill(value) : null;
+    const modalSkill = skill ?? fallbackSkill;
+    const isClickable = Boolean(modalSkill) && (canOpenSkillModal(modalSkill) || value !== "なし");
+
+    return { value, modalSkill, isClickable };
+  };
+
+  const openSkillModal = (kind: ResultCardSkillKind) => {
+    const resolved =
+      kind === "ability"
+        ? getModalSkill(horse.card.abilityData ?? null, horse.card.ability)
+        : getModalSkill(temperament, temperament?.name);
+
+    if (resolved.isClickable && resolved.modalSkill) {
+      onOpenSkillModal(kind === "ability" ? "非凡" : "天性", resolved.modalSkill);
+    }
+  };
+
+  const handleSkillClick = (
+    event: React.MouseEvent<HTMLElement>,
+    kind: ResultCardSkillKind
+  ) => {
+    event.preventDefault();
+    event.stopPropagation();
+    openSkillModal(kind);
+  };
+
+  const handleSkillKeyDown = (
+    event: React.KeyboardEvent<HTMLElement>,
+    kind: ResultCardSkillKind
+  ) => {
+    if (event.key !== "Enter" && event.key !== " ") {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+    openSkillModal(kind);
+  };
+
+  const handleSkillTouchEnd = (
+    event: React.TouchEvent<HTMLElement>,
+    kind: ResultCardSkillKind
+  ) => {
+    event.preventDefault();
+    event.stopPropagation();
+    openSkillModal(kind);
+  };
+
+  const renderSkillEntry = (
+    kind: ResultCardSkillKind,
+    title: string,
+    skill: HorseSkillData | null | undefined,
+    fallbackName: string | undefined
+  ) => {
+    const { value, modalSkill, isClickable } = getModalSkill(skill, fallbackName);
+    const entryClassName = [
+      "result-card__skill-entry",
+      `result-card__skill-entry--${kind}`,
+      isClickable ? "result-card__skill-entry--button" : ""
+    ].filter(Boolean).join(" ");
+    const renderedValue = kind === "ability" ? renderText(value, highlighter.defaultTerms) : value;
+
+    if (isClickable && modalSkill) {
+      return (
+        <span
+          className={entryClassName}
+          data-result-card-horse-id={horse.HorseId}
+          data-result-card-serial={horse.SerialNumber}
+          data-result-card-skill={kind}
+          role="button"
+          tabIndex={0}
+          onClick={(event) => handleSkillClick(event, kind)}
+          onKeyDown={(event) => handleSkillKeyDown(event, kind)}
+          onTouchEnd={(event) => handleSkillTouchEnd(event, kind)}
+        >
+          <span className="result-card__skill-label">{title}</span>
+          <span className="result-card__skill-value">{renderedValue}</span>
+        </span>
+      );
+    }
 
     return (
-      <div className="result-card__skill-entry">
+      <div className={entryClassName}>
         <span className="result-card__skill-label">{title}</span>
-        {isClickable && skill ? (
-          <button
-            className="result-card__skill-button"
-            type="button"
-            onClick={() => setActiveSkillModal({ title, skill })}
-          >
-            {value}
-          </button>
-        ) : (
-          <span className="result-card__skill-value">{value}</span>
-        )}
+        <span className="result-card__skill-value">{renderedValue}</span>
       </div>
     );
   };
@@ -662,11 +734,17 @@ const HorseResultCardBase = ({ horse, criteria }: HorseResultCardProps) => {
                   <td colSpan={4} className="result-card__skill-summary-cell">
                     <div className="result-card__skill-summary">
                       {renderSkillEntry(
+                        "ability",
                         "非凡",
                         horse.card.abilityData ?? null,
                         horse.card.ability
                       )}
-                      {renderSkillEntry("天性", temperament, temperament?.name)}
+                      {renderSkillEntry(
+                        "temperament",
+                        "天性",
+                        temperament,
+                        temperament?.name
+                      )}
                     </div>
                   </td>
                 </tr>
@@ -776,14 +854,6 @@ const HorseResultCardBase = ({ horse, criteria }: HorseResultCardProps) => {
         </section>
       </div>
       </article>
-      {activeSkillModal ? (
-        <HorseSkillModal
-          open
-          title={activeSkillModal.title}
-          skill={activeSkillModal.skill}
-          onClose={() => setActiveSkillModal(null)}
-        />
-      ) : null}
     </>
   );
 };
