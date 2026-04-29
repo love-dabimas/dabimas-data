@@ -247,20 +247,29 @@ const createLegacyRegexMatcher = (pattern: string | null) => {
   }
 };
 
+const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
 const createLegacyLookaheadMatcher = (value: string) =>
-  createLegacyRegexMatcher(value ? `^(?=.*${value}).*$` : null);
+  createLegacyRegexMatcher(value ? `^(?=.*${escapeRegExp(value)}).*$` : null);
+
+const createAncestorTokenMatcher = (ancestorName: string, positions: string[]) => {
+  if (positions.length === ANCESTOR_POSITION_OPTIONS.length) {
+    return createLegacyLookaheadMatcher(ancestorName);
+  }
+
+  const escapedName = escapeRegExp(ancestorName);
+  return createLegacyRegexMatcher(
+    positions
+      .map((position: string) => `\\[${escapeRegExp(position)}${escapedName}\\]`)
+      .join("|")
+  );
+};
 
 const compileCriteria = (criteria: SearchCriteria): CompiledCriteria => {
   const ancestorName = criteria.ancestorName.trim();
   const ancestorMatcher =
     ancestorName && criteria.ancestorPositions.length > 0
-      ? criteria.ancestorPositions.length === ANCESTOR_POSITION_OPTIONS.length
-        ? createLegacyLookaheadMatcher(ancestorName)
-        : createLegacyRegexMatcher(
-            criteria.ancestorPositions
-              .map((position: string) => `[${position}${ancestorName}]`)
-              .join("|")
-          )
+      ? createAncestorTokenMatcher(ancestorName, criteria.ancestorPositions)
       : null;
 
   return {

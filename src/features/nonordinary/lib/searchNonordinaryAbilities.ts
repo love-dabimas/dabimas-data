@@ -1,3 +1,6 @@
+// このファイルは、ユーザーが選んだ条件（レース・脚質・馬場・天候）にあう
+// 「非凡な才能」を才能バンドルの中から見つけ出す計算ロジック。
+
 import type { HorseRecord } from "@/features/horses/model/types";
 import type {
   AbilityDetailRow,
@@ -32,6 +35,7 @@ interface SearchContext {
   weather: string[];
 }
 
+// JSON のフィールド名の表記ゆれを統一する。"course" → "racecourse" など。
 const normalizeField = (field: string) => {
   if (field === "course") {
     return "racecourse";
@@ -42,6 +46,7 @@ const normalizeField = (field: string) => {
   return field;
 };
 
+// 「中山競馬場」のように末尾に「競馬場」がついている場合は削って「中山」にそろえる。
 const normalizeRacecourse = (value: string) => value.replace(/競馬場$/u, "");
 
 const normalizeComparableText = (field: string, value: string) =>
@@ -52,8 +57,10 @@ const getValueNumber = (rule: ConditionRuleRow) => rule.value_number ?? rule.val
 const getMinNumber = (rule: ConditionRuleRow) => rule.min_number ?? rule.min_num ?? null;
 const getMaxNumber = (rule: ConditionRuleRow) => rule.max_number ?? rule.max_num ?? null;
 
+// 配列から重複を取り除いた新しい配列を返す小道具。
 const unique = <T,>(values: T[]) => [...new Set(values)];
 
+// 配列の各要素を指定したキーで引けるマップ（辞書）に変換する。高速な「名前で検索」用。
 const indexBy = <T, K extends string>(
   values: T[],
   getKey: (value: T) => K
@@ -63,6 +70,7 @@ const indexBy = <T, K extends string>(
   return map;
 };
 
+// 配列の各要素を指定したキーでグループ分けしたマップを返す。
 const groupBy = <T, K extends string>(
   values: T[],
   getKey: (value: T) => K
@@ -80,6 +88,9 @@ const groupBy = <T, K extends string>(
   return map;
 };
 
+// ユーザーが選んだ条件（レース ID・脚質・馬場・天候）を、
+// 才能のルールと比較しやすい「コンテキスト」オブジェクトに変換する。
+// 脚質の "nige" "senko" などは日本語ラベル（"逃げ" "先行"）に変換する。
 const buildSearchContext = (
   bundle: NonordinaryBundle,
   input: NonordinarySearchInput
@@ -118,6 +129,7 @@ const selectedValuesForField = (
 const actualContextValues = (context: SearchContext, field: SearchField) =>
   context[field];
 
+// 文字列の値がルール（等しい・等しくない など）を満たすか調べる。
 const matchTextRule = (value: string, rule: ConditionRuleRow) => {
   const field = normalizeField(rule.field);
   const left = normalizeComparableText(field, value);
@@ -139,6 +151,7 @@ const matchTextRule = (value: string, rule: ConditionRuleRow) => {
   }
 };
 
+// 数値の値がルール（等しい・範囲内・以上・以下 など）を満たすか調べる。距離の判定に使う。
 const matchNumberRule = (value: number, rule: ConditionRuleRow) => {
   const operator = getOperator(rule);
   const valueNumber = getValueNumber(rule);
@@ -176,6 +189,8 @@ const matchNumberRule = (value: number, rule: ConditionRuleRow) => {
 const ruleMatchesValue = (value: string | number, rule: ConditionRuleRow) =>
   typeof value === "number" ? matchNumberRule(value, rule) : matchTextRule(value, rule);
 
+// ユーザーが選んだ「選択型の条件」（脚質・馬場・天候）が才能のルールと合うか調べる。
+// 何も選んでいない（length === 0）場合は条件なしとして常に true を返す。
 const matchesSelectableField = (
   input: NonordinarySearchInput,
   context: SearchContext,
@@ -202,6 +217,8 @@ const matchesSelectableField = (
   );
 };
 
+// レース固有のフィールド（競馬場名・コース・距離など）が才能のルールと合うか調べる。
+// レースが選ばれていない場合、またはルールがない場合は常に true を返す。
 const matchesRaceField = (
   context: SearchContext,
   field: RaceField,
@@ -222,6 +239,8 @@ const matchesRaceField = (
   return rules.some((rule) => ruleMatchesValue(value, rule));
 };
 
+// 1 件の才能詳細が、ユーザーの選択した全条件（脚質・馬場・天候・レース情報）を
+// すべて満たすかどうか調べる。1 つでも外れたら false を返す。
 const matchesDetail = (
   detail: AbilityDetailRow,
   input: NonordinarySearchInput,
@@ -255,6 +274,7 @@ const matchesDetail = (
   return true;
 };
 
+// 結果をよみがな（かな）順、同じかなの場合は才能名の順に並べる。
 const sortResults = (results: MatchedNonordinaryAbility[]) =>
   [...results].sort((left, right) => {
     const kanaDiff = (left.kana ?? "").localeCompare(right.kana ?? "", "ja");
@@ -264,6 +284,8 @@ const sortResults = (results: MatchedNonordinaryAbility[]) =>
     return left.ability_name.localeCompare(right.ability_name, "ja");
   });
 
+// ユーザーが非凡検索モーダルで選んだ条件にあう才能を探して、結果リストを返す主関数。
+// 才能ごとに「条件詳細がどれか 1 つでも一致するか」を調べ、一致した才能だけを集める。
 export const searchNonordinaryAbilities = (
   bundle: NonordinaryBundle,
   horses: HorseRecord[],

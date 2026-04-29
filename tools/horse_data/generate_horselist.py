@@ -1,5 +1,9 @@
 from __future__ import annotations
 
+# このファイルは、エクセルのシートや JSON ファイルから馬のデータを読み込んで、
+# 検索機能で使う horselist.json と factor.json を作り出す道具。
+# 血統表・因子カウント・配合理論（完璧・奇跡・至高）の計算もここで行う。
+
 import argparse
 import json
 import re
@@ -339,6 +343,8 @@ def get_parent_line_name(parent_line: object) -> str:
 def get_factor_codes(
     factor_url_1: object, factor_url_2: object, factor_url_3: object
 ) -> tuple[str, str, str]:
+    # 因子アイコン画像の URL（または数値）から因子コードを 3 つ取り出す。
+    # 因子が 1 つや 2 つのときは右寄せ（3 枠目・2 枠目）に入れる。
     factor_1 = ""
     factor_2 = ""
     factor_3 = ""
@@ -456,6 +462,7 @@ def worksheet_rows(
 
 
 def load_excel_source(workbook_path: Path) -> dict[str, list[list[object]]]:
+    # エクセルファイルを開いて「種牡馬一覧」「ALL」「特別レア」の 3 シートを行データとして読み込む。
     if load_workbook is None:
         raise RuntimeError("openpyxl is required to read .xlsm sources.")
 
@@ -480,6 +487,7 @@ def load_excel_source(workbook_path: Path) -> dict[str, list[list[object]]]:
 
 
 def load_source_json(source_json_path: Path) -> dict[str, list[list[object]]]:
+    # 保存してある source JSON ファイルを行データとして読み込む。エクセルの代わりに使える。
     payload = json.loads(source_json_path.read_text(encoding="utf-8"))
     if not isinstance(payload, dict):
         raise ValueError("source JSON root must be an object.")
@@ -520,6 +528,8 @@ def generate_source_json_text(workbook_path: Path) -> str:
 
 
 def build_url_by_serial(rows: Iterable[list[object]]) -> dict[str, str]:
+    # 種牡馬一覧シートの URL から「通し番号 → 馬 ID」の辞書を作る。
+    # エクセルに馬 ID が入っていない場合の補完に使う。
     mapping: dict[str, str] = {}
     for index, cells in enumerate(rows, start=1):
         value = text(cells[0])
@@ -532,6 +542,8 @@ def build_url_by_serial(rows: Iterable[list[object]]) -> dict[str, str]:
 
 
 def build_special_rare_sets(rows: Iterable[list[object]]) -> tuple[set[str], set[str]]:
+    # 「特別レア」シートから「レア 8」と「レア 7」の馬 ID セットを作る。
+    # アイコンだけでは判定できない特別扱いの馬に使う。
     rare_8: set[str] = set()
     rare_7: set[str] = set()
 
@@ -555,6 +567,8 @@ def iter_all_rows(rows: Iterable[list[object]]) -> Iterable[list[object]]:
 
 
 def build_factor_counts(row: list[object]) -> tuple[list[int], list[int], list[int]]:
+    # 血統表の全馬（自身＋15 スロット）の因子を数え、「全血」「1 薄め」「2 薄め」の 3 段階で集計する。
+    # 返り値は [全血カウント, 1薄カウント, 2薄カウント] の 3 つのリスト。
     counter: Counter[str] = Counter()
 
     for factor_name in get_factor_names(
@@ -607,6 +621,7 @@ def compute_horse_id(
 
 
 def compute_rare_cd(
+    # アイコン画像番号・特別レアリスト・性別をもとに、レアリティコード（"1"〜"8" や "Z" など）を決める。
     gender: str,
     horse_id: str,
     row: list[object],
@@ -637,6 +652,8 @@ def compute_rare_cd(
 
 
 def build_header_detail(
+    # 馬名・因子アイコン・能力値・因子カウント表を含む、旧形式の HTML 文字列を組み立てる。
+    # この HTML は horselist.json の card.HeaderDetail フィールドに格納される（後方互換用途）。
     row: list[object],
     gender: str,
     horse_name: str,
@@ -736,11 +753,13 @@ def normalize_base_name(name: str) -> str:
 
 
 def canonical_horse_name(name: str) -> str:
+    # 馬名を正規化する。末尾の「-○○-」形式のバリアント表記を除き、英語の別名を日本語に統一する。
     base_name = normalize_base_name(name)
     return ALIAS_MAP.get(base_name, base_name)
 
 
 def same_horse(left: str, right: str) -> bool:
+    # 2 つの馬名が（バリアントや別名を含めて）同じ馬を指すかどうか調べる。
     return canonical_horse_name(left) == canonical_horse_name(right)
 
 
@@ -786,6 +805,8 @@ def sorted_factor_names(factors: set[str]) -> list[str]:
 
 
 def get_omoshiro_lines(record: dict[str, object]) -> list[str]:
+    # 「おもしろ系統」として扱う 4 スロット（自身・父母・母父・母母父）の系統コードを返す。
+    # 完璧・超完璧の判定に使う。
     return [
         text(record.get("Paternal_t")).strip(),
         pedigree_entry_line(record, SLOT_THT),
@@ -795,6 +816,8 @@ def get_omoshiro_lines(record: dict[str, object]) -> list[str]:
 
 
 def get_migoto_lines(record: dict[str, object]) -> list[str]:
+    # 「見事系統」として扱う 4 スロット（4 か所の見事位置）の系統コードを返す。
+    # 完璧・奇跡の判定に使う。
     return [
         pedigree_entry_line(record, SLOT_TTHT),
         pedigree_entry_line(record, SLOT_THHT),
@@ -804,6 +827,7 @@ def get_migoto_lines(record: dict[str, object]) -> list[str]:
 
 
 def get_miracle_cross_names(record: dict[str, object]) -> list[str]:
+    # 奇跡配合でクロスになりうる 4 スロット（父父父・父母父・母父父・母母父）の馬名を返す。
     return [
         pedigree_entry_name(record, SLOT_TTT),
         pedigree_entry_name(record, SLOT_THT),
@@ -813,6 +837,8 @@ def get_miracle_cross_names(record: dict[str, object]) -> list[str]:
 
 
 def build_perfect_theory(record: dict[str, object]) -> dict[str, object]:
+    # おもしろ系統（自身・母・母父・母母父）と見事系統（4 か所）を合わせた系統を数える。
+    # ユニークな系統が 7 種以上なら「完璧」、8 種以上なら「超完璧」と判定する。
     combined_lines = [
         line for line in get_omoshiro_lines(record) + get_migoto_lines(record) if line
     ]
@@ -830,6 +856,9 @@ def record_name(record: dict[str, object]) -> str:
 
 
 def find_miracle_mother_sire_candidates(
+    # 「奇跡配合」の母父候補を探す。
+    # この馬の見事スロット 4 か所のどれかに自系統が入っていて、
+    # なおかつクロスになる先祖名が血統表にある種牡馬を候補として集める。
     record: dict[str, object], candidate_index: dict[str, list[dict[str, object]]]
 ) -> list[dict[str, str]]:
     target_name = record_name(record)
@@ -864,11 +893,14 @@ def find_miracle_mother_sire_candidates(
 
 
 def is_variant_record(record: dict[str, object]) -> bool:
+    # 馬名に「-○○-」バリアント表記が付いているかを調べる。至高配合の判定で使う。
     name = record_name(record)
     return bool(name) and name != normalize_base_name(name)
 
 
 def find_factor_union(
+    # 複数のレコードが持つ因子を全部合わせて「因子の種類のセット」を返す。
+    # 最低レコード数・最低因子種類数の条件を満たさなければ None を返す。
     records: list[dict[str, object]],
     min_records: int,
     min_factor_kinds: int,
@@ -886,6 +918,9 @@ def find_factor_union(
 
 
 def build_shiho_lookup(records: list[dict[str, object]]) -> dict[str, dict[str, object]]:
+    # 「至高配合」の条件を全種牡馬について調べて、馬 ID → 判定結果の辞書を作る。
+    # パターン A: 同名バリアント馬が 3 頭以上いて因子の種類が 6 種以上。
+    # パターン B: バリアント＋本体で 4 頭以上、本体が血統表に使われていて因子が 6 種以上。
     groups: dict[str, list[dict[str, object]]] = {}
     pedigree_seen_base_names: set[str] = set()
 
@@ -940,6 +975,8 @@ def build_shiho_lookup(records: list[dict[str, object]]) -> dict[str, dict[str, 
 
 
 def attach_theory(records: list[dict[str, object]]) -> None:
+    # 全レコードに完璧・超完璧・奇跡・至高の配合理論フラグを計算して付け加える。
+    # この関数は build_records_from_source の最後に一度だけ呼ばれる。
     shiho_lookup = build_shiho_lookup(records)
     candidate_index: dict[str, list[dict[str, object]]] = {}
     for record in records:
@@ -1052,6 +1089,9 @@ def build_skill_card_payload(value: object) -> dict[str, object] | None:
 
 
 def build_records_from_source(
+    # 元データ（エクセルや JSON）の各行を 1 件ずつ JSON レコードに変換して返す。
+    # 馬名・血統・能力・因子カウント・血統表・才能データをまとめた「card」も含まれる。
+    # 最後に attach_theory を呼んで配合理論フラグを全件に付ける。
     source: dict[str, list[list[object]]],
     site_metadata_horses: dict[str, dict[str, object]] | None = None,
 ) -> list[dict[str, object]]:
@@ -1567,6 +1607,8 @@ def factor_sort_key(name: str) -> tuple[int, str]:
 
 
 def build_factor_options(records: list[dict[str, object]]) -> list[dict[str, object]]:
+    # 全レコードの血統表から「馬名 → 因子コードの集合」を逆引きで作り、
+    # 祖先オートコンプリート用のデータ（名前・ID・バッジラベル）として返す。
     factor_map: dict[str, set[str]] = {}
 
     for record in records:

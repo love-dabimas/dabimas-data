@@ -1,5 +1,9 @@
 ﻿from __future__ import annotations
 
+# このファイルは、ダビ娘のウェブサイトを自動で巡回して、
+# 種牡馬・牝馬のページから馬名・血統・能力・非凡な才能などのデータを集める道具。
+# 集めたデータは JSON ファイルとして保存し、horselist.json の生成に使われる。
+
 import argparse
 import re
 import sys
@@ -189,6 +193,7 @@ def skill_summary_from_anchor(anchor: Tag, base_url: str) -> dict[str, object] |
 
 
 def parse_stallion_skill_summaries(
+    # ページから「非凡な才能」と「天性」のサマリー情報を読み取る。
     soup: BeautifulSoup, base_url: str
 ) -> dict[str, dict[str, object]]:
     skills: dict[str, dict[str, object]] = {}
@@ -280,6 +285,7 @@ def parse_skill_detail(html: str) -> dict[str, object]:
 
 
 def enrich_skill_details(
+    # サマリーで得た才能の詳細ページを追加で取得し、発揮効果・条件・対象などを補完する。
     skills: dict[str, dict[str, object]],
     base_url: str,
     timeout: float,
@@ -343,6 +349,7 @@ def fill_consecutive(
 
 
 def fill_pedigree(row: list[object], pedigree_tables: list[Tag]) -> None:
+    # 血統テーブルの馬名・親系統・子系統・因子コードを行データの各列に書き込む。
     names = horse_cells(pedigree_tables[0] if len(pedigree_tables) > 0 else None)
     parent_lines = horse_cells(pedigree_tables[1] if len(pedigree_tables) > 1 else None)
     child_lines = horse_cells(pedigree_tables[2] if len(pedigree_tables) > 2 else None)
@@ -390,6 +397,7 @@ def build_empty_row(serial_number: int, gender: str) -> list[object]:
 
 
 def parse_stallion_detail(
+    # 種牡馬の詳細ページ HTML を解析して、能力・血統・才能データを取り出す。
     html: str, serial_number: int, base_url: str
 ) -> tuple[list[object], dict[str, dict[str, object]]]:
     soup = BeautifulSoup(html, "html.parser")
@@ -437,6 +445,7 @@ def parse_stallion_detail(
 
 
 def parse_broodmare_detail(html: str, serial_number: int) -> list[object]:
+    # 牝馬の詳細ページ HTML を解析して、馬名・血統・レア情報などを取り出す。
     soup = BeautifulSoup(html, "html.parser")
     tables = select_tables(soup)
     if len(tables) < 4:
@@ -456,6 +465,7 @@ def parse_broodmare_detail(html: str, serial_number: int) -> list[object]:
 
 
 def fetch_text(url: str, timeout: float, retries: int) -> str:
+    # 指定した URL のページを取ってくる。失敗したら何度か間を置いて試し直す。
     last_error: Exception | None = None
     for attempt in range(retries + 1):
         try:
@@ -484,6 +494,7 @@ def horse_id_from_path(path: str) -> str:
 
 
 def scrape_list_urls(base_url: str, path: str, selector: str, timeout: float) -> list[str]:
+    # 一覧ページを取ってきて、個々の馬ページへのリンク URL を全部集める。
     html = fetch_text(urljoin(base_url, path), timeout=timeout, retries=2)
     soup = BeautifulSoup(html, "html.parser")
     urls: list[str] = []
@@ -508,6 +519,7 @@ def scrape_list_urls(base_url: str, path: str, selector: str, timeout: float) ->
 
 
 def scrape_detail_row(
+    # 1 頭分の詳細ページを取ってきて、行データと才能データに変換する。
     base_url: str,
     path: str,
     serial_number: int,
@@ -524,6 +536,7 @@ def scrape_detail_row(
 
 
 def scrape_rows(
+    # 複数の馬ページを同時に並列で取得して、全行データと才能データを返す。
     base_url: str,
     urls: list[str],
     *,

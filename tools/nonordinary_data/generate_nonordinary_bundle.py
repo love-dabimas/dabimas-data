@@ -1,5 +1,9 @@
 from __future__ import annotations
 
+# このファイルは、ダビ娘のウェブサイトにある「非凡な才能」の一覧ページを解析して、
+# 検索機能で使える JSON ファイル（バンドル）を作り出す道具。
+# バンドルには才能の名前・発揮条件・対応する種牡馬などがまとめて入っている。
+
 import argparse
 import hashlib
 import json
@@ -45,6 +49,7 @@ def now_jst_iso() -> str:
 
 
 def fetch_text(url: str) -> str:
+    # 指定した URL のページを取ってきて文字列として返す。
     request = Request(
         url,
         headers={
@@ -59,6 +64,7 @@ def fetch_text(url: str) -> str:
 
 
 def load_or_fetch_html(path: Path, refresh: bool) -> str:
+    # キャッシュファイルがあればそれを読む。なければウェブから取ってきてキャッシュに保存する。
     if path.exists() and not refresh:
         return path.read_text(encoding="utf-8")
 
@@ -69,6 +75,7 @@ def load_or_fetch_html(path: Path, refresh: bool) -> str:
 
 
 def extract_js_value(script: str, key: str) -> str:
+    # JavaScript のコードの中から特定のキーに対応するオブジェクト・配列の部分だけを取り出す。
     marker = f"{key}:"
     start = script.index(marker) + len(marker)
     while start < len(script) and script[start].isspace():
@@ -108,6 +115,7 @@ def extract_js_value(script: str, key: str) -> str:
 
 
 def parse_vue_data(soup: BeautifulSoup) -> tuple[dict[str, Any], list[dict[str, Any]], list[dict[str, Any]]]:
+    # HTML に埋め込まれた Vue.js のデータから、才能の発揮条件・レース一覧を取り出す。
     scripts = [
         script.get_text("\n")
         for script in soup.find_all("script")
@@ -164,6 +172,7 @@ def first_text(panel: Tag, selector: str) -> str:
 
 
 def parse_race_filter_options(soup: BeautifulSoup) -> list[dict[str, Any]]:
+    # HTML のセレクトボックスからレースの一覧を読み取る。
     select = soup.select_one('select[v-model="race"]')
     if select is None:
         raise ValueError("Could not find race select.")
@@ -274,6 +283,7 @@ def append_value_rules(
 
 
 def build_condition_rules(
+    # 競馬場・馬場状態・天候・脚質・レース・距離などの発揮条件を、検索で使えるルール形式に変換する。
     ability_id: str,
     detail_id: str,
     group_id: str,
@@ -400,6 +410,7 @@ def build_condition_rules(
 
 
 def build_bundle(html: str) -> dict[str, Any]:
+    # HTML 全体を解析して、才能・種牡馬・発揮条件などをまとめた JSON バンドルを作る。
     soup = BeautifulSoup(html, "html.parser")
     ability_conditions, races, association_races = parse_vue_data(soup)
     race_filter_options = parse_race_filter_options(soup)

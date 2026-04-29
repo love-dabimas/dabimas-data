@@ -11616,6 +11616,29 @@ button {
   width: min(760px, 100%);
 }
 
+.nonordinary-modal .filter-modal__option-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 8px;
+}
+
+.nonordinary-modal .filter-modal__choice {
+  flex: 0 0 auto;
+  min-width: 64px;
+  padding-left: 14px;
+  padding-right: 14px;
+  white-space: nowrap;
+}
+
+.nonordinary-modal .filter-modal__choice--none {
+  min-width: 136px;
+}
+
+.nonordinary-modal .filter-modal__choice-break {
+  flex-basis: 100%;
+  height: 0;
+}
+
 .nonordinary-modal .select-input {
   display: none;
 }
@@ -11870,12 +11893,13 @@ button {
 .line-autocomplete__control {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   width: 100%;
   border: 1px solid var(--line-strong);
   border-radius: 10px;
   background: rgba(255, 255, 255, 0.85);
-  padding: 8px 10px;
+  min-height: 44px;
+  padding: 5px 9px;
   transition:
     border-color 150ms ease,
     box-shadow 150ms ease,
@@ -11895,8 +11919,8 @@ button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 34px;
-  padding: 4px 8px;
+  min-width: 30px;
+  padding: 3px 7px;
   border-radius: 999px;
   border: 1px solid rgba(53, 95, 65, 0.16);
   background: rgba(53, 95, 65, 0.1);
@@ -11921,6 +11945,7 @@ button {
   background: transparent;
   box-shadow: none;
   font-size: 16px;
+  line-height: 1.25;
   outline: none;
   padding: 0;
 }
@@ -11931,8 +11956,8 @@ button {
 
 .line-autocomplete__clear {
   flex-shrink: 0;
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
   border: 0;
   border-radius: 999px;
   background: rgba(112, 97, 83, 0.12);
@@ -11949,7 +11974,7 @@ button {
 .line-autocomplete__menu {
   display: grid;
   gap: 0;
-  max-height: 320px;
+  max-height: 220px;
   overflow-y: auto;
   border: 1px solid var(--line);
   border-radius: 14px;
@@ -11965,7 +11990,7 @@ button {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 12px 8px;
+  padding: 8px 10px 6px;
   color: var(--muted);
   font-size: 0.78rem;
   font-weight: 700;
@@ -11975,7 +12000,7 @@ button {
 .line-autocomplete__group-list {
   display: grid;
   gap: 2px;
-  padding: 0 8px 8px;
+  padding: 0 7px 7px;
 }
 
 .line-autocomplete__option {
@@ -11987,7 +12012,7 @@ button {
   border-radius: 10px;
   background: transparent;
   color: var(--text);
-  padding: 8px 10px;
+  padding: 6px 9px;
   text-align: left;
   transition:
     background-color 150ms ease,
@@ -12025,12 +12050,13 @@ button {
 .factor-autocomplete__control {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   width: 100%;
   border: 1px solid var(--line-strong);
   border-radius: 10px;
   background: rgba(255, 255, 255, 0.85);
-  padding: 8px 10px;
+  min-height: 44px;
+  padding: 5px 9px;
   transition:
     border-color 150ms ease,
     box-shadow 150ms ease,
@@ -12051,6 +12077,7 @@ button {
   background: transparent;
   box-shadow: none;
   font-size: 16px;
+  line-height: 1.25;
   outline: none;
   padding: 0;
 }
@@ -12063,7 +12090,7 @@ button {
 .factor-autocomplete__badges {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 4px;
 }
 
 .factor-autocomplete__selected-badges {
@@ -12073,8 +12100,8 @@ button {
 
 .factor-autocomplete__clear {
   flex-shrink: 0;
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
   border: 0;
   border-radius: 999px;
   background: rgba(112, 97, 83, 0.12);
@@ -12091,7 +12118,7 @@ button {
 .factor-autocomplete__menu {
   display: grid;
   gap: 0;
-  max-height: 320px;
+  max-height: 220px;
   overflow-y: auto;
   border: 1px solid var(--line);
   border-radius: 14px;
@@ -12105,7 +12132,7 @@ button {
   border-radius: 0;
   background: transparent;
   color: var(--text);
-  padding: 11px 12px;
+  padding: 8px 10px;
   text-align: left;
   transition: background-color 150ms ease;
 }
@@ -12599,7 +12626,7 @@ button {
   .nonordinary-modal .filter-modal__choice--none {
     grid-column: 1 / -1;
     justify-self: start;
-    min-width: 162px;
+    min-width: 136px;
   }
 
   .filter-modal__option-grid--theory {

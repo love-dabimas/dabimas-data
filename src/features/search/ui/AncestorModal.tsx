@@ -1,3 +1,7 @@
+// このファイルは「絞り込み」ボタンを押したときに開くモーダル。
+// 配合理論・能力値・脚質・成長型・天性・子系統・祖先指定など、
+// 詳細な検索条件をここで設定して「反映する」ボタンで検索に適用する。
+
 import { useEffect, useMemo, useState } from "react";
 import type { FactorOption } from "@/features/horses/model/types";
 import type { ChildLineOption } from "@/features/search/model/childLineOption";
@@ -76,6 +80,8 @@ const ABILITY_FILTERS = [
   { key: "health", label: "体質", options: RANK_OPTIONS }
 ] as const;
 
+// モーダル内で編集中の「下書き」状態を現在値からコピーして作る。
+// 「反映する」を押すまでは実際の検索条件には影響しない。
 const createDraft = (value: DraftState): DraftState => ({
   theory: [...value.theory],
   runningStyle: [...value.runningStyle],
@@ -105,6 +111,8 @@ interface MultiChoiceGridProps {
   onChange: (nextValues: string[]) => void;
 }
 
+// 複数の選択肢をボタングリッドで表示する部品。
+// 押すたびに選択状態がトグルされ、親へ変更が伝わる。
 const MultiChoiceGrid = ({
   className = "",
   options,
@@ -159,6 +167,8 @@ export const AncestorModal = ({
     ancestorPositions: criteria.ancestorPositions
   });
 
+  // モーダルが開くたびに現在の検索条件から下書きを作り直す。
+  // これにより「キャンセルして再度開く」と前回の編集内容がリセットされる。
   useEffect(() => {
     if (!open) {
       return;
@@ -218,6 +228,7 @@ export const AncestorModal = ({
     };
   }, [open]);
 
+  // 入力中の祖先名がすでに登録済みの因子と一致するか確認して、バッジ表示に使う。
   const resolvedFactor = useMemo(
     () =>
       factors.find(
@@ -240,6 +251,8 @@ export const AncestorModal = ({
         : [...current.ancestorPositions, position]
     }));
 
+  // 「反映する」ボタンを押したとき、下書きの条件を確定して検索ストアへ送る。
+  // 祖先名が因子マスタに一致する場合は ID で正規化してから適用する。
   const handleApply = () => {
     const resolvedName = draft.ancestorName.trim();
     const nextFilters = {
@@ -274,6 +287,7 @@ export const AncestorModal = ({
     });
   };
 
+  // 「条件を消す」ボタンを押したとき、下書きの全条件を空にリセットする。
   const handleReset = () =>
     setDraft({
       theory: [],

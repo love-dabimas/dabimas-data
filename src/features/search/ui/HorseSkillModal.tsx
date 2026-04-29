@@ -1,3 +1,6 @@
+// このファイルは「非凡な才能」や「天性」の詳細情報を全画面のポップアップ（モーダル）で
+// 見せるための画面部品。発揮効果・発揮条件・発揮対象・発揮確率をタブで切り替えられる。
+
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import type { HorseSkillData, HorseSkillDetailTab } from "@/features/horses/model/types";
@@ -16,6 +19,8 @@ const SECTION_LABELS = {
   probability: "発揮確率"
 } as const;
 
+// テキストの行リストを段落として表示する。行が 0 件のときは「なし」と出す。
+// 「・」で始まらない行は前の行の続きとしてインデントを付ける。
 const renderLines = (lines: string[]) => {
   if (lines.length === 0) {
     return <p className="skill-modal__empty">なし</p>;
@@ -39,6 +44,7 @@ const renderLines = (lines: string[]) => {
   );
 };
 
+// 「発揮効果」「発揮条件」などのセクション見出しと本文をひとまとめにする小部品。
 const SkillSection = ({
   label,
   lines,
@@ -55,6 +61,7 @@ const SkillSection = ({
 );
 
 export const HorseSkillModal = ({ open, title, skill, onClose }: HorseSkillModalProps) => {
+  // 現在選ばれているタブの番号。0 から始まる。
   const [activeTabIndex, setActiveTabIndex] = useState(0);
   const detailTabs = skill.detailTabs ?? [];
   const description = skill.description ?? [];
@@ -75,6 +82,7 @@ export const HorseSkillModal = ({ open, title, skill, onClose }: HorseSkillModal
         ];
   const activeTab: HorseSkillDetailTab | undefined = tabs[activeTabIndex] ?? tabs[0];
 
+  // モーダルを開くたびに最初のタブへ戻す。
   useEffect(() => {
     if (!open) {
       return;
@@ -83,6 +91,8 @@ export const HorseSkillModal = ({ open, title, skill, onClose }: HorseSkillModal
     setActiveTabIndex(0);
   }, [open, skill]);
 
+  // モーダルを開いている間はページ全体のスクロールを止める。
+  // 閉じるとき（クリーンアップ時）に元の設定に戻す。
   useEffect(() => {
     if (!open || typeof document === "undefined") {
       return;
@@ -101,6 +111,8 @@ export const HorseSkillModal = ({ open, title, skill, onClose }: HorseSkillModal
     };
   }, [open]);
 
+  // モーダルが閉じている間は何も表示しない。
+  // createPortal を使って <body> の直下に描画することで、z-index の重なりを確実にする。
   if (!open || !activeTab || typeof document === "undefined") {
     return null;
   }

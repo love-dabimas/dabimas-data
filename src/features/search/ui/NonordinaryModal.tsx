@@ -1,4 +1,8 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+// このファイルは「非凡」ボタンを押したときに開くモーダル。
+// 騎乗指示・レース・馬場状態・天候を選んで「検索する」を押すと、
+// 条件に合う非凡な才能を持つ種牡馬の ID を検索画面へ渡す。
+
+import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import type { HorseRecord } from "@/features/horses/model/types";
 import { searchNonordinaryAbilities } from "@/features/nonordinary/lib/searchNonordinaryAbilities";
@@ -70,6 +74,8 @@ const RACE_DATE_ORDER_BY_ID: Record<string, number> = {
   "5912364276": 38
 };
 
+// レース選択肢の表示順を決める。ゲーム内の日程順に並べるための優先度を返す。
+// リストにない race_id は sort_order + 1000 という低優先度にする。
 const getRaceDateOrder = (option: RaceFilterOption) => {
   if (option.is_all || option.race_id === null) {
     return -1;
@@ -114,12 +120,14 @@ const toggleArrayValue = (values: string[], nextValue: string) =>
     ? values.filter((value) => value !== nextValue)
     : [...values, nextValue];
 
+// 改行区切りの生テキストを行リストに分割して空行を除く。
 const splitRawLines = (value: string | null) =>
   (value ?? "")
     .split(/\r?\n/u)
     .map((line) => line.trim())
     .filter(Boolean);
 
+// 馬の適性距離を「1200〜1800m」のような文字列に整形する。
 const formatHorseDistance = (horse: HorseRecord) => {
   const { distanceMin, distanceMax } = horse.card.stats;
   if (!distanceMin && !distanceMax) {
@@ -146,22 +154,30 @@ const MultiChoiceGrid = ({
       const active = selectedValues.includes(option.value);
 
       return (
-        <button
-          key={option.value}
-          aria-pressed={active}
-          className={[
-            "chip-button",
-            "filter-modal__choice",
-            option.value === "none" ? "filter-modal__choice--none" : "",
-            active ? "is-active" : ""
-          ]
-            .filter(Boolean)
-            .join(" ")}
-          type="button"
-          onClick={() => onChange(toggleArrayValue(selectedValues, option.value))}
-        >
-          {option.label}
-        </button>
+        <Fragment key={option.value}>
+          <button
+            aria-pressed={active}
+            className={[
+              "chip-button",
+              "filter-modal__choice",
+              option.value === "none" ? "filter-modal__choice--none" : "",
+              active ? "is-active" : ""
+            ]
+              .filter(Boolean)
+              .join(" ")}
+            type="button"
+            onClick={() => onChange(toggleArrayValue(selectedValues, option.value))}
+          >
+            {option.label}
+          </button>
+          {option.value === "none" ? (
+            <span
+              key={`${option.value}-break`}
+              aria-hidden="true"
+              className="filter-modal__choice-break"
+            />
+          ) : null}
+        </Fragment>
       );
     })}
   </div>
@@ -173,6 +189,8 @@ interface RaceSelectProps {
   onChange: (value: string | null) => void;
 }
 
+// カスタムドロップダウン部品。モバイルでも見やすいボタン式でレースを選べる。
+// 外側をクリックしたら自動で閉じるよう pointerdown を監視している。
 const RaceSelect = ({ options, value, onChange }: RaceSelectProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -238,6 +256,7 @@ const RaceSelect = ({ options, value, onChange }: RaceSelectProps) => {
   );
 };
 
+// 非凡な才能 1 件ぶんの結果カード。才能名・発揮条件・それを持つ種牡馬の一覧を表示する。
 const ResultDetail = ({ result }: { result: MatchedNonordinaryAbility }) => (
   <article className="nonordinary-result">
     <div className="nonordinary-result__header">
@@ -316,6 +335,7 @@ const ResultDetail = ({ result }: { result: MatchedNonordinaryAbility }) => (
   </article>
 );
 
+// 検索結果から「horselist に登録されている」種牡馬の ID だけを重複なしで取り出す。
 const getDisplayableHorseIds = (results: MatchedNonordinaryAbility[]) =>
   [
     ...new Set(
@@ -389,6 +409,7 @@ export const NonordinaryModal = ({
     return null;
   }
 
+  // 「条件を消す」ボタンを押したとき、下書きと検索結果を両方リセットする。
   const handleReset = () => {
     setDraft(createDraft(DEFAULT_INPUT));
     setCommitted(null);

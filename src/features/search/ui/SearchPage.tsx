@@ -1,3 +1,8 @@
+// このファイルは検索画面全体をまとめたトップレベルの部品。
+// 馬のデータ・検索条件・非凡才能データをまとめて受け取り、
+// 「基本条件パネル」「絞り込みモーダル」「非凡検索モーダル」「検索結果パネル」を組み合わせて表示する。
+// 検索実行の遅延（useDeferredValue）や「検索中」スピナーの表示制御もここで行う。
+
 import { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
 import type { FactorOption, HorseRecord } from "@/features/horses/model/types";
 import type { NonordinaryBundle } from "@/features/nonordinary/model/types";
@@ -21,6 +26,7 @@ import { ResultsPanel } from "@/features/search/ui/ResultsPanel";
 import { PARENT_LINE_OPTIONS } from "@/shared/constants/parentLines";
 import { RARE_OPTIONS } from "@/shared/constants/rareCodes";
 
+// SearchPage に渡す設定。馬リスト・因子・非凡バンドル・系統選択肢が必要。
 interface SearchPageProps {
   horses: HorseRecord[];
   factors: FactorOption[];
@@ -29,13 +35,19 @@ interface SearchPageProps {
   lineHtOptions: ChildLineOption[];
 }
 
+// 基本条件タブの選択肢。自身・母父・見事・1薄・レアの 5 種類。
 type QuickFilterTab = "father" | "damSire" | "migoto" | "thin" | "rare";
 
+// 「ページ先頭へ戻る」ボタンを表示し始めるスクロール量（ピクセル）。
 const SCROLL_TOP_BUTTON_THRESHOLD = 180;
+// 非凡検索の「検索中」表示を最低でも何ミリ秒維持するか。
+// あまりに素早く消えると点滅して見苦しいので、最短表示時間を設けている。
 const SEARCH_FEEDBACK_MIN_MS = 260;
+// レアコードの内部値（例："ss"）を画面表示用ラベル（例："超希少"）に変換するマップ。
 const RARE_LABEL_BY_VALUE = new Map<string, string>(
   RARE_OPTIONS.map(({ value, label }) => [value, label])
 );
+// 脚質コード（1 文字）→ 表示名の変換テーブル。
 const RUNNING_STYLE_LABEL_BY_VALUE: Record<string, string> = {
   逃: "逃げ",
   先: "先行",
@@ -43,17 +55,20 @@ const RUNNING_STYLE_LABEL_BY_VALUE: Record<string, string> = {
   追: "追込",
   自: "自在"
 };
+// 成長型コード（1 文字）→ 表示名の変換テーブル。
 const GROWTH_LABEL_BY_VALUE: Record<string, string> = {
   早: "早熟",
   普: "普通",
   晩: "晩成"
 };
+// 配合理論の内部キー → 表示名の変換テーブル。
 const THEORY_LABEL_BY_VALUE: Record<string, string> = {
   perfect: "完璧",
   superPerfect: "超完璧",
   miracle: "奇跡",
   shiho: "至高"
 };
+// SearchCriteria のキー → 検索条件一覧に表示するラベルの変換テーブル。
 const ABILITY_LABEL_BY_KEY: Partial<Record<keyof SearchCriteria, string>> = {
   dirt: "適応力",
   achievement: "実績",
@@ -63,9 +78,12 @@ const ABILITY_LABEL_BY_KEY: Partial<Record<keyof SearchCriteria, string>> = {
   health: "体質"
 };
 
+// レアコードの配列を「希少, 超希少」のような表示用文字列に変換する。
 const formatRareCodes = (rareCodes: string[]) =>
   rareCodes.map((code) => RARE_LABEL_BY_VALUE.get(code) ?? code).join(", ");
 
+// 現在の検索条件を「自身: ネイティヴ」「レア: 希少」のようなチップ文字列の配列に変換する。
+// 条件一覧アコーディオンに表示するために使う。
 const buildActiveSummaries = (criteria: SearchCriteria) => {
   const items: string[] = [];
 
@@ -144,6 +162,7 @@ export const SearchPage = ({
   lineOptions,
   lineHtOptions
 }: SearchPageProps) => {
+  // 検索条件ストアから必要なデータとアクションを取り出す。
   const criteria = useSearchStore((state) => state.criteria);
   const toggleFatherLine = useSearchStore((state) => state.toggleFatherLine);
   const toggleDamSireLine = useSearchStore((state) => state.toggleDamSireLine);
@@ -156,22 +175,33 @@ export const SearchPage = ({
   );
   const resetCriteria = useSearchStore((state) => state.resetCriteria);
 
+  // UI 状態ストアから「選択中のタブ」「表示件数」「タブ切り替え」などを取り出す。
   const activeTab = useUiStore((state) => state.activeTab);
   const visibleCounts = useUiStore((state) => state.visibleCounts);
   const setActiveTab = useUiStore((state) => state.setActiveTab);
   const resetVisibleCounts = useUiStore((state) => state.resetVisibleCounts);
   const increaseVisible = useUiStore((state) => state.increaseVisible);
 
+  // 絞り込みモーダルが開いているか。
   const [isModalOpen, setIsModalOpen] = useState(false);
+  // 非凡検索モーダルが開いているか。
   const [isNonordinaryModalOpen, setIsNonordinaryModalOpen] = useState(false);
+  // 「検索中…」スピナーオーバーレイを表示しているか。
   const [isSearchFeedbackVisible, setIsSearchFeedbackVisible] = useState(false);
+  // 「ページ先頭へ戻る」ボタンを表示しているか。
   const [isScrollTopVisible, setIsScrollTopVisible] = useState(false);
+  // 基本条件タブ（自身・母父・見事…）で今選ばれているタブ。
   const [activeQuickTab, setActiveQuickTab] = useState<QuickFilterTab>("father");
+  // 種牡馬リストと牝馬リスト、それぞれの「もっと読み込む」トリガー要素への参照。
   const stallionSentinelRef = useRef<HTMLDivElement>(null);
   const broodmareSentinelRef = useRef<HTMLDivElement>(null);
+  // スピナー表示を開始した時刻（ms）。最低表示時間の計算に使う。
   const searchFeedbackStartedAtRef = useRef(0);
+  // スピナーを消すためのタイマー ID。再設定時に前のタイマーをキャンセルするために保持する。
   const searchFeedbackTimerRef = useRef<number | null>(null);
+  // 馬リストをソート順に並べ替えたもの。並べ替えは重いので useMemo でキャッシュ。
   const sortedHorses = useMemo(() => sortHorseRecords(horses), [horses]);
+  // 絞り込みモーダルの「天性」選択肢。馬リストから重複を除いて五十音順に並べる。
   const temperamentOptions = useMemo(
     () =>
       [...new Set(sortedHorses
@@ -181,16 +211,26 @@ export const SearchPage = ({
         .map((name) => ({ value: name, label: name })),
     [sortedHorses]
   );
+  // ビットフィールドを使った高速検索インデックス。馬リストが変わるときだけ再構築する。
   const horseSearchIndex = useMemo(() => createHorseSearchIndex(sortedHorses), [sortedHorses]);
 
+  // 検索条件を「少し遅らせた」バージョン。React の並行レンダリング機能を使い、
+  // 条件入力中に画面がフリーズしないよう、重い絞り込み処理を後回しにする。
   const deferredCriteria = useDeferredValue(criteria);
+  // deferredCriteria が現在の criteria に追いついていない間 true になる。
+  // この間は「検索中」スピナーを出す。
   const isSearchUpdating = deferredCriteria !== criteria;
+  // 検索条件全体を JSON 文字列にしたもの。変化の検知キーとして使う。
   const criteriaKey = useMemo(() => JSON.stringify(criteria), [criteria]);
+  // 前回のキーを保持する ref。条件が変わったか比較するために使う。
   const previousCriteriaKeyRef = useRef(criteriaKey);
+  // 遅延条件でフィルタリングした検索結果。種牡馬リストと牝馬リストが入っている。
   const results = useMemo(
     () => filterHorseRecords(horseSearchIndex, deferredCriteria),
     [horseSearchIndex, deferredCriteria]
   );
+  // カードの中でキーワードや系統名を色付けするための「強調条件」。
+  // 条件の変化が描画に関係するフィールドだけ監視し、無駄な再計算を防ぐ。
   const highlightCriteria = useMemo(
     () => pickHorseCardHighlightCriteria(deferredCriteria),
     [
@@ -204,11 +244,16 @@ export const SearchPage = ({
       deferredCriteria.damSireChildLine
     ]
   );
+  // 現在の条件をチップ（小さなラベル）として表示するための文字列配列。
   const activeSummaries = useMemo(() => buildActiveSummaries(criteria), [criteria]);
+  // 今表示中のタブに対応する馬レコードのリスト（種牡馬 or 牝馬）。
   const activeRecords = activeTab === "0" ? results.stallions : results.broodmares;
+  // 今表示中のタブに対応する「もっと読み込む」トリガー要素の参照。
   const activeSentinelRef =
     activeTab === "0" ? stallionSentinelRef : broodmareSentinelRef;
+  // このレンダリング時点で条件が切り替わったばかりかどうか。
   const criteriaJustChanged = previousCriteriaKeyRef.current !== criteriaKey;
+  // 表示件数。条件が変わった直後はデフォルト件数にリセット、そうでなければ保持する。
   const activeVisibleCount = criteriaJustChanged
     ? DEFAULT_VISIBLE_COUNT
     : visibleCounts[activeTab];
@@ -286,12 +331,17 @@ export const SearchPage = ({
     }
   ];
 
+  // 現在の activeQuickTab に対応するパネル（FilterSection）を探す。
   const activeQuickPanel =
     quickTabItems.find((item) => item.id === activeQuickTab)?.panel ?? quickTabItems[0].panel;
+
+  // ページ先頭へスムーズスクロールする。
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  // 「検索中」スピナーを表示し始める。
+  // すでにタイマーが動いている場合はキャンセルしてリセットする。
   const showSearchFeedback = () => {
     if (searchFeedbackTimerRef.current !== null) {
       window.clearTimeout(searchFeedbackTimerRef.current);
@@ -302,6 +352,10 @@ export const SearchPage = ({
     setIsSearchFeedbackVisible(true);
   };
 
+  // 非凡検索モーダルで「この馬たちを検索」が押されたときに呼ばれる。
+  // スピナーを表示してからモーダルを閉じ、条件ストアに馬 ID 群を反映する。
+  // requestAnimationFrame → setTimeout の 2 段遅延で、まずスピナーが描画されてから
+  // 重い絞り込み処理を実行することでフリーズを避けている。
   const handleApplyNonordinaryHorseIds = useCallback(
     (horseIds: string[]) => {
       showSearchFeedback();
@@ -322,9 +376,11 @@ export const SearchPage = ({
     [applyNonordinaryHorseIds, setActiveTab]
   );
 
+  // スクロール量を監視して「ページ先頭へ戻る」ボタンの表示を切り替える。
   useEffect(() => {
     const updateScrollTopVisibility = () => {
       const shouldShow = window.scrollY > SCROLL_TOP_BUTTON_THRESHOLD;
+      // 値が変わっていないときは setState を呼ばないことで余計な再描画を防ぐ。
       setIsScrollTopVisible((current) => (current === shouldShow ? current : shouldShow));
     };
 
@@ -336,16 +392,20 @@ export const SearchPage = ({
     };
   }, []);
 
+  // 検索条件が変わるたびに表示件数をリセットし、criteriaKey の ref を最新にする。
   useEffect(() => {
     previousCriteriaKeyRef.current = criteriaKey;
     resetVisibleCounts();
   }, [criteriaKey, resetVisibleCounts]);
 
+  // 「検索中」スピナーが表示されているとき、最低表示時間が経過したら自動的に消す。
+  // criteriaKey の変化もトリガーにすることで、条件が変わるたびに再起動する。
   useEffect(() => {
     if (!isSearchFeedbackVisible) {
       return;
     }
 
+    // 表示開始からの経過時間を引いて「残り最低時間」を計算する。
     const elapsed = Date.now() - searchFeedbackStartedAtRef.current;
     const delay = Math.max(0, SEARCH_FEEDBACK_MIN_MS - elapsed);
     const timerId = window.setTimeout(() => {
@@ -363,9 +423,12 @@ export const SearchPage = ({
     };
   }, [criteriaKey, isSearchFeedbackVisible]);
 
+  // リストの末尾にある「センチネル要素」が画面に入ってきたら、表示件数を増やす。
+  // IntersectionObserver で末尾要素を監視することで、スクロールに応じた「無限スクロール」を実現する。
   useEffect(() => {
     const node = activeSentinelRef.current;
 
+    // 条件未入力、またはすでに全件表示済みなら監視不要。
     if (!node || !results.hasActivePrimaryFilters) {
       return;
     }
@@ -380,6 +443,7 @@ export const SearchPage = ({
           increaseVisible(activeTab);
         }
       },
+      // 画面より 420px 下まで近づいたら「見えた」と判定する（余裕をもって読み込む）。
       { rootMargin: "420px 0px" }
     );
 
