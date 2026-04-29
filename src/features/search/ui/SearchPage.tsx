@@ -109,7 +109,11 @@ const buildActiveSummaries = (criteria: SearchCriteria) => {
     items.push(`天性: ${criteria.temperamentNames.join(", ")}`);
   }
   if (criteria.nonordinaryHorseIds !== null) {
-    items.push(`非凡検索: ${criteria.nonordinaryHorseIds.length}頭`);
+    items.push(
+      ...(criteria.nonordinarySearchSummary.length > 0
+        ? criteria.nonordinarySearchSummary
+        : ["非凡: 条件指定なし"])
+    );
   }
   if (criteria.theory.length > 0) {
     items.push(
@@ -357,12 +361,12 @@ export const SearchPage = ({
   // requestAnimationFrame → setTimeout の 2 段遅延で、まずスピナーが描画されてから
   // 重い絞り込み処理を実行することでフリーズを避けている。
   const handleApplyNonordinaryHorseIds = useCallback(
-    (horseIds: string[]) => {
+    (horseIds: string[], summary: string[]) => {
       showSearchFeedback();
       setIsNonordinaryModalOpen(false);
       setActiveTab("0");
 
-      const apply = () => applyNonordinaryHorseIds(horseIds);
+      const apply = () => applyNonordinaryHorseIds(horseIds, summary);
 
       if (typeof window === "undefined") {
         apply();

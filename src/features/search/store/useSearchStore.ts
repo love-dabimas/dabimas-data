@@ -31,7 +31,7 @@ interface SearchState {
   toggleRareCode: (value: string) => void;
   setKeyword: (value: string) => void;
   applyAdvancedFilters: (value: AdvancedFilters) => void;
-  applyNonordinaryHorseIds: (horseIds: string[]) => void;
+  applyNonordinaryHorseIds: (horseIds: string[], summary: string[]) => void;
   resetCriteria: () => void;
 }
 
@@ -112,11 +112,12 @@ export const useSearchStore = create<SearchState>((set) => ({
         ancestorPositions: value.ancestorPositions
       }
     })),
-  applyNonordinaryHorseIds: (horseIds) =>
+  applyNonordinaryHorseIds: (horseIds, summary) =>
     set((state) => ({
       criteria: {
         ...state.criteria,
-        nonordinaryHorseIds: [...horseIds]
+        nonordinaryHorseIds: [...horseIds],
+        nonordinarySearchSummary: [...summary]
       }
     })),
   // 全条件リセット時は新しい初期値オブジェクトを作り直す。

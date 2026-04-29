@@ -20,6 +20,7 @@ export interface SearchCriteria {
   health: string[];
   temperamentNames: string[];
   nonordinaryHorseIds: string[] | null;
+  nonordinarySearchSummary: string[];
   ownChildLine: string;
   damSireChildLine: string;
   ancestorName: string;
@@ -55,6 +56,7 @@ export const createDefaultCriteria = (): SearchCriteria => ({
   health: [],
   temperamentNames: [],
   nonordinaryHorseIds: null,
+  nonordinarySearchSummary: [],
   ownChildLine: "",
   damSireChildLine: "",
   ancestorName: "",

@@ -17,7 +17,7 @@ interface NonordinaryModalProps {
   open: boolean;
   bundle: NonordinaryBundle;
   horses: HorseRecord[];
-  onApplyHorseIds: (horseIds: string[]) => void;
+  onApplyHorseIds: (horseIds: string[], summary: string[]) => void;
   onClose: () => void;
 }
 
@@ -134,6 +134,45 @@ const formatHorseDistance = (horse: HorseRecord) => {
     return "";
   }
   return distanceMax ? `${distanceMin}〜${distanceMax}m` : `${distanceMin}m`;
+};
+
+const formatSelectedChoiceLabels = (
+  options: readonly ChoiceOption[],
+  selectedValues: readonly string[]
+) =>
+  selectedValues
+    .map((value) => options.find((option) => option.value === value)?.label ?? value)
+    .join(", ");
+
+const buildNonordinarySearchSummary = (
+  input: NonordinarySearchInput,
+  raceOptions: RaceFilterOption[]
+) => {
+  const items: string[] = [];
+
+  if (input.race_id) {
+    const raceName =
+      raceOptions.find((option) => option.race_id === input.race_id)?.race_name ??
+      input.race_id;
+    items.push(`非凡レース: ${raceName}`);
+  }
+
+  const tacticLabel = formatSelectedChoiceLabels(TACTIC_OPTIONS, input.tactics);
+  if (tacticLabel) {
+    items.push(`非凡騎乗指示: ${tacticLabel}`);
+  }
+
+  const goingLabel = formatSelectedChoiceLabels(GOING_OPTIONS, input.going);
+  if (goingLabel) {
+    items.push(`非凡馬場状態: ${goingLabel}`);
+  }
+
+  const weatherLabel = formatSelectedChoiceLabels(WEATHER_OPTIONS, input.weather);
+  if (weatherLabel) {
+    items.push(`非凡天候: ${weatherLabel}`);
+  }
+
+  return items.length > 0 ? items : ["非凡: 条件指定なし"];
 };
 
 interface MultiChoiceGridProps {
@@ -418,7 +457,10 @@ export const NonordinaryModal = ({
   const handleSearch = () => {
     const nextResults = searchNonordinaryAbilities(bundle, horses, draft);
     setCommitted(null);
-    onApplyHorseIds(getDisplayableHorseIds(nextResults));
+    onApplyHorseIds(
+      getDisplayableHorseIds(nextResults),
+      buildNonordinarySearchSummary(draft, raceOptions)
+    );
   };
 
   return createPortal(
