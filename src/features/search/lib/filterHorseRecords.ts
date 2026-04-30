@@ -248,19 +248,27 @@ const createLegacyRegexMatcher = (pattern: string | null) => {
 };
 
 const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const SELF_ANCESTOR_POSITION = ANCESTOR_POSITION_OPTIONS[0]?.value ?? "自身";
+const SELF_ANCESTOR_SUFFIX_START_PATTERN = "[-‐‑‒–—―－\\d０-９]";
 
 const createLegacyLookaheadMatcher = (value: string) =>
   createLegacyRegexMatcher(value ? `^(?=.*${escapeRegExp(value)}).*$` : null);
 
-const createAncestorTokenMatcher = (ancestorName: string, positions: string[]) => {
-  if (positions.length === ANCESTOR_POSITION_OPTIONS.length) {
-    return createLegacyLookaheadMatcher(ancestorName);
+const createAncestorTokenPattern = (ancestorName: string, position: string) => {
+  const escapedPosition = escapeRegExp(position);
+  const escapedName = escapeRegExp(ancestorName);
+
+  if (position === SELF_ANCESTOR_POSITION) {
+    return `\\[${escapedPosition}${escapedName}(?:\\]|${SELF_ANCESTOR_SUFFIX_START_PATTERN}[^\\]]*\\])`;
   }
 
-  const escapedName = escapeRegExp(ancestorName);
+  return `\\[${escapedPosition}${escapedName}\\]`;
+};
+
+const createAncestorTokenMatcher = (ancestorName: string, positions: string[]) => {
   return createLegacyRegexMatcher(
-    positions
-      .map((position: string) => `\\[${escapeRegExp(position)}${escapedName}\\]`)
+    [...new Set(positions)]
+      .map((position: string) => createAncestorTokenPattern(ancestorName, position))
       .join("|")
   );
 };
