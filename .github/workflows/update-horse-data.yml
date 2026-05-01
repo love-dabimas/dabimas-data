@@ -46,7 +46,7 @@ jobs:
 
       - name: Generate JSON data
         run: >
-          python tools/horse_data/generate_horselist.py
+          python -m tools.horse_data.generate_horselist
           --source-json ./data/source/workbook.json
           --site-metadata ./data/source/site_metadata.json
           --output ./json/horselist.json
