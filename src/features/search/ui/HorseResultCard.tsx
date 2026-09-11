@@ -11,6 +11,10 @@ import {
   type HorseCardHighlightCriteria
 } from "@/features/search/lib/createHorseCardHighlighter";
 import { renderHighlightedText } from "@/features/search/lib/renderHighlightedText";
+import { IS_EMBEDDED, IS_PICKER, horseKeyOf } from "@/features/embed/model/embedMode";
+import { requestFavoriteToggle } from "@/features/embed/lib/embedBridge";
+import { useEmbedStore } from "@/features/embed/store/useEmbedStore";
+import { FavoriteButton } from "@/features/embed/ui/FavoriteButton";
 
 interface HorseResultCardProps {
   horse: HorseRecord;
@@ -528,6 +532,18 @@ const HorseResultCardBase = ({ horse, criteria, onOpenSkillModal }: HorseResultC
   const legacyRef = useRef<HTMLElement>(null);
   const [legacyScale, setLegacyScale] = useState(1);
   const [scaledHeight, setScaledHeight] = useState<number | null>(null);
+  // ダビふぁくに埋め込まれているときだけ使う。❤ はダビふぁくのデータにいる馬にだけ出す。
+  // 普通に開いたときは常に false / 何もしない。
+  const horseKey = horseKeyOf(horse);
+  const canFavorite = useEmbedStore(
+    (state) => IS_EMBEDDED && state.supportedKeys !== null && state.supportedKeys.has(horseKey)
+  );
+  const isFavorite = useEmbedStore((state) => state.favoriteKeys.has(horseKey));
+  const isPicked = useEmbedStore(
+    (state) =>
+      IS_PICKER && state.pickedHorse !== null && horseKeyOf(state.pickedHorse) === horseKey
+  );
+  const togglePick = useEmbedStore((state) => state.togglePick);
   const temperament = horse.card.temperamentData ?? null;
 
   // 距離は min/max 両方ある時だけレンジ表記にする。
@@ -687,7 +703,23 @@ const HorseResultCardBase = ({ horse, criteria, onOpenSkillModal }: HorseResultC
 
   return (
     <>
-      <article className="result-card">
+      <article
+        className={`result-card${isPicked ? " is-picked" : ""}`}
+        onClick={
+          IS_PICKER
+            ? (event) => {
+                // カード内の非凡・天性の表示や ❤ のタップは、選択の扱いにしない。
+                if ((event.target as HTMLElement).closest("button, a, [role='button']")) {
+                  return;
+                }
+                togglePick(horse);
+              }
+            : undefined
+        }
+      >
+      {canFavorite ? (
+        <FavoriteButton active={isFavorite} onToggle={() => requestFavoriteToggle(horse)} />
+      ) : null}
       <div
         ref={viewportRef}
         className="result-card__viewport"

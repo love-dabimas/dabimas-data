@@ -25,6 +25,12 @@ import { NonordinaryModal } from "@/features/search/ui/NonordinaryModal";
 import { ResultsPanel } from "@/features/search/ui/ResultsPanel";
 import { PARENT_LINE_OPTIONS } from "@/shared/constants/parentLines";
 import { RARE_OPTIONS } from "@/shared/constants/rareCodes";
+import { IS_EMBEDDED, IS_PICKER, PICKER_SEX } from "@/features/embed/model/embedMode";
+import { announceReady, confirmPickedHorse } from "@/features/embed/lib/embedBridge";
+import { applyFavoritesOnly } from "@/features/embed/lib/applyFavoritesOnly";
+import { useEmbedStore } from "@/features/embed/store/useEmbedStore";
+import { FavoritesOnlyToggle } from "@/features/embed/ui/FavoritesOnlyToggle";
+import { PickerBar } from "@/features/embed/ui/PickerBar";
 
 // SearchPage に渡す設定。馬リスト・因子・非凡バンドル・系統選択肢が必要。
 interface SearchPageProps {
@@ -185,6 +191,24 @@ export const SearchPage = ({
   const setActiveTab = useUiStore((state) => state.setActiveTab);
   const resetVisibleCounts = useUiStore((state) => state.resetVisibleCounts);
   const increaseVisible = useUiStore((state) => state.increaseVisible);
+  // ダビふぁくに埋め込まれているときだけ使う状態（お気に入りの写し・選択中の馬）。
+  const favoritesOnly = useEmbedStore((state) => state.favoritesOnly);
+  const favoriteKeys = useEmbedStore((state) => state.favoriteKeys);
+  const setFavoritesOnly = useEmbedStore((state) => state.setFavoritesOnly);
+  const pickedHorse = useEmbedStore((state) => state.pickedHorse);
+  const clearPick = useEmbedStore((state) => state.clearPick);
+
+  // 検索画面が出たことを親に知らせ、❤ を付けてよい馬と今のお気に入りを受け取る。
+  useEffect(() => {
+    announceReady();
+  }, []);
+
+  // 馬選択で開かれたときは、セルの性別に合うタブ（種牡馬 / 牝馬）を先に選んでおく。
+  useEffect(() => {
+    if (IS_PICKER && PICKER_SEX !== "any") {
+      setActiveTab(PICKER_SEX);
+    }
+  }, [setActiveTab]);
 
   // 絞り込みモーダルが開いているか。
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -229,9 +253,17 @@ export const SearchPage = ({
   // 前回のキーを保持する ref。条件が変わったか比較するために使う。
   const previousCriteriaKeyRef = useRef(criteriaKey);
   // 遅延条件でフィルタリングした検索結果。種牡馬リストと牝馬リストが入っている。
-  const results = useMemo(
+  const baseResults = useMemo(
     () => filterHorseRecords(horseSearchIndex, deferredCriteria),
     [horseSearchIndex, deferredCriteria]
+  );
+  // 埋め込み時の「お気に入りのみ」。条件なしならお気に入り全部、条件ありなら条件との掛け合わせ。
+  const results = useMemo(
+    () =>
+      IS_EMBEDDED && favoritesOnly
+        ? applyFavoritesOnly(baseResults, horseSearchIndex.records, favoriteKeys)
+        : baseResults,
+    [baseResults, favoritesOnly, favoriteKeys, horseSearchIndex]
   );
   // カードの中でキーワードや系統名を色付けするための「強調条件」。
   // 条件の変化が描画に関係するフィールドだけ監視し、無駄な再計算を防ぐ。
@@ -507,6 +539,13 @@ export const SearchPage = ({
                 setKeyword(event.target.value);
               }}
             />
+            {IS_EMBEDDED ? (
+              <FavoritesOnlyToggle
+                active={favoritesOnly}
+                count={favoriteKeys.size}
+                onChange={setFavoritesOnly}
+              />
+            ) : null}
           </div>
 
           <div className="quick-tabs" role="tablist" aria-label="基本条件タブ">
@@ -589,6 +628,14 @@ export const SearchPage = ({
           </section>
         </div>
       </div>
+
+      {IS_PICKER && pickedHorse ? (
+        <PickerBar
+          horse={pickedHorse}
+          onCancel={clearPick}
+          onConfirm={() => confirmPickedHorse(pickedHorse)}
+        />
+      ) : null}
 
       {isSearchUpdating || isSearchFeedbackVisible ? (
         <div className="search-overlay" aria-live="polite" aria-label="検索中">

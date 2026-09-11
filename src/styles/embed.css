@@ -1,0 +1,251 @@
+/*
+ * このファイルは、ダビ娘がダビふぁくの中に埋め込まれているときだけ効くスタイル。
+ * <html> に付く .embed-mode（馬選択のときは .embed-mode--picker も）で囲うか、
+ * 埋め込みのときにしか描かれない部品のクラスにだけ当てる。普通に開いたダビ娘の見た目は変えない。
+ * 見た目の数値は、ダビふぁく側の docs/dabimusume-integration-design.md の §6.5 で決めたもの。
+ */
+
+/* ===== カード: 枠で囲み、1 頭ぶんの範囲を見えるようにする ===== */
+
+/* カード同士の空きは、グリッドの隙間ではなく仮想スクロールの行の下の余白で取る。
+   仮想スクロールは行の実測の高さを積み上げて位置を出すので、行の中の余白なら計算がずれない。
+   グリッドの隙間を広げると、先頭の高さ 0 のスペーサーとの間にも空きが入って 1 枚目の上が空きすぎ、
+   スクロール中に表示範囲が入れ替わるたびに位置もずれる。 */
+.embed-mode .results-list__virtual-row {
+  padding-bottom: 14px;
+}
+
+.embed-mode .result-card {
+  position: relative;
+  padding: 8px;
+  border: 2px solid #cfd8e3;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  /* 角の ❤ と「✓ 選択中」がカードの外にはみ出すので、切り取らせない。
+     仮想スクロールで描くカードは元々数枚なので、描画の省略をやめても重くならない。 */
+  content-visibility: visible;
+}
+
+/* ===== ❤: カードの右上の角に掛かる白い丸ボタン ===== */
+
+/* 押せる範囲は 44px。見た目の丸（32px）の下端をカード上端から +14px に置き、
+   配合理論の見出し（+16px）に掛けない。 */
+.result-card__favorite {
+  position: absolute;
+  top: -26px;
+  right: -12px;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.result-card__favorite-circle {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid #e5e7eb;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+}
+
+.result-card__favorite-icon {
+  width: 18px;
+  height: 18px;
+  fill: transparent;
+  stroke: #9aa4b2;
+  stroke-width: 2;
+  stroke-linejoin: round;
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: fill 0.15s ease, stroke 0.15s ease;
+}
+
+.result-card__favorite.is-on .result-card__favorite-icon,
+.result-card__favorite.is-anim-in .result-card__favorite-icon {
+  fill: #e0245e;
+  stroke: #e0245e;
+}
+
+/* 付ける: ハートが弾む（1 → 1.4 → 0.9 → 1 倍）＋ピンクの輪が広がって消える */
+.result-card__favorite.is-anim-in .result-card__favorite-icon {
+  animation: embed-heart-pop 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.4);
+}
+
+.result-card__favorite.is-anim-in .result-card__favorite-circle::after {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border: 2px solid #e0245e;
+  border-radius: 50%;
+  opacity: 0;
+  animation: embed-heart-ring 0.5s ease-out;
+}
+
+/* 外す: 小さく縮む */
+.result-card__favorite.is-anim-out .result-card__favorite-icon {
+  animation: embed-heart-shrink 0.25s ease-out;
+}
+
+@keyframes embed-heart-pop {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.4); }
+  60% { transform: scale(0.9); }
+  100% { transform: scale(1); }
+}
+
+@keyframes embed-heart-ring {
+  0% { transform: scale(0.7); opacity: 0.8; }
+  100% { transform: scale(1.7); opacity: 0; }
+}
+
+@keyframes embed-heart-shrink {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.75); }
+  100% { transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .result-card__favorite .result-card__favorite-icon,
+  .result-card__favorite .result-card__favorite-circle::after {
+    animation: none !important;
+  }
+}
+
+/* ===== 「お気に入りのみ」: キーワード欄の右 ===== */
+
+.embed-mode .keyword-block {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.embed-mode .keyword-block .text-input {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.favorites-only-toggle {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 4px;
+  min-height: 40px;
+  padding: 0 12px;
+  border: 1px solid #cfd8e3;
+  border-radius: 999px;
+  background: #fff;
+  color: #374151;
+  font-size: 13px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.favorites-only-toggle__icon {
+  width: 14px;
+  height: 14px;
+  fill: transparent;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+.favorites-only-toggle.is-on {
+  border-color: #e0245e;
+  background: #fff0f5;
+  color: #e0245e;
+  font-weight: 700;
+}
+
+.favorites-only-toggle.is-on .favorites-only-toggle__icon {
+  fill: currentColor;
+}
+
+/* ===== 馬選択: カードをタップして選び、下部バーで確定する ===== */
+
+/* 確定バーで最後のカードが隠れないよう、下に余白を足す */
+.embed-mode--picker body {
+  padding-bottom: 88px;
+}
+
+.embed-mode--picker .result-card {
+  cursor: pointer;
+}
+
+.embed-mode--picker .result-card.is-picked {
+  border-color: #1e6bd6;
+  background: #f3f8ff;
+  box-shadow: 0 0 0 3px rgba(30, 107, 214, 0.35);
+}
+
+/* 右上の角は ❤ が使うので、「✓ 選択中」は左上の縁に掛けるタグにする */
+.embed-mode--picker .result-card.is-picked::after {
+  content: "✓ 選択中";
+  position: absolute;
+  top: -11px;
+  left: 12px;
+  z-index: 2;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #1e6bd6;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* ダビ娘のポップアップ（z-index 70）より下、結果一覧より上に出す */
+.picker-bar {
+  position: fixed;
+  right: 8px;
+  bottom: 8px;
+  left: 8px;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 8px 8px 12px;
+  border-radius: 12px;
+  background: #111827;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  color: #fff;
+}
+
+.picker-bar__name {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.picker-bar__cancel {
+  flex: 0 0 auto;
+  min-height: 40px;
+  padding: 0 10px;
+  border: 1px solid #6b7280;
+  border-radius: 8px;
+  background: transparent;
+  color: #fff;
+}
+
+.picker-bar__confirm {
+  flex: 0 0 auto;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 8px;
+  background: #1e6bd6;
+  color: #fff;
+  font-weight: 700;
+}
