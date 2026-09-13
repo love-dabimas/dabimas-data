@@ -224,6 +224,45 @@ const renderTheoryMarks = (horse: HorseRecord) => {
   );
 };
 
+// 埋め込みのときだけ、配合理論マークの代わりに出す面白・見事の系統。
+// 面白は Paternal_t / Paternal_jik の前半 / Paternal_ht / Paternal_jik の後半 の 4 つ。
+// 見事は Paternal_mig を 2 文字ずつに割ったもので、種牡馬は 4 つ・繁殖牝馬は 3 つになる
+// （全 2,979 頭で例外なし）。数が違うので枠は固定せず、並んだ分だけ伸ばす。
+const renderLineCodes = (horse: HorseRecord) => {
+  const rows = [
+    {
+      kind: "omoshiro",
+      label: "面白",
+      codes: [
+        horse.Paternal_t,
+        horse.Paternal_jik.slice(0, 2),
+        horse.Paternal_ht,
+        horse.Paternal_jik.slice(2, 4)
+      ]
+    },
+    {
+      kind: "migoto",
+      label: "見事",
+      codes: horse.Paternal_mig.match(/.{2}/g) ?? []
+    }
+  ] as const;
+
+  return (
+    <span className="result-card__lines" aria-label="面白・見事の系統">
+      {rows.map(({ kind, label, codes }) => (
+        <span key={kind} className={`result-card__lines-row result-card__lines-row--${kind}`}>
+          <span className="result-card__lines-label">{label}</span>
+          {codes.map((code, index) => (
+            <span key={index} className="result-card__lines-code">
+              {code}
+            </span>
+          ))}
+        </span>
+      ))}
+    </span>
+  );
+};
+
 // 旧テーブルごとの colspan / rowSpan を維持したまま、スロット別に 1 行ずつ描画する。
 const renderPedigreeRow = (
   slot: PedigreeSlot,
@@ -761,21 +800,7 @@ const HorseResultCardBase = ({ horse, criteria, pedigreeOpen, onTogglePedigree, 
                           {renderText(horse.Category, highlighter.horseCategoryTerms)}
                         </span>
                       </label>
-                      {IS_EMBEDDED ? (
-                        <span className="result-card__lines">
-                          {[
-                            { kind: "omoshiro", label: "面白", codes: [horse.Paternal_t, horse.Paternal_jik.slice(0, 2), horse.Paternal_ht, horse.Paternal_jik.slice(2, 4)] },
-                            { kind: "migoto", label: "見事", codes: horse.Paternal_mig.match(/.{2}/g) ?? [] }
-                          ].map(({ kind, label, codes }) => (
-                            <span key={kind} className={`result-card__lines-row result-card__lines-row--${kind}`}>
-                              <span className="result-card__lines-label">{label}</span>
-                              {codes.map((code, index) => (
-                                <span key={index} className="result-card__lines-code">{code}</span>
-                              ))}
-                            </span>
-                          ))}
-                        </span>
-                      ) : renderTheoryMarks(horse)}
+                      {IS_EMBEDDED ? renderLineCodes(horse) : renderTheoryMarks(horse)}
                     </div>
                   </td>
                 </tr>
