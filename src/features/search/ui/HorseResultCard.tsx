@@ -19,6 +19,8 @@ import { FavoriteButton } from "@/features/embed/ui/FavoriteButton";
 interface HorseResultCardProps {
   horse: HorseRecord;
   criteria: HorseCardHighlightCriteria;
+  pedigreeOpen: boolean;
+  onTogglePedigree: (horse: HorseRecord) => void;
   onOpenSkillModal: (title: string, skill: HorseSkillData) => void;
 }
 
@@ -524,7 +526,7 @@ const renderPedigreeRow = (
   }
 };
 
-const HorseResultCardBase = ({ horse, criteria, onOpenSkillModal }: HorseResultCardProps) => {
+const HorseResultCardBase = ({ horse, criteria, pedigreeOpen, onTogglePedigree, onOpenSkillModal }: HorseResultCardProps) => {
   // all / 1薄 / 2薄 の因子カウントを上段表へ分けて表示する。
   const [allFactorCounts, thin1FactorCounts, thin2FactorCounts] = horse.card.factorCounts;
   const highlighter = createHorseCardHighlighter(criteria, horse);
@@ -544,6 +546,7 @@ const HorseResultCardBase = ({ horse, criteria, onOpenSkillModal }: HorseResultC
       IS_PICKER && state.pickedHorse !== null && horseKeyOf(state.pickedHorse) === horseKey
   );
   const togglePick = useEmbedStore((state) => state.togglePick);
+  const clearPick = useEmbedStore((state) => state.clearPick);
   const temperament = horse.card.temperamentData ?? null;
 
   // 距離は min/max 両方ある時だけレンジ表記にする。
@@ -712,7 +715,7 @@ const HorseResultCardBase = ({ horse, criteria, onOpenSkillModal }: HorseResultC
                 if ((event.target as HTMLElement).closest("button, a, [role='button']")) {
                   return;
                 }
-                togglePick(horse);
+                if (!isPicked) togglePick(horse);
               }
             : undefined
         }
@@ -758,11 +761,25 @@ const HorseResultCardBase = ({ horse, criteria, onOpenSkillModal }: HorseResultC
                           {renderText(horse.Category, highlighter.horseCategoryTerms)}
                         </span>
                       </label>
-                      {renderTheoryMarks(horse)}
+                      {IS_EMBEDDED ? (
+                        <span className="result-card__lines">
+                          {[
+                            { kind: "omoshiro", label: "面白", codes: [horse.Paternal_t, horse.Paternal_jik.slice(0, 2), horse.Paternal_ht, horse.Paternal_jik.slice(2, 4)] },
+                            { kind: "migoto", label: "見事", codes: horse.Paternal_mig.match(/.{2}/g) ?? [] }
+                          ].map(({ kind, label, codes }) => (
+                            <span key={kind} className={`result-card__lines-row result-card__lines-row--${kind}`}>
+                              <span className="result-card__lines-label">{label}</span>
+                              {codes.map((code, index) => (
+                                <span key={index} className="result-card__lines-code">{code}</span>
+                              ))}
+                            </span>
+                          ))}
+                        </span>
+                      ) : renderTheoryMarks(horse)}
                     </div>
                   </td>
                 </tr>
-                <tr>
+                {!IS_EMBEDDED && <tr>
                   <td colSpan={4} className="result-card__skill-summary-cell">
                     <div className="result-card__skill-summary">
                       {renderSkillEntry(
@@ -779,7 +796,7 @@ const HorseResultCardBase = ({ horse, criteria, onOpenSkillModal }: HorseResultC
                       )}
                     </div>
                   </td>
-                </tr>
+                </tr>}
               </tbody>
             </table>
 
@@ -823,7 +840,7 @@ const HorseResultCardBase = ({ horse, criteria, onOpenSkillModal }: HorseResultC
                     <span className="result-card__label-full">距離</span>
                     <span className="result-card__label-short">距</span>
                   </th>
-                  {renderCountHeaderCells("all")}
+                  {!IS_EMBEDDED && renderCountHeaderCells("all")}
                 </tr>
                 <tr>
                   <td>{renderText(horse.card.stats.runningStyle, highlighter.defaultTerms)}</td>
@@ -837,13 +854,13 @@ const HorseResultCardBase = ({ horse, criteria, onOpenSkillModal }: HorseResultC
                   <td className="result-card__distance-value">
                     {renderText(distance, highlighter.defaultTerms)}
                   </td>
-                  {renderCountValueCells(allFactorCounts, "all")}
+                  {!IS_EMBEDDED && renderCountValueCells(allFactorCounts, "all")}
                 </tr>
               </tbody>
             </table>
 
             {/* 下段: 1 薄 / 2 薄の因子カウント。 */}
-            <table width="100%">
+            {!IS_EMBEDDED && <table width="100%">
               <tbody>
                 <tr>
                   <th className="header01_01" colSpan={THIN_FACTOR_HEADER_CODES.length}>
@@ -870,10 +887,10 @@ const HorseResultCardBase = ({ horse, criteria, onOpenSkillModal }: HorseResultC
                   )}
                 </tr>
               </tbody>
-            </table>
+            </table>}
           </div>
 
-          <div className="detail">
+          {(!IS_EMBEDDED || pedigreeOpen) && <div className="detail">
             {/* 血統表本体。スロット配列順に 1 行ずつ差し込む。 */}
             <table className="pedigree" width="100%">
               <tbody>
@@ -882,9 +899,26 @@ const HorseResultCardBase = ({ horse, criteria, onOpenSkillModal }: HorseResultC
                 )}
               </tbody>
             </table>
-          </div>
+          </div>}
         </section>
       </div>
+      {IS_EMBEDDED && (
+        <button
+          type="button"
+          className="result-card__pedigree-toggle"
+          aria-expanded={pedigreeOpen}
+          onClick={() => onTogglePedigree(horse)}
+        >
+          {pedigreeOpen ? "▲ 血統表を隠す" : "▼ 血統表を見る"}
+        </button>
+      )}
+      {isPicked && (
+        <div className="result-card__selection-overlay">
+          <button type="button" className="result-card__deselect" onClick={clearPick}>
+            選択を解除する
+          </button>
+        </div>
+      )}
       </article>
     </>
   );

@@ -197,6 +197,17 @@ const ResultsPanelBase = ({
   const isEmpty = !hasActivePrimaryFilters || records.length === 0;
   // 仮想スクロールリスト全体の div への参照。スクロール位置の計算に使う。
   const listRef = useRef<HTMLDivElement>(null);
+  // 仮想スクロールでカードが外れても、開閉状態と測定済み高さの対応を保つ。
+  const [openPedigrees, setOpenPedigrees] = useState<Set<string>>(() => new Set());
+  const handleTogglePedigree = useCallback((horse: HorseRecord) => {
+    const key = `${horse.HorseId}-${horse.SerialNumber}`;
+    setOpenPedigrees((current) => {
+      const next = new Set(current);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  }, []);
   // カードごとに計測した実際の高さを保存するマップ。index → height（px）。
   // Ref にすることで、高さを書き換えても余計な再描画が起きないようにしている。
   const measuredHeightsRef = useRef<Map<number, number>>(new Map());
@@ -425,6 +436,8 @@ const ResultsPanelBase = ({
                 <HorseResultCard
                   horse={horse}
                   criteria={criteria}
+                  pedigreeOpen={openPedigrees.has(`${horse.HorseId}-${horse.SerialNumber}`)}
+                  onTogglePedigree={handleTogglePedigree}
                   onOpenSkillModal={handleOpenSkillModal}
                 />
               </VirtualRow>
