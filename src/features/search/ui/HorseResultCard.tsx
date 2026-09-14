@@ -813,11 +813,11 @@ const HorseResultCardBase = ({ horse, criteria, pedigreeOpen, onTogglePedigree, 
                           {renderText(horse.Category, highlighter.horseCategoryTerms)}
                         </span>
                       </label>
-                      {IS_EMBEDDED ? renderLineCodes(horse) : renderTheoryMarks(horse)}
+                      {IS_PICKER ? renderLineCodes(horse) : renderTheoryMarks(horse)}
                     </div>
                   </td>
                 </tr>
-                {!IS_EMBEDDED && <tr>
+                {!IS_PICKER && <tr>
                   <td colSpan={4} className="result-card__skill-summary-cell">
                     <div className="result-card__skill-summary">
                       {renderSkillEntry(
@@ -878,7 +878,7 @@ const HorseResultCardBase = ({ horse, criteria, pedigreeOpen, onTogglePedigree, 
                     <span className="result-card__label-full">距離</span>
                     <span className="result-card__label-short">距</span>
                   </th>
-                  {!IS_EMBEDDED && renderCountHeaderCells("all")}
+                  {!IS_PICKER && renderCountHeaderCells("all")}
                 </tr>
                 <tr>
                   <td>{renderText(horse.card.stats.runningStyle, highlighter.defaultTerms)}</td>
@@ -892,13 +892,13 @@ const HorseResultCardBase = ({ horse, criteria, pedigreeOpen, onTogglePedigree, 
                   <td className="result-card__distance-value">
                     {renderText(distance, highlighter.defaultTerms)}
                   </td>
-                  {!IS_EMBEDDED && renderCountValueCells(allFactorCounts, "all")}
+                  {!IS_PICKER && renderCountValueCells(allFactorCounts, "all")}
                 </tr>
               </tbody>
             </table>
 
             {/* 下段: 1 薄 / 2 薄の因子カウント。 */}
-            {!IS_EMBEDDED && <table width="100%">
+            {!IS_PICKER && <table width="100%">
               <tbody>
                 <tr>
                   <th className="header01_01" colSpan={THIN_FACTOR_HEADER_CODES.length}>
@@ -928,7 +928,7 @@ const HorseResultCardBase = ({ horse, criteria, pedigreeOpen, onTogglePedigree, 
             </table>}
           </div>
 
-          {(!IS_EMBEDDED || pedigreeOpen) && <div className="detail">
+          {(!IS_PICKER || pedigreeOpen) && <div className="detail">
             {/* 血統表本体。スロット配列順に 1 行ずつ差し込む。 */}
             <table className="pedigree" width="100%">
               <tbody>
@@ -940,7 +940,7 @@ const HorseResultCardBase = ({ horse, criteria, pedigreeOpen, onTogglePedigree, 
           </div>}
         </section>
       </div>
-      {IS_EMBEDDED && (
+      {IS_PICKER && (
         <button
           type="button"
           className="result-card__pedigree-toggle"

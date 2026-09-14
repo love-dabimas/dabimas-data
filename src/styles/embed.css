@@ -268,25 +268,25 @@
 }
 
 /* 面白・見事は馬名と同じ20px基準。見事3枠の牝馬も自然幅で並べる。 */
-.embed-mode .result-card__summary-cell {
+.embed-mode--picker .result-card__summary-cell {
   grid-template-columns: minmax(0, 1fr) auto;
 }
 
-.embed-mode .result-card__lines {
+.embed-mode--picker .result-card__lines {
   display: inline-flex;
   flex-direction: column;
   gap: 4px;
   margin-left: auto;
 }
 
-.embed-mode .result-card__lines-row {
+.embed-mode--picker .result-card__lines-row {
   display: flex;
   align-items: center;
   gap: 4px;
 }
 
-.embed-mode .result-card__lines-label,
-.embed-mode .result-card__lines-code {
+.embed-mode--picker .result-card__lines-label,
+.embed-mode--picker .result-card__lines-code {
   font-size: 20px;
   font-weight: 700;
   border-radius: 4px;
@@ -294,21 +294,21 @@
   line-height: 1.25;
 }
 
-.embed-mode .result-card__lines-label {
+.embed-mode--picker .result-card__lines-label {
   padding: 3px 6px;
   min-width: 52px;
   color: #fff;
 }
 
-.embed-mode .result-card__lines-row--omoshiro .result-card__lines-label {
+.embed-mode--picker .result-card__lines-row--omoshiro .result-card__lines-label {
   background: #c2703a;
 }
 
-.embed-mode .result-card__lines-row--migoto .result-card__lines-label {
+.embed-mode--picker .result-card__lines-row--migoto .result-card__lines-label {
   background: #2f6fb5;
 }
 
-.embed-mode .result-card__lines-code {
+.embed-mode--picker .result-card__lines-code {
   padding: 3px 2px;
   min-width: 38px;
   color: #2a2a33;
@@ -316,7 +316,7 @@
   border: 1px solid #d7dce5;
 }
 
-.embed-mode .result-card__pedigree-toggle {
+.embed-mode--picker .result-card__pedigree-toggle {
   display: block;
   width: 100%;
   margin-top: 6px;
@@ -331,30 +331,30 @@
   cursor: pointer;
 }
 
-.embed-mode .result-card__pedigree-toggle:hover {
+.embed-mode--picker .result-card__pedigree-toggle:hover {
   background: #e4d9fb;
 }
 
-.embed-mode .result-card__pedigree-toggle:focus-visible {
+.embed-mode--picker .result-card__pedigree-toggle:focus-visible {
   outline: 2px solid #6b4fbb;
   outline-offset: 2px;
 }
 
 /* 開閉ボタンをスクロールアンカーにしないことで、展開した高さだけ画面が動くのを防ぐ。 */
-.embed-mode .results-list {
+.embed-mode--picker .results-list {
   overflow-anchor: none;
 }
 
 /* 配合理論は親が指定した順で表示する。長いラベルも375pxに収める。 */
-.embed-mode .pair-theory-chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.embed-mode .pair-theory-chips button {
+.embed-mode--picker .pair-theory-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.embed-mode--picker .pair-theory-chips button {
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   flex: 1 1 68px; min-width: 0; min-height: 44px; padding: 6px 4px;
   font: inherit; font-size: 13px; border: 1px solid #899b90; border-radius: 14px;
   color: #244538; background: #fff; overflow-wrap: anywhere;
 }
-.embed-mode .pair-theory-chips button[aria-pressed="true"] { background: #244538; color: #fff; }
-.embed-mode .pair-theory-chips button:disabled { color: #626b65; background: #edf0ed; cursor: default; }
+.embed-mode--picker .pair-theory-chips button[aria-pressed="true"] { background: #244538; color: #fff; }
+.embed-mode--picker .pair-theory-chips button:disabled { color: #626b65; background: #edf0ed; cursor: default; }
 .embed-mode .custom-horse-badge {
   display: inline-block; margin-left: 6px; padding: 1px 5px;
   border: 1px solid currentColor; border-radius: 4px; font-size: 12px; vertical-align: middle;

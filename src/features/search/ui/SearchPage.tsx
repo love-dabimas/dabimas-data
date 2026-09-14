@@ -289,7 +289,7 @@ export const SearchPage = ({
         : baseResults,
     [baseResults, favoritesOnly, favoriteKeys, horseSearchIndex]
   );
-  const pairResults = useMemo(() => IS_EMBEDDED && theoryMap
+  const pairResults = useMemo(() => IS_PICKER && theoryMap
     ? pairTheoryResults(nonPairResults, horseSearchIndex.records, theoryMap, pairTheory) : null,
     [nonPairResults, horseSearchIndex, theoryMap, pairTheory]);
   const results = pairResults?.results ?? nonPairResults;
@@ -615,7 +615,7 @@ export const SearchPage = ({
         </section>
 
         <div className="results-stack">
-          {IS_EMBEDDED && theoryMap && pairResults && (
+          {IS_PICKER && theoryMap && pairResults && (
             <div className="pair-theory-chips" role="group" aria-label="母との配合理論">
               {theoryMap.chips.map((chip, index) => (
                 <button key={chip.key} type="button" disabled={chip.pending}
