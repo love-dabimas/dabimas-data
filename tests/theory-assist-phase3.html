@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="ja">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>埋め込みカード検証</title>
+<style>body { margin: 0; } iframe { display:block; border:0; width:375px; height:844px; } pre { white-space:pre-wrap; }</style>
+<iframe title="ダビ娘検証"></iframe>
+<pre id="messages"></pre>
+<script>
+const frame = document.querySelector('iframe');
+frame.addEventListener('load', () => {
+  frame.contentDocument.addEventListener('click', (event) => {
+    if (!event.target.closest('.result-card__pedigree-toggle')) return;
+    const before = frame.contentWindow.scrollY;
+    setTimeout(() => {
+      document.querySelector('#messages').textContent += JSON.stringify({toggleScrollBefore: before, toggleScrollAfter: frame.contentWindow.scrollY}) + '\n';
+    }, 250);
+  }, true);
+});
+frame.src = '/?' + (new URLSearchParams(location.search).get('mode') === 'embed' ? 'embed=1' : 'picker=1');
+window.addEventListener('message', (event) => {
+  if (event.origin !== location.origin || event.source !== frame.contentWindow) return;
+  document.querySelector('#messages').textContent += JSON.stringify(event.data) + '\n';
+});
+</script>
+</html>
