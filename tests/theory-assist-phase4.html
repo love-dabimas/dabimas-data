@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="ja">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>配合理論補助 Phase 4 検証</title>
+<style>body {margin:0;font:14px sans-serif} iframe {display:block;border:0;width:100%;max-width:375px;height:844px} pre {white-space:pre-wrap;overflow-wrap:anywhere} button {min-height:44px}</style>
+<button id="change-mare">母を変更</button>
+<iframe title="ダビ娘 Phase 4 検証"></iframe>
+<pre id="messages"></pre>
+<script>
+const frame = document.querySelector('iframe');
+const chips = [
+  {key:'PERFECT',label:'完璧',bit:1,pending:false},
+  {key:'SUPER_PERFECT',label:'超完璧',bit:2,pending:false},
+  {key:'MIRACLE',label:'奇跡',bit:4,pending:false},
+  {key:'SUPREME',label:'至高',bit:8,pending:true}
+];
+const custom = {
+  key:'ch_phase4-0',gender:'0',name:'検証自家製スター',category:'ボールドルーラー系',categoryHt:'',
+  paternalT:'Ns',paternalHt:'He',paternalJik:'HeRo',paternalMig:'MaSwHiHa',factors:['01'],
+  pedigree:Array.from({length:15},(_,i)=>['検証祖先'+i,'ボールドルーラー系','Ns',[]])
+};
+window.phase4 = {messages:[], candidateSendAt:0, candidateMs:null, candidateCloneMs:null, rows:[], entries:[]};
+// 送信の直前と受信時を同じ親の時計で測る。通信の本体は元の postMessage。
+window.phase4OriginalPost = window.postMessage;
+frame.addEventListener('load', () => {
+  // 子の realm で包み、postMessage の event.source を子のまま保つ。
+  window.postMessage = frame.contentWindow.Function('message', '...args', `
+    const parent = window.parent;
+    const candidate = message?.type === 'dabimas:candidates';
+    if(candidate) parent.phase4.candidateSendAt = parent.performance.now();
+    const result = parent.phase4OriginalPost.call(parent, message, ...args);
+    if(candidate) parent.phase4.candidateCloneMs = parent.performance.now() - parent.phase4.candidateSendAt;
+    return result;
+  `);
+});
+function send(message) {frame.contentWindow.postMessage({...message,v:1},location.origin)}
+function map(mareKey='mare-a') {send({type:'dabimas:theory-map',mareKey,chips,entries:phase4.entries})}
+window.sendPhase4 = send;
+window.addEventListener('message', event => {
+  if(event.origin!==location.origin || event.source!==frame.contentWindow) return;
+  const message=event.data;
+  phase4.messages.push(message);
+  if(message.type==='dabimas:hello') {
+    send({type:'dabimas:favorites',supportedKeys:['3315497239-0'],favoriteKeys:[],favoritesOnly:false});
+    send({type:'dabimas:custom-horses',horses:[custom,{...custom,key:'ch_phase4-mare-1',gender:'1',name:'検証自家製牝馬',paternalMig:'MaHiHa'}]});
+  }
+  if(message.type==='dabimas:candidates') {
+    phase4.candidateMs=performance.now()-phase4.candidateSendAt;
+    phase4.rows=message.rows;
+    phase4.entries=[['3315497239-0',5],['ch_phase4-0',1]];
+    map();
+  }
+  document.querySelector('#messages').textContent=JSON.stringify({
+    types:phase4.messages.map(x=>x.type), rows:phase4.rows.length,
+    candidateCloneMs:phase4.candidateCloneMs,candidateMs:phase4.candidateMs,
+    selection:phase4.messages.filter(x=>x.type==='dabimas:select')
+  },null,2);
+});
+document.querySelector('#change-mare').onclick=()=>map('mare-'+Date.now());
+frame.src='/?picker=1&sex=0';
+</script>
+</html>

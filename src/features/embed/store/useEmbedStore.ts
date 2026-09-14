@@ -5,9 +5,15 @@
 import { create } from "zustand";
 import type { HorseRecord } from "@/features/horses/model/types";
 import { horseKeyOf } from "@/features/embed/model/embedMode";
+import type { TheoryMap } from "@/features/embed/model/messages";
 import { postToParent } from "@/features/embed/model/messages";
 
 interface EmbedState {
+  customHorses: HorseRecord[];
+  theoryMap: TheoryMap | null;
+  pairTheory: string | null;
+  receiveTheoryMap: (map: TheoryMap) => void;
+  togglePairTheory: (key: string) => void;
   // ❤ を付けてよい馬のキー。親から届くまでは null で、その間は ❤ を出さない。
   supportedKeys: Set<string> | null;
   favoriteKeys: Set<string>;
@@ -21,6 +27,19 @@ interface EmbedState {
 }
 
 export const useEmbedStore = create<EmbedState>((set) => ({
+  customHorses: [],
+  theoryMap: null,
+  pairTheory: null,
+  receiveTheoryMap: (map) => set((state) => ({
+    theoryMap: map,
+    pairTheory: state.theoryMap?.mareKey === map.mareKey &&
+      map.chips.some((chip) => chip.key === state.pairTheory && !chip.pending)
+      ? state.pairTheory : null
+  })),
+  togglePairTheory: (key) => set((state) =>
+    state.theoryMap?.chips.some((chip) => chip.key === key && !chip.pending)
+      ? { pairTheory: state.pairTheory === key ? null : key } : {}
+  ),
   supportedKeys: null,
   favoriteKeys: new Set<string>(),
   favoritesOnly: false,

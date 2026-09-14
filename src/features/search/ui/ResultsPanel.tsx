@@ -21,6 +21,7 @@ import { HorseSkillModal } from "@/features/search/ui/HorseSkillModal";
 
 // 結果パネルに渡す設定。馬のリスト・強調条件・表示件数・センチネル要素の参照などが入る。
 interface ResultsPanelProps {
+  emptyMessage?: string;
   records: HorseRecord[];
   criteria: HorseCardHighlightCriteria;
   hasActivePrimaryFilters: boolean;
@@ -187,6 +188,7 @@ const VirtualRow = memo(({ children, index, onMeasure }: VirtualRowProps) => {
 
 // 検索結果パネルの本体。memo でくるんで不要な再描画を防ぐ。
 const ResultsPanelBase = ({
+  emptyMessage,
   records,
   criteria,
   hasActivePrimaryFilters,
@@ -450,8 +452,8 @@ const ResultsPanelBase = ({
         </div>
       ) : (
         <div className="empty-state">
-          <h2>{hasActivePrimaryFilters ? EMPTY_RESULTS_HEADING : EMPTY_IDLE_HEADING}</h2>
-          <p>{hasActivePrimaryFilters ? EMPTY_RESULTS_BODY : EMPTY_IDLE_BODY}</p>
+          <h2>{hasActivePrimaryFilters ? (emptyMessage ? "該当なし" : EMPTY_RESULTS_HEADING) : EMPTY_IDLE_HEADING}</h2>
+          <p>{hasActivePrimaryFilters ? (emptyMessage ?? EMPTY_RESULTS_BODY) : EMPTY_IDLE_BODY}</p>
         </div>
       )}
     </section>

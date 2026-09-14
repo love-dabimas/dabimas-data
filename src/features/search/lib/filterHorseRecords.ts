@@ -429,12 +429,13 @@ const getIndexedCandidateMask = (index: HorseSearchIndex, criteria: SearchCriter
 
 export const filterHorseRecords = (
   source: HorseRecord[] | HorseSearchIndex,
-  criteria: SearchCriteria
+  criteria: SearchCriteria,
+  allowWithoutPrimaryFilters = false
 ): FilterHorseRecordsResult => {
   const index = Array.isArray(source) ? createHorseSearchIndex(sortHorseRecords(source)) : source;
   const compiled = compileCriteria(criteria);
 
-  if (!compiled.activePrimaryFilters) {
+  if (!compiled.activePrimaryFilters && !allowWithoutPrimaryFilters) {
     return {
       stallions: [],
       broodmares: [],
