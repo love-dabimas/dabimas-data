@@ -26,10 +26,11 @@ import { ResultsPanel } from "@/features/search/ui/ResultsPanel";
 import { PARENT_LINE_OPTIONS } from "@/shared/constants/parentLines";
 import { RARE_OPTIONS } from "@/shared/constants/rareCodes";
 import { IS_EMBEDDED, IS_PICKER, PICKER_SEX } from "@/features/embed/model/embedMode";
-import { announceReady, confirmPickedHorse } from "@/features/embed/lib/embedBridge";
+import { announceCandidates, announceReady, confirmPickedHorse } from "@/features/embed/lib/embedBridge";
 import { applyFavoritesOnly } from "@/features/embed/lib/applyFavoritesOnly";
 import { useEmbedStore } from "@/features/embed/store/useEmbedStore";
 import { FavoritesOnlyToggle } from "@/features/embed/ui/FavoritesOnlyToggle";
+import { pairTheoryResults } from "@/features/embed/lib/pairTheoryResults";
 import { PickerBar } from "@/features/embed/ui/PickerBar";
 
 // SearchPage に渡す設定。馬リスト・因子・非凡バンドル・系統選択肢が必要。
@@ -197,11 +198,17 @@ export const SearchPage = ({
   const setFavoritesOnly = useEmbedStore((state) => state.setFavoritesOnly);
   const pickedHorse = useEmbedStore((state) => state.pickedHorse);
   const clearPick = useEmbedStore((state) => state.clearPick);
+  const customHorses = useEmbedStore((state) => state.customHorses);
+  const theoryMap = useEmbedStore((state) => state.theoryMap);
+  const pairTheory = useEmbedStore((state) => state.pairTheory);
+  const togglePairTheory = useEmbedStore((state) => state.togglePairTheory);
+
 
   // 検索画面が出たことを親に知らせ、❤ を付けてよい馬と今のお気に入りを受け取る。
   useEffect(() => {
     announceReady();
-  }, []);
+    announceCandidates(horses);
+  }, [horses]);
 
   // 馬選択で開かれたときは、セルの性別に合うタブ（種牡馬 / 牝馬）を先に選んでおく。
   useEffect(() => {
@@ -228,7 +235,9 @@ export const SearchPage = ({
   // スピナーを消すためのタイマー ID。再設定時に前のタイマーをキャンセルするために保持する。
   const searchFeedbackTimerRef = useRef<number | null>(null);
   // 馬リストをソート順に並べ替えたもの。並べ替えは重いので useMemo でキャッシュ。
-  const sortedHorses = useMemo(() => sortHorseRecords(horses), [horses]);
+  const masterHorses = useMemo(() => sortHorseRecords(horses), [horses]);
+  const sortedHorses = useMemo(() => IS_EMBEDDED
+    ? [...masterHorses, ...customHorses] : masterHorses, [masterHorses, customHorses]);
   // 絞り込みモーダルの「天性」選択肢。馬リストから重複を除いて五十音順に並べる。
   const temperamentOptions = useMemo(
     () =>
@@ -241,6 +250,9 @@ export const SearchPage = ({
   );
   // ビットフィールドを使った高速検索インデックス。馬リストが変わるときだけ再構築する。
   const horseSearchIndex = useMemo(() => createHorseSearchIndex(sortedHorses), [sortedHorses]);
+  const masterSearchIndex = useMemo(() => IS_EMBEDDED
+    ? createHorseSearchIndex(masterHorses) : horseSearchIndex, [masterHorses, horseSearchIndex]);
+  const customSearchIndex = useMemo(() => createHorseSearchIndex(customHorses), [customHorses]);
 
   // 検索条件を「少し遅らせた」バージョン。React の並行レンダリング機能を使い、
   // 条件入力中に画面がフリーズしないよう、重い絞り込み処理を後回しにする。
@@ -254,17 +266,33 @@ export const SearchPage = ({
   const previousCriteriaKeyRef = useRef(criteriaKey);
   // 遅延条件でフィルタリングした検索結果。種牡馬リストと牝馬リストが入っている。
   const baseResults = useMemo(
-    () => filterHorseRecords(horseSearchIndex, deferredCriteria),
-    [horseSearchIndex, deferredCriteria]
+    () => {
+      if (!IS_EMBEDDED) return filterHorseRecords(horseSearchIndex, deferredCriteria);
+      // 自家製馬にはレアがないためレア条件だけを適用しない。
+      const master = filterHorseRecords(masterSearchIndex, deferredCriteria, Boolean(theoryMap));
+      const custom = filterHorseRecords(customSearchIndex,
+        { ...deferredCriteria, rareCodes: [] }, Boolean(theoryMap));
+      return {
+        stallions: [...master.stallions, ...custom.stallions],
+        broodmares: [...master.broodmares, ...custom.broodmares],
+        total: master.total + custom.total,
+        hasActivePrimaryFilters: master.hasActivePrimaryFilters || custom.hasActivePrimaryFilters
+      };
+    },
+    [horseSearchIndex, deferredCriteria, masterSearchIndex, customSearchIndex, theoryMap]
   );
   // 埋め込み時の「お気に入りのみ」。条件なしならお気に入り全部、条件ありなら条件との掛け合わせ。
-  const results = useMemo(
+  const nonPairResults = useMemo(
     () =>
       IS_EMBEDDED && favoritesOnly
         ? applyFavoritesOnly(baseResults, horseSearchIndex.records, favoriteKeys)
         : baseResults,
     [baseResults, favoritesOnly, favoriteKeys, horseSearchIndex]
   );
+  const pairResults = useMemo(() => IS_EMBEDDED && theoryMap
+    ? pairTheoryResults(nonPairResults, horseSearchIndex.records, theoryMap, pairTheory) : null,
+    [nonPairResults, horseSearchIndex, theoryMap, pairTheory]);
+  const results = pairResults?.results ?? nonPairResults;
   // カードの中でキーワードや系統名を色付けするための「強調条件」。
   // 条件の変化が描画に関係するフィールドだけ監視し、無駄な再計算を防ぐ。
   const highlightCriteria = useMemo(
@@ -521,7 +549,7 @@ export const SearchPage = ({
               <button
                 className="ghost-button"
                 type="button"
-                onClick={resetCriteria}
+                onClick={() => { resetCriteria(); if (IS_EMBEDDED) useEmbedStore.setState({ pairTheory: null }); }}
               >
                 全条件リセット
               </button>
@@ -587,6 +615,18 @@ export const SearchPage = ({
         </section>
 
         <div className="results-stack">
+          {IS_EMBEDDED && theoryMap && pairResults && (
+            <div className="pair-theory-chips" role="group" aria-label="母との配合理論">
+              {theoryMap.chips.map((chip, index) => (
+                <button key={chip.key} type="button" disabled={chip.pending}
+                  aria-pressed={pairTheory === chip.key}
+                  onClick={() => togglePairTheory(chip.key)}>
+                  <span>{chip.label}</span>
+                  <span>{chip.pending ? "計算中" : `${pairResults.counts[index]?.[activeTab] ?? 0}頭`}</span>
+                </button>
+              ))}
+            </div>
+          )}
           <section className="results-tabs-shell">
             <div className="tab-strip" role="tablist" aria-label="検索対象タブ">
               <button
@@ -618,6 +658,9 @@ export const SearchPage = ({
                 <ResultsPanel
                   key={activeTab}
                   criteria={highlightCriteria}
+                  emptyMessage={pairResults?.chip
+                    ? `${pairResults.chip.label}な配合になる${activeTab === "0" ? "種牡馬" : "繁殖牝馬"}はいませんでした。`
+                    : undefined}
                   hasActivePrimaryFilters={results.hasActivePrimaryFilters}
                   records={activeRecords}
                   sentinelRef={activeSentinelRef}

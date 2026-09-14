@@ -2,13 +2,41 @@
 // やり取りは window.postMessage だけで行い、ダビ娘はダビふぁくの保存データ（IndexedDB）には触らない。
 // 仕様はダビふぁく側の docs/dabimusume-integration-design.md の §4 と同じ。
 
-import type { GenderTab } from "@/features/horses/model/types";
+import type { GenderTab, PedigreeEntry } from "@/features/horses/model/types";
+
+export interface CustomHorsePayload {
+  key: string;
+  gender: GenderTab;
+  name: string;
+  category: string;
+  categoryHt: string;
+  paternalT: string;
+  paternalHt: string;
+  paternalJik: string;
+  paternalMig: string;
+  factors: string[];
+  pedigree: PedigreeEntry[];
+}
+
+export interface TheoryChip {
+  key: string;
+  label: string;
+  bit: number;
+  pending: boolean;
+}
+
+export interface TheoryMap {
+  mareKey: string;
+  chips: TheoryChip[];
+  entries: [string, number][];
+}
 
 // メッセージの形を変えるときに、親と子で食い違いに気づけるよう版番号を付ける。
 export const EMBED_PROTOCOL_VERSION = 1;
 
 // ダビ娘 → 親
 export type MessageToParent =
+  | { type: "dabimas:candidates"; v: number; rows: [string, string, string, string, string][] }
   | { type: "dabimas:hello"; v: number; mode: "embed" | "picker" }
   | { type: "dabimas:favorite-toggle"; v: number; horseId: string; gender: GenderTab }
   | { type: "dabimas:favorites-only"; v: number; value: boolean }
@@ -16,6 +44,8 @@ export type MessageToParent =
 
 // 親 → ダビ娘
 export type MessageFromParent =
+  | { type: "dabimas:custom-horses"; v: number; horses: CustomHorsePayload[] }
+  | ({ type: "dabimas:theory-map"; v: number } & TheoryMap)
   | {
       type: "dabimas:favorites";
       v: number;
@@ -45,7 +75,8 @@ export const readMessageFromParent = (event: MessageEvent): MessageFromParent | 
   }
 
   const type = (data as { type?: unknown }).type;
-  if (type === "dabimas:favorites" || type === "dabimas:reset-pick") {
+  if (type === "dabimas:favorites" || type === "dabimas:reset-pick" ||
+      type === "dabimas:custom-horses" || type === "dabimas:theory-map") {
     return data as MessageFromParent;
   }
 

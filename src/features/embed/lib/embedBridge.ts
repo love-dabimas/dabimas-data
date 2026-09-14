@@ -2,11 +2,24 @@
 // 親から届くメッセージを受け取ってストアに反映し、ダビ娘からのお願いを親へ送る。
 
 import type { HorseRecord } from "@/features/horses/model/types";
-import { IS_EMBEDDED, IS_PICKER } from "@/features/embed/model/embedMode";
+import { IS_EMBEDDED, IS_PICKER, horseKeyOf } from "@/features/embed/model/embedMode";
 import { postToParent, readMessageFromParent } from "@/features/embed/model/messages";
 import { useEmbedStore } from "@/features/embed/store/useEmbedStore";
 
+import { buildCustomHorseRecord } from "./buildCustomHorseRecord";
+
 let started = false;
+let candidatesSent = false;
+
+// StrictMode の再マウントでも、マスター候補の送信は一度だけ。
+export const announceCandidates = (horses: HorseRecord[]) => {
+  if (!IS_EMBEDDED || candidatesSent) return;
+  candidatesSent = true;
+  postToParent({ type: "dabimas:candidates", rows: horses
+    .filter((horse) => !horse.HorseId.startsWith("ch_"))
+    .map((horse) => [horseKeyOf(horse), horse.Paternal_t, horse.Paternal_ht,
+      horse.Paternal_jik, horse.Paternal_mig]) });
+};
 
 // 起動時に 1 度だけ呼び、親からのメッセージの受け口を作る。
 // 検索画面が出る前に作っておき、hello への返事を取りこぼさないようにする。
@@ -25,6 +38,21 @@ export const startEmbedBridge = () => {
     if (message.type === "dabimas:reset-pick") {
       // 親が別のセル用に開き直したとき・馬を入れ終わったときは、選んでいた馬を残さない。
       useEmbedStore.setState({ pickedHorse: null });
+      return;
+    }
+
+    if (message.type === "dabimas:custom-horses") {
+      const customHorses = message.horses.map(buildCustomHorseRecord);
+      useEmbedStore.setState((state) => ({
+        customHorses,
+        pickedHorse: state.pickedHorse?.HorseId.startsWith("ch_")
+          ? customHorses.find((horse) => horseKeyOf(horse) === horseKeyOf(state.pickedHorse!)) ?? null
+          : state.pickedHorse
+      }));
+      return;
+    }
+    if (message.type === "dabimas:theory-map") {
+      useEmbedStore.getState().receiveTheoryMap(message);
       return;
     }
 

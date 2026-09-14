@@ -577,7 +577,7 @@ const HorseResultCardBase = ({ horse, criteria, pedigreeOpen, onTogglePedigree, 
   // 普通に開いたときは常に false / 何もしない。
   const horseKey = horseKeyOf(horse);
   const canFavorite = useEmbedStore(
-    (state) => IS_EMBEDDED && state.supportedKeys !== null && state.supportedKeys.has(horseKey)
+    (state) => IS_EMBEDDED && !horse.HorseId.startsWith("ch_") && state.supportedKeys !== null && state.supportedKeys.has(horseKey)
   );
   const isFavorite = useEmbedStore((state) => state.favoriteKeys.has(horseKey));
   const isPicked = useEmbedStore(
@@ -589,7 +589,7 @@ const HorseResultCardBase = ({ horse, criteria, pedigreeOpen, onTogglePedigree, 
   const temperament = horse.card.temperamentData ?? null;
 
   // 距離は min/max 両方ある時だけレンジ表記にする。
-  const distance =
+  const distance = IS_EMBEDDED && horse.HorseId.startsWith("ch_") ? "ー" :
     horse.card.stats.distanceMin && horse.card.stats.distanceMax
       ? `${horse.card.stats.distanceMin}〜${horse.card.stats.distanceMax}`
       : horse.card.stats.distanceMin || horse.card.stats.distanceMax;
@@ -787,6 +787,9 @@ const HorseResultCardBase = ({ horse, criteria, pedigreeOpen, onTogglePedigree, 
                       <label className="result-card__summary-main">
                         <span className="result-card__horse-name">
                           {renderText(horse.card.name, highlighter.horseNameTerms)}
+                          {IS_EMBEDDED && horse.HorseId.startsWith("ch_") && (
+                            <span className="custom-horse-badge" aria-label="自家製馬">自</span>
+                          )}
                         </span>
                         <span className="factor_02_img">
                           {horse.card.selfFactorCodes.map((code, index) => (
