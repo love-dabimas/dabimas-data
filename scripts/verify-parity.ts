@@ -86,6 +86,35 @@ const filterSqlText = (
   return `${prefix}(${column} REGEXP "^(?=.*${value}).*$")`;
 };
 
+// ここだけは旧実装の SQL をそのまま写していない。旧実装は先祖名の条件を
+//
+//   Ped_All REGEXP "[父父Bull Dog]"
+//
+// と組み立てていたが、角かっこを逃がしていないので正規表現の**文字クラス**になり、
+// 「父・B・u・l・D・o・g・空白 のどれか1文字でも含む馬」の意味になっていた。
+// 実データでは全 2,979 頭が当たり、位置を指定した先祖名検索が事実上効いていない。
+// 突き合わせの相手がこれでは新実装を守れないので、ここでは**旧実装が出したかった
+// 問い**（`[父父Bull Dog]` という並びそのものを探す）を書く。新実装の
+// `createAncestorTokenPattern` と同じ形にしてある。
+// なお alasql は文字列リテラルでバックスラッシュを1段外すので、`\\[` と書くと
+// 正規表現には `\[` が渡る。
+const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+// 「自身」だけは `[自身ナントカ-3]` のように枝番が付くことがあり、新実装も
+// そこを別扱いしている（filterHorseRecords.ts の SELF_ANCESTOR_SUFFIX_START_PATTERN）。
+const SELF_ANCESTOR_POSITION = "自身";
+const SELF_ANCESTOR_SUFFIX_START_PATTERN = "[-‐‑‒–—―－\\d０-９]";
+
+const ancestorTokenPattern = (position: string, ancestorName: string) => {
+  const escaped = `${escapeRegExp(position)}${escapeRegExp(ancestorName)}`;
+
+  if (position === SELF_ANCESTOR_POSITION) {
+    return `\\[${escaped}(?:\\]|${SELF_ANCESTOR_SUFFIX_START_PATTERN}[^\\]]*\\])`;
+  }
+
+  return `\\[${escaped}\\]`;
+};
+
 const filterSqlFactor = (
   sqlFilter: string,
   factorValue: string,
@@ -96,11 +125,14 @@ const filterSqlFactor = (
   }
 
   const prefix = sqlFilter.length > 0 ? `${sqlFilter} AND ` : "";
-  const joined = factorPositions.map((position) => `[${position}${factorValue}]`).join("|");
 
   if (factorPositions.length === 7) {
     return `${prefix}(Ped_All REGEXP "^(?=.*${factorValue}).*$")`;
   }
+
+  const joined = [...new Set(factorPositions)]
+    .map((position) => ancestorTokenPattern(position, factorValue))
+    .join("|");
 
   return `${prefix}(Ped_All REGEXP "${joined}")`;
 };
