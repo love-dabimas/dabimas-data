@@ -4,7 +4,7 @@
 // 検索実行の遅延（useDeferredValue）や「検索中」スピナーの表示制御もここで行う。
 
 import { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
-import type { FactorOption, HorseRecord } from "@/features/horses/model/types";
+import type { FactorOption, GenderTab, HorseRecord } from "@/features/horses/model/types";
 import type { NonordinaryBundle } from "@/features/nonordinary/model/types";
 import type { ChildLineOption } from "@/features/search/model/childLineOption";
 import { pickHorseCardHighlightCriteria } from "@/features/search/lib/createHorseCardHighlighter";
@@ -216,6 +216,11 @@ export const SearchPage = ({
       setActiveTab(PICKER_SEX);
     }
   }, [setActiveTab]);
+
+  // 入れられない性別のタブは押せなくする。選べてしまうと、確定したあとに親から
+  // 「このセルには繁殖牝馬しか入りません」と返されるまで分からない。
+  const isTabLocked = (tab: GenderTab) =>
+    IS_PICKER && PICKER_SEX !== "any" && PICKER_SEX !== tab;
 
   // 絞り込みモーダルが開いているか。
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -634,6 +639,7 @@ export const SearchPage = ({
                 className={`tab-button ${activeTab === "0" ? "is-active" : ""}`}
                 role="tab"
                 type="button"
+                disabled={isTabLocked("0")}
                 onClick={() => setActiveTab("0")}
               >
                 種牡馬
@@ -644,6 +650,7 @@ export const SearchPage = ({
                 className={`tab-button ${activeTab === "1" ? "is-active" : ""}`}
                 role="tab"
                 type="button"
+                disabled={isTabLocked("1")}
                 onClick={() => setActiveTab("1")}
               >
                 牝馬
