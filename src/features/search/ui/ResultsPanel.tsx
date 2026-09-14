@@ -342,6 +342,15 @@ const ResultsPanelBase = ({
   // VirtualRow から高さが報告されたときに呼ばれる。
   // 値が変わっていないときは無視して、変わったときだけ保存して再計算を促す。
   const handleMeasure = useCallback((index: number, height: number) => {
+    // 高さ 0 は「まだ描かれていない」「隠れている」ときの値で、カードの実寸ではない。
+    // これを採用すると、埋め込みのシートを閉じたときに全カードが 0 になり、
+    // 仮想スクロールが「まだ入る」と判断して行を増やし、増えた行がまた 0 を報告し…
+    // と際限なく state 更新が続いて React が止まる（Maximum update depth exceeded）。
+    // 隠れている間は前の高さを持ち続け、見えたときに測り直す。
+    if (height <= 0) {
+      return;
+    }
+
     const current = measuredHeightsRef.current.get(index);
     if (current === height) {
       return;
