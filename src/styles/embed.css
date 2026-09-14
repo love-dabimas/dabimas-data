@@ -359,3 +359,15 @@
   display: inline-block; margin-left: 6px; padding: 1px 5px;
   border: 1px solid currentColor; border-radius: 4px; font-size: 12px; vertical-align: middle;
 }
+
+/* 馬選択で開かれたとき、入れられない性別のタブは押せなくする。
+   押せてしまうと、確定したあとに親から「このセルには…しか入りません」と
+   返されるまで分からない。押せないことが見て分かる薄さにする。 */
+.embed-mode--picker .tab-button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.embed-mode--picker .tab-button:disabled span {
+  background: rgba(255, 255, 255, 0.5);
+}
