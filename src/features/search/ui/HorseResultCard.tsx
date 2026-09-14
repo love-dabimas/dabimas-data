@@ -1,5 +1,5 @@
 ﻿import { useLayoutEffect, useRef, useState, type CSSProperties } from "react";
-import { memo } from "react";
+import { Fragment, memo } from "react";
 import type {
   HorseRecord,
   HorseSkillData,
@@ -129,22 +129,32 @@ const renderFactorImage = (code: string) => {
   return <img src={factorIcon(code)} alt="" />;
 };
 
-// 血統表末尾の因子欄は最大 2 個だけ見せる仕様なので、空欄込みで 2 セルへそろえる。
+// 血統表末尾の因子欄は 2 セル固定。行ごとにセル数を変えると桁が揃わなくなる。
+// マスターの祖先は 1 行あたり最大 2 個なので、ここは今までどおり 1 個ずつ入る。
+// 自家製馬の父だけは利用者が選んだ種牡馬そのもので、因子を 3 個持ちうる
+// （ダビふぁくの血統表も 3 個出す）。落とさずに、左のセルへまとめて入れる。
 const renderPedigreeFactorCells = (
   kind: "horse" | "migoto" | "omoshiro" | "omoshiro_mare",
   factorCodes: string[]
 ) => {
-  const visibleCodes = factorCodes.slice(-2);
-  const paddedCodes =
-    visibleCodes.length === 0
-      ? ["", ""]
-      : visibleCodes.length === 1
-        ? ["", visibleCodes[0]]
-        : visibleCodes;
+  const cells: string[][] =
+    factorCodes.length === 0
+      ? [[], []]
+      : factorCodes.length === 1
+        ? [[], [factorCodes[0]]]
+        : [factorCodes.slice(0, -1), factorCodes.slice(-1)];
 
-  return paddedCodes.map((code, index) => (
-    <td key={`${kind}-${index}-${code || "blank"}`} className={`factor_${kind}`} width="24">
-      {renderFactorImage(code)}
+  return cells.map((codes, index) => (
+    <td
+      key={`${kind}-${index}-${codes.join("") || "blank"}`}
+      className={`factor_${kind}`}
+      width="24"
+    >
+      {codes.length === 0
+        ? renderFactorImage("")
+        : codes.map((code, position) => (
+            <Fragment key={`${position}-${code}`}>{renderFactorImage(code)}</Fragment>
+          ))}
     </td>
   ));
 };
