@@ -16,6 +16,7 @@ import {
 } from "react";
 import type { HorseRecord, HorseSkillData } from "@/features/horses/model/types";
 import type { HorseCardHighlightCriteria } from "@/features/search/lib/createHorseCardHighlighter";
+import { COLLAPSE_PEDIGREE } from "@/features/embed/model/embedMode";
 import { HorseResultCard } from "@/features/search/ui/HorseResultCard";
 import { HorseSkillModal } from "@/features/search/ui/HorseSkillModal";
 
@@ -66,7 +67,13 @@ const EMPTY_RESULTS_BODY =
 const SUMMARY_SUFFIX = "件を表示";
 const SUMMARY_MIDDLE = "件中";
 // まだカードの高さを計測していないときに使う仮の高さ（ピクセル）。
-const ESTIMATED_CARD_HEIGHT = 620;
+// 血統表（15行）を畳んでいるときは実寸が 140px 前後まで縮むので、620px の
+// ままだと1枚あたり4倍以上に見積もることになる。見積もりが大きすぎると
+// 描画範囲が数枚しか取れず、描いたカードが実寸を報告するたびに範囲を
+// 計算し直して描き足す、を繰り返してスクロールがガタつく。
+// 逆に小さめに外すと少し多めに描くだけで済むので、畳んでいるときは
+// 実寸より気持ち小さい値を使う。
+const ESTIMATED_CARD_HEIGHT = COLLAPSE_PEDIGREE ? 150 : 620;
 // 画面に見えている範囲より上下にどれだけ余分に描画しておくか（ピクセル）。
 // 大きいほどスクロール時のちらつきが減るが、描画するカードが増えて重くなる。
 const VIRTUAL_OVERSCAN_PX = 900;
