@@ -316,7 +316,7 @@
   border: 1px solid #d7dce5;
 }
 
-.embed-mode--picker .result-card__pedigree-toggle {
+.embed-mode .result-card__pedigree-toggle {
   display: block;
   width: 100%;
   margin-top: 6px;
@@ -331,17 +331,17 @@
   cursor: pointer;
 }
 
-.embed-mode--picker .result-card__pedigree-toggle:hover {
+.embed-mode .result-card__pedigree-toggle:hover {
   background: #e4d9fb;
 }
 
-.embed-mode--picker .result-card__pedigree-toggle:focus-visible {
+.embed-mode .result-card__pedigree-toggle:focus-visible {
   outline: 2px solid #6b4fbb;
   outline-offset: 2px;
 }
 
 /* 開閉ボタンをスクロールアンカーにしないことで、展開した高さだけ画面が動くのを防ぐ。 */
-.embed-mode--picker .results-list {
+.embed-mode .results-list {
   overflow-anchor: none;
 }
 

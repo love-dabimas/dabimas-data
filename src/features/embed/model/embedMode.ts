@@ -5,6 +5,7 @@
 //
 //   ?embed=1               … ダビふぁくのホームから開く単体画面（カードに ❤、「お気に入りのみ」）
 //   ?picker=1&sex=0|1|any  … ダビふぁくの馬選択の「条件で探す」から開く（上に加えて、カードをタップして選ぶ）
+//   &pedigree=open         … 血統表を最初から開く（どちらのモードにも付きうる）
 
 import type { GenderTab, HorseRecord } from "@/features/horses/model/types";
 
@@ -26,6 +27,11 @@ export const EMBED_MODE: EmbedMode = !isInFrame
 
 export const IS_EMBEDDED = EMBED_MODE !== "none";
 export const IS_PICKER = EMBED_MODE === "picker";
+
+// ?pedigree=open … 血統表を最初から開いた状態で出す。ダビふぁくの設定から付く。
+// 既定（付かないとき）は畳む。血統表は1枚あたり15行あって、一覧を
+// スクロールするときの重さの本体になっている。
+export const PEDIGREE_OPEN = params.get("pedigree") === "open";
 
 // 馬選択のとき、どちらの性別のセルから開かれたか。種牡馬・牝馬のタブを先に選んでおくのに使う。
 export const PICKER_SEX: PickerSex = (() => {
