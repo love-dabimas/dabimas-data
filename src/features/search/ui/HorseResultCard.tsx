@@ -709,39 +709,76 @@ const HorseResultCardBase = ({ horse, criteria, pedigreeOpen, onTogglePedigree, 
       return;
     }
 
-    const measure = () => {
-      const availableWidth = viewport.clientWidth;
+    // ResizeObserver が渡してくるサイズだけで計算し、offsetHeight /
+    // clientWidth は読まない。あれは強制同期レイアウトを起こし、旧カードは
+    // 760px 幅の大きな table なので1回が重い。スクロール中に次々カードが
+    // 出入りするとこれが積み上がってカクつく（実測でスクロール中の CPU の
+    // 約2割がこの計測だった）。
+    let observedWidth = -1;
+    let observedLegacyHeight = -1;
 
-      if (availableWidth <= 0) {
+    const sizeOf = (entry: ResizeObserverEntry) => {
+      const box = entry.borderBoxSize && entry.borderBoxSize[0];
+      return box
+        ? { width: box.inlineSize, height: box.blockSize }
+        : { width: entry.contentRect.width, height: entry.contentRect.height };
+    };
+
+    const apply = () => {
+      if (observedWidth <= 0 || observedLegacyHeight <= 0) {
         return;
       }
 
       // 基準幅より狭い時だけ縮小し、広い画面では等倍表示のままにする。
-      const nextScale = Math.min(1, availableWidth / LEGACY_CARD_WIDTH);
-      const nextHeight = Math.ceil(legacy.offsetHeight * nextScale);
+      const nextScale = Math.min(1, observedWidth / LEGACY_CARD_WIDTH);
+      const nextHeight = Math.ceil(observedLegacyHeight * nextScale);
 
       setLegacyScale((current) => (Math.abs(current - nextScale) < 0.001 ? current : nextScale));
       setScaledHeight((current) => (current === nextHeight ? current : nextHeight));
     };
 
-    const scheduleMeasure = () => {
+    const scheduleApply = () => {
       if (frameId !== 0) {
         return;
       }
 
       frameId = requestAnimationFrame(() => {
         frameId = 0;
-        measure();
+        apply();
       });
     };
 
-    // 初回表示とリサイズの両方で高さを再計算する。
-    measure();
+    const resizeObserver = new ResizeObserver((entries) => {
+      let changed = false;
 
-    const resizeObserver = new ResizeObserver(scheduleMeasure);
+      for (const entry of entries) {
+        const size = sizeOf(entry);
+
+        if (entry.target === legacy) {
+          // 中身の高さ。ここが変わったときだけ縮小後の高さを出し直す。
+          if (size.height !== observedLegacyHeight) {
+            observedLegacyHeight = size.height;
+            changed = true;
+          }
+          continue;
+        }
+
+        // viewport の高さは apply 自身が書き換えているので、幅だけ見る。
+        // 高さの変化まで拾うと、測る→高さを変える→また呼ばれる、の往復になる。
+        if (size.width !== observedWidth) {
+          observedWidth = size.width;
+          changed = true;
+        }
+      }
+
+      if (changed) {
+        scheduleApply();
+      }
+    });
+    // observe した時点で今のサイズが1回配られるので、初回の同期計測は要らない。
     resizeObserver.observe(viewport);
     resizeObserver.observe(legacy);
-    window.addEventListener("resize", scheduleMeasure);
+    window.addEventListener("resize", scheduleApply);
 
     return () => {
       if (frameId !== 0) {
@@ -749,7 +786,7 @@ const HorseResultCardBase = ({ horse, criteria, pedigreeOpen, onTogglePedigree, 
       }
 
       resizeObserver.disconnect();
-      window.removeEventListener("resize", scheduleMeasure);
+      window.removeEventListener("resize", scheduleApply);
     };
   }, []);
 

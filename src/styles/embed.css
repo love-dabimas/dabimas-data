@@ -371,3 +371,10 @@
 .embed-mode--picker .tab-button:disabled span {
   background: rgba(255, 255, 255, 0.5);
 }
+
+/* カード内部のレイアウトを外へ波及させない。旧カードは 760px 幅の大きな table で、
+   1枚の組版が他のカードの再計算を誘発する。paint は含めない（角の ❤ が
+   カードの外にはみ出しており、切り取られてしまうため）。 */
+.embed-mode .result-card__legacy {
+  contain: layout style;
+}
