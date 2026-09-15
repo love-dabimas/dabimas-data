@@ -748,6 +748,14 @@ const HorseResultCardBase = ({ horse, criteria, pedigreeOpen, onTogglePedigree, 
       });
     };
 
+    // 最初の高さは描画前に決める。ここを ResizeObserver 任せにすると、最初の
+    // 描画が高さ未定（＝20px の空箱）のまま出る。仮想スクロールはその 20px を
+    // 実寸と受け取り「まだ入る」と判断して数十枚まとめて描き、数秒固まる。
+    // 1枚につき1回だけの読み出しなので、スクロール中に積み上がることはない。
+    observedWidth = viewport.clientWidth;
+    observedLegacyHeight = legacy.offsetHeight;
+    apply();
+
     const resizeObserver = new ResizeObserver((entries) => {
       let changed = false;
 
