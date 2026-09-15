@@ -137,21 +137,27 @@ const renderFactorImage = (code: string) => {
 // マスターの祖先は 1 行あたり最大 2 個なので、ここは今までどおり 1 個ずつ入る。
 // 自家製馬の父だけは利用者が選んだ種牡馬そのもので、因子を 3 個持ちうる
 // （ダビふぁくの血統表も 3 個出す）。落とさずに、左のセルへまとめて入れる。
+// そのとき左のセルは 2 個ぶんの幅が要る。表は table-layout: auto でカード幅まで
+// 詰められているので、放っておくと 2 個目が隣のセルへはみ出して 3 個目に
+// ぴったり重なり、見た目は 2 個のままになる。幅は CSS 側（--multi）で確保する。
 const renderPedigreeFactorCells = (
   kind: "horse" | "migoto" | "omoshiro" | "omoshiro_mare",
   factorCodes: string[]
 ) => {
+  // マスターの因子は ["", "難", "底"] のように空文字で桁を埋めてくる。
+  // 先に落としておかないと「2 個入っているセル」を見分けられない。
+  const filled = factorCodes.filter(Boolean);
   const cells: string[][] =
-    factorCodes.length === 0
-      ? [[], []]
-      : factorCodes.length === 1
-        ? [[], [factorCodes[0]]]
-        : [factorCodes.slice(0, -1), factorCodes.slice(-1)];
+    filled.length <= 1 ? [[], filled] : [filled.slice(0, -1), filled.slice(-1)];
 
   return cells.map((codes, index) => (
     <td
       key={`${kind}-${index}-${codes.join("") || "blank"}`}
-      className={`factor_${kind}`}
+      className={
+        codes.length > 1
+          ? `factor_${kind} result-card__factor-cell--multi`
+          : `factor_${kind}`
+      }
       width="24"
     >
       {codes.length === 0

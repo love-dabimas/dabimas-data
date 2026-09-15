@@ -378,3 +378,13 @@
 .embed-mode .result-card__legacy {
   contain: layout style;
 }
+
+/* 自家製馬の父は因子を3個持つ（マスターの祖先は最大2個）。左の因子セルに2個
+   入るので、1個ぶん（10px）のままだと2個目が隣のセルへはみ出して3個目に
+   ぴったり重なり、3個目が見えなくなる。2個ぶんの幅を確保する。
+   自家製馬は埋め込みのときにしか出ないので、ここに置く。 */
+.embed-mode .result-card__legacy .pedigree td.result-card__factor-cell--multi {
+  /* 旧カードは 760px 幅で組んでからカード幅へ縮小して表示している。ここは
+     縮小前の座標なので、因子アイコン1個ぶんは 22px。2個で 46px 要る。 */
+  min-width: 48px;
+}
