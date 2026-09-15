@@ -11,7 +11,7 @@ import {
   type HorseCardHighlightCriteria
 } from "@/features/search/lib/createHorseCardHighlighter";
 import { renderHighlightedText } from "@/features/search/lib/renderHighlightedText";
-import { IS_EMBEDDED, IS_PICKER, horseKeyOf } from "@/features/embed/model/embedMode";
+import { IS_EMBEDDED, IS_PICKER, PEDIGREE_OPEN, horseKeyOf } from "@/features/embed/model/embedMode";
 import { requestFavoriteToggle } from "@/features/embed/lib/embedBridge";
 import { useEmbedStore } from "@/features/embed/store/useEmbedStore";
 import { FavoriteButton } from "@/features/embed/ui/FavoriteButton";
@@ -106,6 +106,10 @@ const FACTOR_INDEX_BY_CODE = Object.fromEntries(
 
 // 旧カードの基準幅。モバイルではこの幅を基準に縮小率を計算する。
 const LEGACY_CARD_WIDTH = 760;
+
+// 血統表を畳むかどうか。埋め込みのときだけ畳み、設定で「最初から開く」に
+// してあるときは今までどおり開いたまま出す。単体で開いたダビ娘は対象外。
+const COLLAPSE_PEDIGREE = IS_EMBEDDED && !PEDIGREE_OPEN;
 
 const assetUrl = (path: string) => `${import.meta.env.BASE_URL}${path}`;
 
@@ -973,7 +977,7 @@ const HorseResultCardBase = ({ horse, criteria, pedigreeOpen, onTogglePedigree, 
             </table>}
           </div>
 
-          {(!IS_PICKER || pedigreeOpen) && <div className="detail">
+          {(!COLLAPSE_PEDIGREE || pedigreeOpen) && <div className="detail">
             {/* 血統表本体。スロット配列順に 1 行ずつ差し込む。 */}
             <table className="pedigree" width="100%">
               <tbody>
@@ -985,7 +989,7 @@ const HorseResultCardBase = ({ horse, criteria, pedigreeOpen, onTogglePedigree, 
           </div>}
         </section>
       </div>
-      {IS_PICKER && (
+      {COLLAPSE_PEDIGREE && (
         <button
           type="button"
           className="result-card__pedigree-toggle"
