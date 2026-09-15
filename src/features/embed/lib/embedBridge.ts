@@ -5,6 +5,7 @@ import type { HorseRecord } from "@/features/horses/model/types";
 import { IS_EMBEDDED, IS_PICKER, horseKeyOf } from "@/features/embed/model/embedMode";
 import { postToParent, readMessageFromParent } from "@/features/embed/model/messages";
 import { useEmbedStore } from "@/features/embed/store/useEmbedStore";
+import { useSearchStore } from "@/features/search/store/useSearchStore";
 
 import { buildCustomHorseRecord } from "./buildCustomHorseRecord";
 
@@ -38,6 +39,11 @@ export const startEmbedBridge = () => {
     if (message.type === "dabimas:reset-pick") {
       // 親が別のセル用に開き直したとき・馬を入れ終わったときは、選んでいた馬を残さない。
       useEmbedStore.setState({ pickedHorse: null });
+      // 検索条件も初期値へ戻す。親は iframe を作り直さずに使い回すので
+      // （作り直すと毎回 1.4〜1.8 秒かかる）、そのままだと前回の
+      // キーワードや絞り込みが残ったまま次の馬を選ぶことになる。
+      useSearchStore.getState().resetCriteria();
+      window.scrollTo(0, 0);
       return;
     }
 

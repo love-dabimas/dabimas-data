@@ -33,6 +33,12 @@ export const IS_PICKER = EMBED_MODE === "picker";
 // スクロールするときの重さの本体になっている。
 export const PEDIGREE_OPEN = params.get("pedigree") === "open";
 
+// 血統表を畳んで出すかどうか。カードの描画（HorseResultCard）と、
+// 仮想スクロールの高さの見積もり（ResultsPanel）の両方が同じ値を見る。
+// 別々に判定すると、片方だけ畳んだときに見積もりが実寸から大きく外れて
+// スクロールがガタつく。
+export const COLLAPSE_PEDIGREE = IS_EMBEDDED && !PEDIGREE_OPEN;
+
 // 馬選択のとき、どちらの性別のセルから開かれたか。種牡馬・牝馬のタブを先に選んでおくのに使う。
 export const PICKER_SEX: PickerSex = (() => {
   const value = params.get("sex");
