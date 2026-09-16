@@ -16,6 +16,8 @@ interface AdvancedFilters {
   potential: string[];
   health: string[];
   temperamentNames: string[];
+  selfFactorCounts: string[];
+  nonordinaryPresence: string[];
   ownChildLine: string;
   damSireChildLine: string;
   ancestorName: string;
@@ -106,6 +108,8 @@ export const useSearchStore = create<SearchState>((set) => ({
         potential: value.potential,
         health: value.health,
         temperamentNames: value.temperamentNames,
+        selfFactorCounts: value.selfFactorCounts,
+        nonordinaryPresence: value.nonordinaryPresence,
         ownChildLine: value.ownChildLine,
         damSireChildLine: value.damSireChildLine,
         ancestorName: value.ancestorName,

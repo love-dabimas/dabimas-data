@@ -32,6 +32,8 @@ interface DraftState {
   potential: string[];
   health: string[];
   temperamentNames: string[];
+  selfFactorCounts: string[];
+  nonordinaryPresence: string[];
   ownChildLine: string;
   damSireChildLine: string;
   ancestorName: string;
@@ -71,6 +73,16 @@ const GROWTH_OPTIONS = [
   { value: "普", label: "普通" },
   { value: "晩", label: "晩成" }
 ] as const satisfies readonly ChoiceOption[];
+const SELF_FACTOR_COUNT_OPTIONS = [
+  { value: "0", label: "0" },
+  { value: "1", label: "1" },
+  { value: "2", label: "2" },
+  { value: "3", label: "3" }
+] as const satisfies readonly ChoiceOption[];
+const NONORDINARY_PRESENCE_OPTIONS = [
+  { value: "has", label: "持っている" },
+  { value: "none", label: "持っていない" }
+] as const satisfies readonly ChoiceOption[];
 const ABILITY_FILTERS = [
   { key: "dirt", label: "適応力", options: APTITUDE_OPTIONS },
   { key: "achievement", label: "実績", options: RANK_OPTIONS },
@@ -93,6 +105,8 @@ const createDraft = (value: DraftState): DraftState => ({
   potential: [...value.potential],
   health: [...value.health],
   temperamentNames: [...value.temperamentNames],
+  selfFactorCounts: [...value.selfFactorCounts],
+  nonordinaryPresence: [...value.nonordinaryPresence],
   ownChildLine: value.ownChildLine,
   damSireChildLine: value.damSireChildLine,
   ancestorName: value.ancestorName,
@@ -161,6 +175,8 @@ export const AncestorModal = ({
     potential: [...criteria.potential],
     health: [...criteria.health],
     temperamentNames: [...criteria.temperamentNames],
+    selfFactorCounts: [...criteria.selfFactorCounts],
+    nonordinaryPresence: [...criteria.nonordinaryPresence],
     ownChildLine: criteria.ownChildLine,
     damSireChildLine: criteria.damSireChildLine,
     ancestorName: criteria.ancestorName,
@@ -186,6 +202,8 @@ export const AncestorModal = ({
         potential: criteria.potential,
         health: criteria.health,
         temperamentNames: criteria.temperamentNames,
+        selfFactorCounts: criteria.selfFactorCounts,
+        nonordinaryPresence: criteria.nonordinaryPresence,
         ownChildLine: criteria.ownChildLine,
         damSireChildLine: criteria.damSireChildLine,
         ancestorName: criteria.ancestorName,
@@ -207,6 +225,8 @@ export const AncestorModal = ({
     criteria.runningStyle,
     criteria.stable,
     criteria.temperamentNames,
+    criteria.selfFactorCounts,
+    criteria.nonordinaryPresence,
     criteria.theory
   ]);
 
@@ -266,6 +286,8 @@ export const AncestorModal = ({
       potential: [...draft.potential],
       health: [...draft.health],
       temperamentNames: [...draft.temperamentNames],
+      selfFactorCounts: [...draft.selfFactorCounts],
+      nonordinaryPresence: [...draft.nonordinaryPresence],
       ownChildLine: draft.ownChildLine,
       damSireChildLine: draft.damSireChildLine,
       ancestorName: resolvedFactor?.id ?? resolvedName,
@@ -300,6 +322,8 @@ export const AncestorModal = ({
       potential: [],
       health: [],
       temperamentNames: [],
+      selfFactorCounts: [],
+      nonordinaryPresence: [],
       ownChildLine: "",
       damSireChildLine: "",
       ancestorName: "",
@@ -337,6 +361,45 @@ export const AncestorModal = ({
                 setDraft((current) => ({
                   ...current,
                   theory: nextValues
+                }))
+              }
+            />
+          </section>
+
+          <section className="filter-modal__section">
+            <div className="filter-modal__section-header">
+              <h3>自身の因子数</h3>
+            </div>
+            <p className="filter-modal__section-note">
+              その馬自身が持つ因子の数。複数選ぶと「どれか」で探す。
+            </p>
+            <MultiChoiceGrid
+              className="filter-modal__option-grid--count"
+              options={SELF_FACTOR_COUNT_OPTIONS}
+              selectedValues={draft.selfFactorCounts}
+              onChange={(nextValues) =>
+                setDraft((current) => ({
+                  ...current,
+                  selfFactorCounts: nextValues
+                }))
+              }
+            />
+          </section>
+
+          <section className="filter-modal__section">
+            <div className="filter-modal__section-header">
+              <h3>非凡の有無</h3>
+            </div>
+            <p className="filter-modal__section-note">
+              非凡そのものの条件は「非凡」ボタンから指定する。
+            </p>
+            <MultiChoiceGrid
+              options={NONORDINARY_PRESENCE_OPTIONS}
+              selectedValues={draft.nonordinaryPresence}
+              onChange={(nextValues) =>
+                setDraft((current) => ({
+                  ...current,
+                  nonordinaryPresence: nextValues
                 }))
               }
             />

@@ -19,6 +19,11 @@ export interface SearchCriteria {
   potential: string[];
   health: string[];
   temperamentNames: string[];
+  // 自身が持つ因子の数（"0"〜"3"）。複数選ぶと「どれか」になる。
+  selfFactorCounts: string[];
+  // 非凡を持っているか（"has" / "none"）。非凡モーダルの条件検索とは別で、
+  // 「非凡を持っていない馬だけ」を出すために使う。
+  nonordinaryPresence: string[];
   nonordinaryHorseIds: string[] | null;
   nonordinarySearchSummary: string[];
   ownChildLine: string;
@@ -55,6 +60,8 @@ export const createDefaultCriteria = (): SearchCriteria => ({
   potential: [],
   health: [],
   temperamentNames: [],
+  selfFactorCounts: [],
+  nonordinaryPresence: [],
   nonordinaryHorseIds: null,
   nonordinarySearchSummary: [],
   ownChildLine: "",

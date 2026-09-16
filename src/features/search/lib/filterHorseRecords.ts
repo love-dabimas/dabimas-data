@@ -33,7 +33,20 @@ export interface HorseSearchIndex {
   potentialIndexes: Map<string, Uint32Array>;
   healthIndexes: Map<string, Uint32Array>;
   temperamentIndexes: Map<string, Uint32Array>;
+  selfFactorCountIndexes: Map<string, Uint32Array>;
+  nonordinaryPresenceIndexes: Map<string, Uint32Array>;
 }
+
+// 自家製馬は ability に表示用の「なし」が入る（buildCustomHorseRecord）。
+// 空文字と同じ扱いにしないと「非凡あり」に紛れ込む。
+const hasNonordinary = (horse: HorseRecord) => {
+  const value = horse.card.ability;
+  if (typeof value !== "string") {
+    return false;
+  }
+  const trimmed = value.trim();
+  return trimmed !== "" && trimmed !== "なし";
+};
 
 interface CompiledCriteria {
   activePrimaryFilters: boolean;
@@ -166,7 +179,9 @@ export const createHorseSearchIndex = (records: HorseRecord[]): HorseSearchIndex
     clemencyIndexes: new Map(),
     potentialIndexes: new Map(),
     healthIndexes: new Map(),
-    temperamentIndexes: new Map()
+    temperamentIndexes: new Map(),
+    selfFactorCountIndexes: new Map(),
+    nonordinaryPresenceIndexes: new Map()
   };
 
   records.forEach((horse, itemIndex) => {
@@ -207,6 +222,19 @@ export const createHorseSearchIndex = (records: HorseRecord[]): HorseSearchIndex
       itemIndex,
       wordCount
     );
+    // 因子は最大3つ。念のため 3 で頭打ちにしておく。
+    addIndexValue(
+      index.selfFactorCountIndexes,
+      String(Math.min(3, horse.card.selfFactorCodes?.length ?? 0)),
+      itemIndex,
+      wordCount
+    );
+    addIndexValue(
+      index.nonordinaryPresenceIndexes,
+      hasNonordinary(horse) ? "has" : "none",
+      itemIndex,
+      wordCount
+    );
   });
 
   return index;
@@ -228,6 +256,8 @@ const hasPrimaryCondition = (criteria: SearchCriteria) =>
   criteria.potential.length > 0 ||
   criteria.health.length > 0 ||
   criteria.temperamentNames.length > 0 ||
+  criteria.selfFactorCounts.length > 0 ||
+  criteria.nonordinaryPresence.length > 0 ||
   criteria.nonordinaryHorseIds !== null ||
   criteria.ownChildLine.length > 0 ||
   criteria.damSireChildLine.length > 0 ||
@@ -418,6 +448,13 @@ const getIndexedCandidateMask = (index: HorseSearchIndex, criteria: SearchCriter
   applyOptionalMask(candidateMask, index, index.potentialIndexes, criteria.potential);
   applyOptionalMask(candidateMask, index, index.healthIndexes, criteria.health);
   applyOptionalMask(candidateMask, index, index.temperamentIndexes, criteria.temperamentNames);
+  applyOptionalMask(candidateMask, index, index.selfFactorCountIndexes, criteria.selfFactorCounts);
+  applyOptionalMask(
+    candidateMask,
+    index,
+    index.nonordinaryPresenceIndexes,
+    criteria.nonordinaryPresence
+  );
 
   const rareMask = getRareMask(index, criteria.rareCodes);
   if (rareMask) {

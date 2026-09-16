@@ -115,6 +115,16 @@ const buildActiveSummaries = (criteria: SearchCriteria) => {
   if (criteria.temperamentNames.length > 0) {
     items.push(`天性: ${criteria.temperamentNames.join(", ")}`);
   }
+  if (criteria.selfFactorCounts.length > 0) {
+    items.push(`自身の因子数: ${[...criteria.selfFactorCounts].sort().join(", ")}`);
+  }
+  if (criteria.nonordinaryPresence.length > 0) {
+    items.push(
+      `非凡: ${criteria.nonordinaryPresence
+        .map((value) => (value === "none" ? "持っていない" : "持っている"))
+        .join(", ")}`
+    );
+  }
   if (criteria.nonordinaryHorseIds !== null) {
     items.push(
       ...(criteria.nonordinarySearchSummary.length > 0
