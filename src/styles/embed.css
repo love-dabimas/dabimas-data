@@ -388,3 +388,9 @@
      縮小前の座標なので、因子アイコン1個ぶんは 22px。2個で 46px 要る。 */
   min-width: 48px;
 }
+
+/* 自家製馬のレア枠。マスターのレア色とぶつからない紫にして、
+   カードの「自」バッジ（.custom-horse-badge）と同じ意味だと分かるようにする。 */
+.embed-mode .header01_custom {
+  background: #5b4b8a;
+}
