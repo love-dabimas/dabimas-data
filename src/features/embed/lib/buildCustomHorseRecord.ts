@@ -29,8 +29,10 @@ export const buildCustomHorseRecord = (horse: CustomHorsePayload): HorseRecord =
     ability: "なし",
     abilityData: null,
     temperamentData: null,
-    rareBadgeClass: "header01",
-    rareBadgeLabel: "ー",
+    // 自家製馬にはレアが無い。空欄や「ー」だと一覧の中で見分けが付かないので、
+    // レアの枠をそのまま「自」の印として使う。
+    rareBadgeClass: "header01 header01_custom",
+    rareBadgeLabel: "自",
     selfFactorCodes: horse.factors.filter(Boolean),
     stats: {
       runningStyle: "ー", growth: "ー", achievement: "ー", clemency: "ー", stable: "ー",

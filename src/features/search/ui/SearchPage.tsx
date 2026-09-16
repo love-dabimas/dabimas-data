@@ -287,9 +287,10 @@ export const SearchPage = ({
       const master = filterHorseRecords(masterSearchIndex, deferredCriteria, Boolean(theoryMap));
       const custom = filterHorseRecords(customSearchIndex,
         { ...deferredCriteria, rareCodes: [] }, Boolean(theoryMap));
+      // 自家製馬は数が少なく、探しているのはたいていそちらなので先頭に置く。
       return {
-        stallions: [...master.stallions, ...custom.stallions],
-        broodmares: [...master.broodmares, ...custom.broodmares],
+        stallions: [...custom.stallions, ...master.stallions],
+        broodmares: [...custom.broodmares, ...master.broodmares],
         total: master.total + custom.total,
         hasActivePrimaryFilters: master.hasActivePrimaryFilters || custom.hasActivePrimaryFilters
       };
