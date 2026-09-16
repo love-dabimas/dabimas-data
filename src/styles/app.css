@@ -1430,6 +1430,17 @@ button {
   grid-template-columns: repeat(3, minmax(70px, 1fr));
 }
 
+.filter-modal__option-grid--count {
+  grid-template-columns: repeat(4, minmax(56px, 1fr));
+}
+
+.filter-modal__section-note {
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
 .filter-modal__choice {
   justify-content: center;
   min-height: 34px;
