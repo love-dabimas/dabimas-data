@@ -389,6 +389,19 @@
   min-width: 48px;
 }
 
+/* 上の min-width は列そのものを2個ぶんに広げるので、因子が1個しか入らない行
+   （マスターの祖先はほとんどこれ）は、左のセルの中でアイコンが左に寄って
+   右隣のアイコンとの間に1個ぶんの隙間ができていた。因子はダビふぁくの
+   血統表と同じく右へ詰めたいので、因子セルの中身を右寄せにする。
+   3個持ちの行は元から埋まっているので見た目は変わらない。
+   系統名のセル（.factor_02_img）は別物なので触らない。 */
+.embed-mode .result-card__legacy .pedigree td.factor_horse,
+.embed-mode .result-card__legacy .pedigree td.factor_omoshiro,
+.embed-mode .result-card__legacy .pedigree td.factor_omoshiro_mare,
+.embed-mode .result-card__legacy .pedigree td.factor_migoto {
+  text-align: right;
+}
+
 /* 自家製馬のレア枠。マスターのレア色とぶつからない紫にして、
    カードの「自」バッジ（.custom-horse-badge）と同じ意味だと分かるようにする。 */
 .embed-mode .header01_custom {
