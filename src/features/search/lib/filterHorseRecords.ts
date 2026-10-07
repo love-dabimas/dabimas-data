@@ -185,7 +185,9 @@ export const createHorseSearchIndex = (records: HorseRecord[]): HorseSearchIndex
   };
 
   records.forEach((horse, itemIndex) => {
-    addIndexValue(index.horseIdIndexes, horse.HorseId, itemIndex, wordCount);
+    if (horse.Gender === "0") {
+      addIndexValue(index.horseIdIndexes, horse.HorseId, itemIndex, wordCount);
+    }
     addIndexValue(index.fatherLineIndexes, horse.Paternal_t, itemIndex, wordCount);
     addIndexValue(index.damSireLineIndexes, horse.Paternal_ht, itemIndex, wordCount);
     addParentLineCodes(index.migotoLineIndexes, horse.Paternal_mig, itemIndex, wordCount);

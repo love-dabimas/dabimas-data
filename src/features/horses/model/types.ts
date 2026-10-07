@@ -56,6 +56,8 @@ export interface HorseTheoryData {
 
 // 1 枚の結果カードを描画するのに必要な派生済みデータ群。
 export interface HorseCardData {
+  abilityGameId?: string | null;
+  sourceGameId?: string;
   name: string;
   ability: string;
   abilityData?: HorseSkillData | null;
@@ -71,6 +73,7 @@ export interface HorseCardData {
 
 // 検索や表示の土台になる元レコード。
 export interface HorseRecord {
+  legacy_ids?: string[];
   SerialNumber: string;
   Gender: GenderTab;
   HorseId: string;

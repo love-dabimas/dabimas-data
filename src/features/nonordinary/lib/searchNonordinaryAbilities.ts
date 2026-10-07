@@ -292,7 +292,18 @@ export const searchNonordinaryAbilities = (
   input: NonordinarySearchInput
 ): MatchedNonordinaryAbility[] => {
   const context = buildSearchContext(bundle, input);
-  const horsesById = indexBy(horses, (horse) => horse.HorseId);
+  const stallions = horses.filter((horse) => horse.Gender === "0");
+  const horsesById = indexBy(stallions, (horse) => horse.HorseId);
+  for (const horse of stallions) {
+    for (const legacyId of horse.legacy_ids ?? []) {
+      horsesById.set(legacyId, horse);
+    }
+  }
+  const horsesByGameAbility = groupBy(
+    horses.filter((horse) => horse.Gender === "0" && horse.card.abilityGameId),
+    (horse) => horse.card.abilityGameId!
+  );
+  const gameLinksByAbility = groupBy(bundle.ability_game_links ?? [], (link) => link.ability_id);
   const abilitiesById = indexBy(bundle.abilities, (ability) => ability.ability_id);
   const stallionsById = indexBy(bundle.stallions, (stallion) => stallion.stallion_id);
   const detailsByAbility = groupBy(bundle.ability_details, (detail) => detail.ability_id);
@@ -334,6 +345,23 @@ export const searchNonordinaryAbilities = (
       };
     });
 
+    for (const link of gameLinksByAbility.get(ability.ability_id) ?? []) {
+      for (const horse of horsesByGameAbility.get(link.game_ability_id) ?? []) {
+        sourceStallions.push({
+          stallion_id: horse.HorseId,
+          stallion_name: horse.card.name,
+          horse
+        });
+      }
+    }
+    const seenHorseIds = new Set<string>();
+    const mergedStallions = sourceStallions.filter((stallion) => {
+      const id = stallion.horse?.HorseId ?? stallion.stallion_id;
+      if (seenHorseIds.has(id)) return false;
+      seenHorseIds.add(id);
+      return true;
+    });
+
     const abilityRow = abilitiesById.get(ability.ability_id) ?? ability;
     results.push({
       ability_id: abilityRow.ability_id,
@@ -342,8 +370,8 @@ export const searchNonordinaryAbilities = (
       description: abilityRow.description,
       source_url: abilityRow.source_url ?? abilityRow.url,
       matched_details: matchedDetails,
-      source_stallion_ids: sourceStallions.map((stallion) => stallion.stallion_id),
-      source_stallions: sourceStallions,
+      source_stallion_ids: mergedStallions.map((stallion) => stallion.stallion_id),
+      source_stallions: mergedStallions,
       warnings: (warningsByAbility.get(ability.ability_id) ?? []).map(
         (warning) => warning.message
       )

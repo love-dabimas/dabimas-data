@@ -40,6 +40,7 @@ export interface NonordinarySearchInput {
 // ウェブサイトから取ってきた「非凡な才能」データを全部まとめたもの。
 // 才能・種牡馬・発揮条件・発揮効果・条件ルールなどがテーブル形式で入っている。
 export interface NonordinaryBundle {
+  ability_game_links?: { ability_id: string; game_ability_id: string }[];
   meta: {
     schema_version: string;
     generated_at: string;

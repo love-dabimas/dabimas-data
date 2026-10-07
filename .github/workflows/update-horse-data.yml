@@ -8,6 +8,11 @@ on:
 
 permissions:
   contents: write
+  actions: write
+
+concurrency:
+  group: horse-data-main
+  cancel-in-progress: false
 
 jobs:
   update:
@@ -18,20 +23,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: main
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "22"
-          cache: npm
-
-      - name: Install Node dependencies
-        run: npm ci
 
       - name: Install Python dependencies
         run: python -m pip install -r requirements.txt
@@ -44,14 +42,6 @@ jobs:
           --existing-source-json ./data/source/workbook.json
           --max-workers 8
 
-      - name: Generate JSON data
-        run: >
-          python -m tools.horse_data.generate_horselist
-          --source-json ./data/source/workbook.json
-          --site-metadata ./data/source/site_metadata.json
-          --output ./json/horselist.json
-          --factor-output ./json/factor.json
-
       - name: Generate nonordinary ability data
         run: >
           python tools/nonordinary_data/generate_nonordinary_bundle.py
@@ -59,24 +49,29 @@ jobs:
           --source-html ./data/nonordinary/raw/official_search/abilities.html
           --output ./json/nonordinary_abilities_bundle.json
 
-      - name: Run Python tests
-        run: python -m pytest
-
-      - name: Build
-        run: npm run build
+      - name: Download R2 masters
         env:
-          VITE_BASE_PATH: /dabimas-data/dist/
-          VITE_DEPLOY_MODE: artifact-root
+          R2_BASE_URL: ${{ secrets.R2_BASE_URL || vars.R2_BASE_URL }}
+        run: python -m tools.horse_data.download_r2 --output "$RUNNER_TEMP/r2"
 
-      - name: Commit generated data
+      - name: Update ID ledger and ability links
         run: |
-          if [ -z "$(git status --porcelain data/source/workbook.json data/source/site_metadata.json data/nonordinary/raw/official_search/abilities.html json/horselist.json json/factor.json json/nonordinary_abilities_bundle.json dist)" ]; then
-            echo "No generated data changes."
+          python -m tools.horse_data.id_ledger --r2-dir "$RUNNER_TEMP/r2"
+          python -m tools.horse_data.ability_links --r2-dir "$RUNNER_TEMP/r2"
+
+      - name: Commit weekly source data
+        run: |
+          if [ -z "$(git status --porcelain data/source data/nonordinary/raw/official_search/abilities.html json/nonordinary_abilities_bundle.json)" ]; then
+            echo "No source data changes."
             exit 0
           fi
-
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/source/workbook.json data/source/site_metadata.json data/nonordinary/raw/official_search/abilities.html json/horselist.json json/factor.json json/nonordinary_abilities_bundle.json dist
-          git commit -m "Update generated horse data"
-          git push
+          git add data/source/workbook.json data/source/site_metadata.json data/source/id_ledger.json data/source/ability_links.json data/nonordinary/raw/official_search/abilities.html json/nonordinary_abilities_bundle.json
+          git commit -m "Update official horse source and R2 links"
+          git push origin HEAD:main
+
+      - name: Generate using updated sources
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run generate-from-r2.yml --ref main

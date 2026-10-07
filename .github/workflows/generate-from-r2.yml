@@ -1,0 +1,68 @@
+name: Generate horse data from R2
+
+on:
+  schedule:
+    - cron: "30 2 * * *" # 11:30 JST
+  workflow_dispatch:
+    inputs:
+      as_of:
+        description: "Publication date in JST (YYYY-MM-DD; empty means today)"
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: horse-data-main
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install Python dependencies
+        run: python -m pip install -r requirements.txt
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - name: Install Node dependencies
+        run: npm ci
+      - name: Download R2 masters
+        env:
+          R2_BASE_URL: ${{ secrets.R2_BASE_URL || vars.R2_BASE_URL }}
+        run: python -m tools.horse_data.download_r2 --output "$RUNNER_TEMP/r2"
+      - name: Generate JSON data
+        env:
+          AS_OF: ${{ inputs.as_of }}
+        run: |
+          args=()
+          if [ -n "$AS_OF" ]; then args+=(--as-of "$AS_OF"); fi
+          python -m tools.horse_data.generate_horselist --r2-dir "$RUNNER_TEMP/r2" "${args[@]}"
+      - name: Run Python tests
+        run: python -m pytest
+      - name: Run TypeScript tests
+        run: npx tsx --test tests/*.test.ts
+      - name: Build published site
+        run: npm run build
+        env:
+          VITE_BASE_PATH: /dabimas-data/dist/
+          VITE_DEPLOY_MODE: artifact-root
+      - name: Commit generated data
+        run: |
+          if [ -z "$(git status --porcelain -- json/horselist.json json/factor.json dist)" ]; then
+            echo "No generated data changes."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add json/horselist.json json/factor.json dist
+          git commit -m "Generate horse data from R2"
+          git push origin HEAD:main

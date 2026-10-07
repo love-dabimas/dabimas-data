@@ -636,13 +636,16 @@ def parse_args() -> argparse.Namespace:
         default=DEFAULT_OUTPUT_PATH,
         help="Output bundle path.",
     )
+    parser.add_argument("--ability-links", type=Path, default=Path("data/source/ability_links.json"))
     return parser.parse_args()
 
 
 def main() -> int:
     args = parse_args()
     html = load_or_fetch_html(args.source_html, args.refresh)
-    write_text(args.output, serialize_bundle(build_bundle(html)))
+    bundle = build_bundle(html)
+    bundle["ability_game_links"] = json.loads(args.ability_links.read_text(encoding="utf-8")) if args.ability_links.exists() else []
+    write_text(args.output, serialize_bundle(bundle))
     return 0
 
 

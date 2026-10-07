@@ -35,8 +35,10 @@ def test_generated_horselist_snapshot_hash() -> None:
 
 
 def test_generated_outputs_match_checked_in_json() -> None:
-    assert GENERATED == (ROOT / "json" / "horselist.json").read_text(encoding="utf-8")
-    assert GENERATED_FACTOR == (ROOT / "json" / "factor.json").read_text(encoding="utf-8")
+    # Published records now originate in R2, while RECORDS exercises the legacy adapter.
+    published = json.loads((ROOT / "json" / "horselist.json").read_text(encoding="utf-8"))
+    assert serialize_factor_options(build_factor_options(published)) == (ROOT / "json" / "factor.json").read_text(encoding="utf-8")
+    assert len({(row["Gender"], row["HorseId"]) for row in published}) == len(published)
 
 
 def test_json_source_matches_workbook_generation_when_available() -> None:

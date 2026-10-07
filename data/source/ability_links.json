@@ -1,0 +1,4858 @@
+[
+  {
+    "ability_id": "0035270614",
+    "game_ability_id": "10571"
+  },
+  {
+    "ability_id": "0182546939",
+    "game_ability_id": "11100"
+  },
+  {
+    "ability_id": "0192546839",
+    "game_ability_id": "10061"
+  },
+  {
+    "ability_id": "0214959369",
+    "game_ability_id": "11111"
+  },
+  {
+    "ability_id": "0264175345",
+    "game_ability_id": "10577"
+  },
+  {
+    "ability_id": "0264175381",
+    "game_ability_id": "10615"
+  },
+  {
+    "ability_id": "0264185317",
+    "game_ability_id": "10048"
+  },
+  {
+    "ability_id": "0264185380",
+    "game_ability_id": "10039"
+  },
+  {
+    "ability_id": "0264195325",
+    "game_ability_id": "11075"
+  },
+  {
+    "ability_id": "0264195334",
+    "game_ability_id": "11097"
+  },
+  {
+    "ability_id": "0264195343",
+    "game_ability_id": "11088"
+  },
+  {
+    "ability_id": "0264195361",
+    "game_ability_id": "11105"
+  },
+  {
+    "ability_id": "0271561423",
+    "game_ability_id": "10719"
+  },
+  {
+    "ability_id": "0281560423",
+    "game_ability_id": "10164"
+  },
+  {
+    "ability_id": "0281561413",
+    "game_ability_id": "10473"
+  },
+  {
+    "ability_id": "0291561403",
+    "game_ability_id": "11107"
+  },
+  {
+    "ability_id": "0315479269",
+    "game_ability_id": "11114"
+  },
+  {
+    "ability_id": "0315488269",
+    "game_ability_id": "10088"
+  },
+  {
+    "ability_id": "0315497269",
+    "game_ability_id": "10616"
+  },
+  {
+    "ability_id": "0409665213",
+    "game_ability_id": "11061"
+  },
+  {
+    "ability_id": "0417765213",
+    "game_ability_id": "10922"
+  },
+  {
+    "ability_id": "0428565213",
+    "game_ability_id": "10166"
+  },
+  {
+    "ability_id": "0459165213",
+    "game_ability_id": "11274"
+  },
+  {
+    "ability_id": "0469065213",
+    "game_ability_id": "11222"
+  },
+  {
+    "ability_id": "0477165213",
+    "game_ability_id": "10531"
+  },
+  {
+    "ability_id": "0478461213",
+    "game_ability_id": "300001"
+  },
+  {
+    "ability_id": "0491466213",
+    "game_ability_id": "320001"
+  },
+  {
+    "ability_id": "0521308406",
+    "game_ability_id": "10034"
+  },
+  {
+    "ability_id": "0521317406",
+    "game_ability_id": "10612"
+  },
+  {
+    "ability_id": "0614532288",
+    "game_ability_id": "10226"
+  },
+  {
+    "ability_id": "0614532297",
+    "game_ability_id": "10703"
+  },
+  {
+    "ability_id": "0614533278",
+    "game_ability_id": "10399"
+  },
+  {
+    "ability_id": "0614534268",
+    "game_ability_id": "10352"
+  },
+  {
+    "ability_id": "0614535267",
+    "game_ability_id": "10781"
+  },
+  {
+    "ability_id": "0614537229",
+    "game_ability_id": "11014"
+  },
+  {
+    "ability_id": "0614538237",
+    "game_ability_id": "10991"
+  },
+  {
+    "ability_id": "1034829356",
+    "game_ability_id": "10400"
+  },
+  {
+    "ability_id": "1054728356",
+    "game_ability_id": "10771"
+  },
+  {
+    "ability_id": "1054827356",
+    "game_ability_id": "10279"
+  },
+  {
+    "ability_id": "1054926356",
+    "game_ability_id": "11273"
+  },
+  {
+    "ability_id": "1064925356",
+    "game_ability_id": "11224"
+  },
+  {
+    "ability_id": "1074923366",
+    "game_ability_id": "52201"
+  },
+  {
+    "ability_id": "1084824356",
+    "game_ability_id": "10478"
+  },
+  {
+    "ability_id": "1094823356",
+    "game_ability_id": "10084"
+  },
+  {
+    "ability_id": "1094922356",
+    "game_ability_id": "11115"
+  },
+  {
+    "ability_id": "1134828356",
+    "game_ability_id": "10427"
+  },
+  {
+    "ability_id": "1144827356",
+    "game_ability_id": "10380"
+  },
+  {
+    "ability_id": "1154826356",
+    "game_ability_id": "10325"
+  },
+  {
+    "ability_id": "1164825356",
+    "game_ability_id": "10275"
+  },
+  {
+    "ability_id": "1174824356",
+    "game_ability_id": "10028"
+  },
+  {
+    "ability_id": "1174923356",
+    "game_ability_id": "11055"
+  },
+  {
+    "ability_id": "1182546839",
+    "game_ability_id": "10470"
+  },
+  {
+    "ability_id": "1184823356",
+    "game_ability_id": "10528"
+  },
+  {
+    "ability_id": "1192546838",
+    "game_ability_id": "10460"
+  },
+  {
+    "ability_id": "1194723356",
+    "game_ability_id": "10667"
+  },
+  {
+    "ability_id": "1194921356",
+    "game_ability_id": "11163"
+  },
+  {
+    "ability_id": "1204929356",
+    "game_ability_id": "11064"
+  },
+  {
+    "ability_id": "1214958369",
+    "game_ability_id": "10154"
+  },
+  {
+    "ability_id": "1219603246",
+    "game_ability_id": "321301"
+  },
+  {
+    "ability_id": "1224828356",
+    "game_ability_id": "10175"
+  },
+  {
+    "ability_id": "1224927356",
+    "game_ability_id": "11175"
+  },
+  {
+    "ability_id": "1234827356",
+    "game_ability_id": "10386"
+  },
+  {
+    "ability_id": "1244826356",
+    "game_ability_id": "10335"
+  },
+  {
+    "ability_id": "1254726356",
+    "game_ability_id": "10774"
+  },
+  {
+    "ability_id": "1264175326",
+    "game_ability_id": "10936"
+  },
+  {
+    "ability_id": "1264175362",
+    "game_ability_id": "10925"
+  },
+  {
+    "ability_id": "1264185307",
+    "game_ability_id": "10448"
+  },
+  {
+    "ability_id": "1264185316",
+    "game_ability_id": "10441"
+  },
+  {
+    "ability_id": "1264185325",
+    "game_ability_id": "10438"
+  },
+  {
+    "ability_id": "1264185334",
+    "game_ability_id": "10466"
+  },
+  {
+    "ability_id": "1264185343",
+    "game_ability_id": "10452"
+  },
+  {
+    "ability_id": "1264725356",
+    "game_ability_id": "10732"
+  },
+  {
+    "ability_id": "1274922356",
+    "game_ability_id": "11018"
+  },
+  {
+    "ability_id": "1281561403",
+    "game_ability_id": "10079"
+  },
+  {
+    "ability_id": "1284723356",
+    "game_ability_id": "10964"
+  },
+  {
+    "ability_id": "1291560403",
+    "game_ability_id": "11062"
+  },
+  {
+    "ability_id": "1294821356",
+    "game_ability_id": "10092"
+  },
+  {
+    "ability_id": "1294920356",
+    "game_ability_id": "11119"
+  },
+  {
+    "ability_id": "1304928356",
+    "game_ability_id": "11091"
+  },
+  {
+    "ability_id": "1315469269",
+    "game_ability_id": "11162"
+  },
+  {
+    "ability_id": "1315478269",
+    "game_ability_id": "10160"
+  },
+  {
+    "ability_id": "1315488268",
+    "game_ability_id": "10530"
+  },
+  {
+    "ability_id": "1315489267",
+    "game_ability_id": "11059"
+  },
+  {
+    "ability_id": "1315497268",
+    "game_ability_id": "11007"
+  },
+  {
+    "ability_id": "1315498267",
+    "game_ability_id": "10027"
+  },
+  {
+    "ability_id": "1315499266",
+    "game_ability_id": "11269"
+  },
+  {
+    "ability_id": "1324728356",
+    "game_ability_id": "10699"
+  },
+  {
+    "ability_id": "1324926356",
+    "game_ability_id": "11193"
+  },
+  {
+    "ability_id": "1334727356",
+    "game_ability_id": "10899"
+  },
+  {
+    "ability_id": "1344726356",
+    "game_ability_id": "10850"
+  },
+  {
+    "ability_id": "1354725356",
+    "game_ability_id": "10801"
+  },
+  {
+    "ability_id": "1374723356",
+    "game_ability_id": "10553"
+  },
+  {
+    "ability_id": "1374822356",
+    "game_ability_id": "10012"
+  },
+  {
+    "ability_id": "1374921356",
+    "game_ability_id": "11033"
+  },
+  {
+    "ability_id": "1384722356",
+    "game_ability_id": "10992"
+  },
+  {
+    "ability_id": "1384821356",
+    "game_ability_id": "10506"
+  },
+  {
+    "ability_id": "1394721356",
+    "game_ability_id": "10640"
+  },
+  {
+    "ability_id": "1404828356",
+    "game_ability_id": "10074"
+  },
+  {
+    "ability_id": "1404927356",
+    "game_ability_id": "11098"
+  },
+  {
+    "ability_id": "1407765213",
+    "game_ability_id": "10614"
+  },
+  {
+    "ability_id": "1408665213",
+    "game_ability_id": "10078"
+  },
+  {
+    "ability_id": "1409565213",
+    "game_ability_id": "11108"
+  },
+  {
+    "ability_id": "1414728356",
+    "game_ability_id": "10959"
+  },
+  {
+    "ability_id": "1414827356",
+    "game_ability_id": "10467"
+  },
+  {
+    "ability_id": "1418565213",
+    "game_ability_id": "10476"
+  },
+  {
+    "ability_id": "1424727356",
+    "game_ability_id": "10711"
+  },
+  {
+    "ability_id": "1424826356",
+    "game_ability_id": "10217"
+  },
+  {
+    "ability_id": "1429365213",
+    "game_ability_id": "11219"
+  },
+  {
+    "ability_id": "1447365213",
+    "game_ability_id": "10870"
+  },
+  {
+    "ability_id": "1454823356",
+    "game_ability_id": "10315"
+  },
+  {
+    "ability_id": "1458165213",
+    "game_ability_id": "10326"
+  },
+  {
+    "ability_id": "1464822356",
+    "game_ability_id": "10263"
+  },
+  {
+    "ability_id": "1464921356",
+    "game_ability_id": "11258"
+  },
+  {
+    "ability_id": "1468065213",
+    "game_ability_id": "10272"
+  },
+  {
+    "ability_id": "1474722356",
+    "game_ability_id": "10561"
+  },
+  {
+    "ability_id": "1474920356",
+    "game_ability_id": "11043"
+  },
+  {
+    "ability_id": "1504728356",
+    "game_ability_id": "10585"
+  },
+  {
+    "ability_id": "1504926356",
+    "game_ability_id": "11072"
+  },
+  {
+    "ability_id": "1521307406",
+    "game_ability_id": "10920"
+  },
+  {
+    "ability_id": "1524924356",
+    "game_ability_id": "11176"
+  },
+  {
+    "ability_id": "1544823356",
+    "game_ability_id": "10343"
+  },
+  {
+    "ability_id": "1554822356",
+    "game_ability_id": "10287"
+  },
+  {
+    "ability_id": "1564722356",
+    "game_ability_id": "10740"
+  },
+  {
+    "ability_id": "1564821356",
+    "game_ability_id": "10234"
+  },
+  {
+    "ability_id": "1564920356",
+    "game_ability_id": "11236"
+  },
+  {
+    "ability_id": "1574721356",
+    "game_ability_id": "10543"
+  },
+  {
+    "ability_id": "1584720356",
+    "game_ability_id": "10970"
+  },
+  {
+    "ability_id": "1604826356",
+    "game_ability_id": "10044"
+  },
+  {
+    "ability_id": "1614532269",
+    "game_ability_id": "11184"
+  },
+  {
+    "ability_id": "1614532278",
+    "game_ability_id": "10192"
+  },
+  {
+    "ability_id": "1614533268",
+    "game_ability_id": "10391"
+  },
+  {
+    "ability_id": "1614533277",
+    "game_ability_id": "10891"
+  },
+  {
+    "ability_id": "1614534258",
+    "game_ability_id": "10341"
+  },
+  {
+    "ability_id": "1614536229",
+    "game_ability_id": "11230"
+  },
+  {
+    "ability_id": "1614637209",
+    "game_ability_id": "52001"
+  },
+  {
+    "ability_id": "1614825356",
+    "game_ability_id": "10445"
+  },
+  {
+    "ability_id": "1624725356",
+    "game_ability_id": "10687"
+  },
+  {
+    "ability_id": "1624824356",
+    "game_ability_id": "10184"
+  },
+  {
+    "ability_id": "1634724356",
+    "game_ability_id": "10883"
+  },
+  {
+    "ability_id": "1634823356",
+    "game_ability_id": "10393"
+  },
+  {
+    "ability_id": "1644822356",
+    "game_ability_id": "10354"
+  },
+  {
+    "ability_id": "1654722356",
+    "game_ability_id": "10785"
+  },
+  {
+    "ability_id": "1654821356",
+    "game_ability_id": "10292"
+  },
+  {
+    "ability_id": "1664820356",
+    "game_ability_id": "10241"
+  },
+  {
+    "ability_id": "1704726356",
+    "game_ability_id": "10593"
+  },
+  {
+    "ability_id": "1704924356",
+    "game_ability_id": "11081"
+  },
+  {
+    "ability_id": "1714725356",
+    "game_ability_id": "10942"
+  },
+  {
+    "ability_id": "1724823356",
+    "game_ability_id": "10194"
+  },
+  {
+    "ability_id": "1724922356",
+    "game_ability_id": "11191"
+  },
+  {
+    "ability_id": "1725848639",
+    "game_ability_id": "10664"
+  },
+  {
+    "ability_id": "1725947639",
+    "game_ability_id": "10649"
+  },
+  {
+    "ability_id": "1734723356",
+    "game_ability_id": "10893"
+  },
+  {
+    "ability_id": "1744821356",
+    "game_ability_id": "10356"
+  },
+  {
+    "ability_id": "1754721356",
+    "game_ability_id": "10790"
+  },
+  {
+    "ability_id": "1804323617",
+    "game_ability_id": "300005"
+  },
+  {
+    "ability_id": "1804725356",
+    "game_ability_id": "10610"
+  },
+  {
+    "ability_id": "1814724356",
+    "game_ability_id": "10961"
+  },
+  {
+    "ability_id": "1814823356",
+    "game_ability_id": "10471"
+  },
+  {
+    "ability_id": "1824723356",
+    "game_ability_id": "10713"
+  },
+  {
+    "ability_id": "1824822356",
+    "game_ability_id": "10229"
+  },
+  {
+    "ability_id": "1825649639",
+    "game_ability_id": "10099"
+  },
+  {
+    "ability_id": "1825847639",
+    "game_ability_id": "10150"
+  },
+  {
+    "ability_id": "1825849637",
+    "game_ability_id": "10025"
+  },
+  {
+    "ability_id": "1825947638",
+    "game_ability_id": "10516"
+  },
+  {
+    "ability_id": "1825949636",
+    "game_ability_id": "10254"
+  },
+  {
+    "ability_id": "1844721356",
+    "game_ability_id": "10865"
+  },
+  {
+    "ability_id": "1854720356",
+    "game_ability_id": "10817"
+  },
+  {
+    "ability_id": "1914723356",
+    "game_ability_id": "10950"
+  },
+  {
+    "ability_id": "1914822356",
+    "game_ability_id": "10459"
+  },
+  {
+    "ability_id": "1925648639",
+    "game_ability_id": "11132"
+  },
+  {
+    "ability_id": "1925747639",
+    "game_ability_id": "11139"
+  },
+  {
+    "ability_id": "1925749637",
+    "game_ability_id": "11028"
+  },
+  {
+    "ability_id": "1925848637",
+    "game_ability_id": "11051"
+  },
+  {
+    "ability_id": "1925849636",
+    "game_ability_id": "11261"
+  },
+  {
+    "ability_id": "1925945639",
+    "game_ability_id": "11148"
+  },
+  {
+    "ability_id": "1925947637",
+    "game_ability_id": "11040"
+  },
+  {
+    "ability_id": "1925948636",
+    "game_ability_id": "11257"
+  },
+  {
+    "ability_id": "1934820356",
+    "game_ability_id": "10410"
+  },
+  {
+    "ability_id": "1944720356",
+    "game_ability_id": "10857"
+  },
+  {
+    "ability_id": "1966243175",
+    "game_ability_id": "59001"
+  },
+  {
+    "ability_id": "2162546939",
+    "game_ability_id": "11181"
+  },
+  {
+    "ability_id": "2169142643",
+    "game_ability_id": "321001"
+  },
+  {
+    "ability_id": "2172546839",
+    "game_ability_id": "10189"
+  },
+  {
+    "ability_id": "2172546938",
+    "game_ability_id": "11192"
+  },
+  {
+    "ability_id": "2192546837",
+    "game_ability_id": "10213"
+  },
+  {
+    "ability_id": "2192546936",
+    "game_ability_id": "11198"
+  },
+  {
+    "ability_id": "2214858369",
+    "game_ability_id": "10483"
+  },
+  {
+    "ability_id": "2214957369",
+    "game_ability_id": "10620"
+  },
+  {
+    "ability_id": "2214958368",
+    "game_ability_id": "10095"
+  },
+  {
+    "ability_id": "2264175325",
+    "game_ability_id": "10684"
+  },
+  {
+    "ability_id": "2264175334",
+    "game_ability_id": "10710"
+  },
+  {
+    "ability_id": "2264175352",
+    "game_ability_id": "10676"
+  },
+  {
+    "ability_id": "2264175361",
+    "game_ability_id": "10718"
+  },
+  {
+    "ability_id": "2264185306",
+    "game_ability_id": "10187"
+  },
+  {
+    "ability_id": "2264185315",
+    "game_ability_id": "10179"
+  },
+  {
+    "ability_id": "2264185324",
+    "game_ability_id": "10222"
+  },
+  {
+    "ability_id": "2264185342",
+    "game_ability_id": "10170"
+  },
+  {
+    "ability_id": "2264195305",
+    "game_ability_id": "11179"
+  },
+  {
+    "ability_id": "2264195314",
+    "game_ability_id": "11206"
+  },
+  {
+    "ability_id": "2264195332",
+    "game_ability_id": "11174"
+  },
+  {
+    "ability_id": "2264195341",
+    "game_ability_id": "11215"
+  },
+  {
+    "ability_id": "2281560403",
+    "game_ability_id": "10038"
+  },
+  {
+    "ability_id": "2315459269",
+    "game_ability_id": "11121"
+  },
+  {
+    "ability_id": "2315477269",
+    "game_ability_id": "10621"
+  },
+  {
+    "ability_id": "2315478268",
+    "game_ability_id": "10486"
+  },
+  {
+    "ability_id": "2315479267",
+    "game_ability_id": "11016"
+  },
+  {
+    "ability_id": "2315487268",
+    "game_ability_id": "10965"
+  },
+  {
+    "ability_id": "2316469267",
+    "game_ability_id": "53701"
+  },
+  {
+    "ability_id": "2316496267",
+    "game_ability_id": "68029"
+  },
+  {
+    "ability_id": "2405360721",
+    "game_ability_id": "10671"
+  },
+  {
+    "ability_id": "2409465213",
+    "game_ability_id": "11065"
+  },
+  {
+    "ability_id": "2415360711",
+    "game_ability_id": "10919"
+  },
+  {
+    "ability_id": "2425360701",
+    "game_ability_id": "10573"
+  },
+  {
+    "ability_id": "2437365213",
+    "game_ability_id": "10876"
+  },
+  {
+    "ability_id": "2448165213",
+    "game_ability_id": "10336"
+  },
+  {
+    "ability_id": "2458065213",
+    "game_ability_id": "10281"
+  },
+  {
+    "ability_id": "2614530279",
+    "game_ability_id": "11085"
+  },
+  {
+    "ability_id": "2614530297",
+    "game_ability_id": "10600"
+  },
+  {
+    "ability_id": "2614531278",
+    "game_ability_id": "10449"
+  },
+  {
+    "ability_id": "2614534248",
+    "game_ability_id": "10374"
+  },
+  {
+    "ability_id": "2614534257",
+    "game_ability_id": "10838"
+  },
+  {
+    "ability_id": "2614535238",
+    "game_ability_id": "10306"
+  },
+  {
+    "ability_id": "2614536228",
+    "game_ability_id": "10231"
+  },
+  {
+    "ability_id": "2614536237",
+    "game_ability_id": "10749"
+  },
+  {
+    "ability_id": "2614537227",
+    "game_ability_id": "10540"
+  },
+  {
+    "ability_id": "2614539207",
+    "game_ability_id": "10618"
+  },
+  {
+    "ability_id": "2621439959",
+    "game_ability_id": "11196"
+  },
+  {
+    "ability_id": "2631439958",
+    "game_ability_id": "10406"
+  },
+  {
+    "ability_id": "2641439957",
+    "game_ability_id": "10853"
+  },
+  {
+    "ability_id": "2651438957",
+    "game_ability_id": "10814"
+  },
+  {
+    "ability_id": "2651439758",
+    "game_ability_id": "10312"
+  },
+  {
+    "ability_id": "2661437759",
+    "game_ability_id": "11249"
+  },
+  {
+    "ability_id": "2661437957",
+    "game_ability_id": "10743"
+  },
+  {
+    "ability_id": "2661438659",
+    "game_ability_id": "11263"
+  },
+  {
+    "ability_id": "2661438758",
+    "game_ability_id": "10268"
+  },
+  {
+    "ability_id": "2661438857",
+    "game_ability_id": "10764"
+  },
+  {
+    "ability_id": "2661439559",
+    "game_ability_id": "11255"
+  },
+  {
+    "ability_id": "2661439757",
+    "game_ability_id": "10752"
+  },
+  {
+    "ability_id": "2667142613",
+    "game_ability_id": "68030"
+  },
+  {
+    "ability_id": "2671434959",
+    "game_ability_id": "11042"
+  },
+  {
+    "ability_id": "2671435859",
+    "game_ability_id": "11022"
+  },
+  {
+    "ability_id": "2671438559",
+    "game_ability_id": "11049"
+  },
+  {
+    "ability_id": "2671438658",
+    "game_ability_id": "10026"
+  },
+  {
+    "ability_id": "2671438757",
+    "game_ability_id": "10565"
+  },
+  {
+    "ability_id": "2671439657",
+    "game_ability_id": "10555"
+  },
+  {
+    "ability_id": "2681434958",
+    "game_ability_id": "10518"
+  },
+  {
+    "ability_id": "2681435858",
+    "game_ability_id": "10491"
+  },
+  {
+    "ability_id": "2681435957",
+    "game_ability_id": "10966"
+  },
+  {
+    "ability_id": "2681437658",
+    "game_ability_id": "10501"
+  },
+  {
+    "ability_id": "2681437757",
+    "game_ability_id": "10985"
+  },
+  {
+    "ability_id": "2681439458",
+    "game_ability_id": "10512"
+  },
+  {
+    "ability_id": "2681439557",
+    "game_ability_id": "10996"
+  },
+  {
+    "ability_id": "2691432959",
+    "game_ability_id": "11117"
+  },
+  {
+    "ability_id": "2691433859",
+    "game_ability_id": "11146"
+  },
+  {
+    "ability_id": "2691435659",
+    "game_ability_id": "11123"
+  },
+  {
+    "ability_id": "2691435857",
+    "game_ability_id": "10625"
+  },
+  {
+    "ability_id": "2691436559",
+    "game_ability_id": "11130"
+  },
+  {
+    "ability_id": "2691436757",
+    "game_ability_id": "10630"
+  },
+  {
+    "ability_id": "2691437459",
+    "game_ability_id": "11134"
+  },
+  {
+    "ability_id": "2691437657",
+    "game_ability_id": "10633"
+  },
+  {
+    "ability_id": "2691438557",
+    "game_ability_id": "10662"
+  },
+  {
+    "ability_id": "2691439259",
+    "game_ability_id": "11149"
+  },
+  {
+    "ability_id": "2760142583",
+    "game_ability_id": "10575"
+  },
+  {
+    "ability_id": "2760143573",
+    "game_ability_id": "10597"
+  },
+  {
+    "ability_id": "2760144563",
+    "game_ability_id": "10602"
+  },
+  {
+    "ability_id": "2760145553",
+    "game_ability_id": "10583"
+  },
+  {
+    "ability_id": "2760146543",
+    "game_ability_id": "10587"
+  },
+  {
+    "ability_id": "2760148523",
+    "game_ability_id": "10611"
+  },
+  {
+    "ability_id": "2761143563",
+    "game_ability_id": "10945"
+  },
+  {
+    "ability_id": "2761144553",
+    "game_ability_id": "10957"
+  },
+  {
+    "ability_id": "2761145543",
+    "game_ability_id": "10929"
+  },
+  {
+    "ability_id": "2761146533",
+    "game_ability_id": "10933"
+  },
+  {
+    "ability_id": "2761147523",
+    "game_ability_id": "10943"
+  },
+  {
+    "ability_id": "2761148513",
+    "game_ability_id": "10963"
+  },
+  {
+    "ability_id": "2762140583",
+    "game_ability_id": "10673"
+  },
+  {
+    "ability_id": "2762143553",
+    "game_ability_id": "10697"
+  },
+  {
+    "ability_id": "2762144543",
+    "game_ability_id": "10708"
+  },
+  {
+    "ability_id": "2762145533",
+    "game_ability_id": "10681"
+  },
+  {
+    "ability_id": "2762146523",
+    "game_ability_id": "10689"
+  },
+  {
+    "ability_id": "2762147513",
+    "game_ability_id": "10692"
+  },
+  {
+    "ability_id": "2762148503",
+    "game_ability_id": "10712"
+  },
+  {
+    "ability_id": "2763142553",
+    "game_ability_id": "10878"
+  },
+  {
+    "ability_id": "2763144533",
+    "game_ability_id": "10910"
+  },
+  {
+    "ability_id": "2763146513",
+    "game_ability_id": "10885"
+  },
+  {
+    "ability_id": "2763147503",
+    "game_ability_id": "10892"
+  },
+  {
+    "ability_id": "2764140563",
+    "game_ability_id": "10824"
+  },
+  {
+    "ability_id": "2764145513",
+    "game_ability_id": "10833"
+  },
+  {
+    "ability_id": "2765141543",
+    "game_ability_id": "10818"
+  },
+  {
+    "ability_id": "2765142533",
+    "game_ability_id": "10775"
+  },
+  {
+    "ability_id": "2765143523",
+    "game_ability_id": "10802"
+  },
+  {
+    "ability_id": "2766140543",
+    "game_ability_id": "10723"
+  },
+  {
+    "ability_id": "2766142523",
+    "game_ability_id": "10733"
+  },
+  {
+    "ability_id": "2766143513",
+    "game_ability_id": "10747"
+  },
+  {
+    "ability_id": "2767140533",
+    "game_ability_id": "10533"
+  },
+  {
+    "ability_id": "2767142513",
+    "game_ability_id": "10535"
+  },
+  {
+    "ability_id": "2767143503",
+    "game_ability_id": "10552"
+  },
+  {
+    "ability_id": "2769140513",
+    "game_ability_id": "10617"
+  },
+  {
+    "ability_id": "2860142573",
+    "game_ability_id": "10041"
+  },
+  {
+    "ability_id": "2860143563",
+    "game_ability_id": "10056"
+  },
+  {
+    "ability_id": "2860148513",
+    "game_ability_id": "10076"
+  },
+  {
+    "ability_id": "2861141573",
+    "game_ability_id": "10475"
+  },
+  {
+    "ability_id": "2861142563",
+    "game_ability_id": "10428"
+  },
+  {
+    "ability_id": "2861143553",
+    "game_ability_id": "10455"
+  },
+  {
+    "ability_id": "2861144543",
+    "game_ability_id": "10462"
+  },
+  {
+    "ability_id": "2861145533",
+    "game_ability_id": "10435"
+  },
+  {
+    "ability_id": "2861146523",
+    "game_ability_id": "10446"
+  },
+  {
+    "ability_id": "2861147513",
+    "game_ability_id": "10447"
+  },
+  {
+    "ability_id": "2862143543",
+    "game_ability_id": "10200"
+  },
+  {
+    "ability_id": "2862144533",
+    "game_ability_id": "10219"
+  },
+  {
+    "ability_id": "2862145523",
+    "game_ability_id": "10181"
+  },
+  {
+    "ability_id": "2862146513",
+    "game_ability_id": "10186"
+  },
+  {
+    "ability_id": "2862147503",
+    "game_ability_id": "10193"
+  },
+  {
+    "ability_id": "2863141553",
+    "game_ability_id": "10425"
+  },
+  {
+    "ability_id": "2863143533",
+    "game_ability_id": "10404"
+  },
+  {
+    "ability_id": "2863144523",
+    "game_ability_id": "10417"
+  },
+  {
+    "ability_id": "2863146503",
+    "game_ability_id": "10392"
+  },
+  {
+    "ability_id": "2864140553",
+    "game_ability_id": "10333"
+  },
+  {
+    "ability_id": "2864144513",
+    "game_ability_id": "10371"
+  },
+  {
+    "ability_id": "2864145503",
+    "game_ability_id": "10342"
+  },
+  {
+    "ability_id": "2865141533",
+    "game_ability_id": "10328"
+  },
+  {
+    "ability_id": "2865142523",
+    "game_ability_id": "10283"
+  },
+  {
+    "ability_id": "2865144503",
+    "game_ability_id": "10314"
+  },
+  {
+    "ability_id": "2866141523",
+    "game_ability_id": "10276"
+  },
+  {
+    "ability_id": "2867140163",
+    "game_ability_id": "300002"
+  },
+  {
+    "ability_id": "2868140513",
+    "game_ability_id": "10480"
+  },
+  {
+    "ability_id": "2868141503",
+    "game_ability_id": "10527"
+  },
+  {
+    "ability_id": "2895496231",
+    "game_ability_id": "11209"
+  },
+  {
+    "ability_id": "2960140583",
+    "game_ability_id": "11063"
+  },
+  {
+    "ability_id": "2960142563",
+    "game_ability_id": "11066"
+  },
+  {
+    "ability_id": "2962142543",
+    "game_ability_id": "11171"
+  },
+  {
+    "ability_id": "2962145513",
+    "game_ability_id": "11178"
+  },
+  {
+    "ability_id": "2962146503",
+    "game_ability_id": "11185"
+  },
+  {
+    "ability_id": "2966140523",
+    "game_ability_id": "11225"
+  },
+  {
+    "ability_id": "2967140603",
+    "game_ability_id": "52101"
+  },
+  {
+    "ability_id": "2967141503",
+    "game_ability_id": "11054"
+  },
+  {
+    "ability_id": "2995486231",
+    "game_ability_id": "11202"
+  },
+  {
+    "ability_id": "3126740055",
+    "game_ability_id": "10580"
+  },
+  {
+    "ability_id": "3126740352",
+    "game_ability_id": "10875"
+  },
+  {
+    "ability_id": "3126740451",
+    "game_ability_id": "10869"
+  },
+  {
+    "ability_id": "3126741054",
+    "game_ability_id": "10603"
+  },
+  {
+    "ability_id": "3126741153",
+    "game_ability_id": "10946"
+  },
+  {
+    "ability_id": "3126741450",
+    "game_ability_id": "10825"
+  },
+  {
+    "ability_id": "3126742251",
+    "game_ability_id": "10721"
+  },
+  {
+    "ability_id": "3126743250",
+    "game_ability_id": "10672"
+  },
+  {
+    "ability_id": "3126745050",
+    "game_ability_id": "10572"
+  },
+  {
+    "ability_id": "3126841053",
+    "game_ability_id": "10057"
+  },
+  {
+    "ability_id": "3126841152",
+    "game_ability_id": "10429"
+  },
+  {
+    "ability_id": "3126841350",
+    "game_ability_id": "10382"
+  },
+  {
+    "ability_id": "3126841710",
+    "game_ability_id": "300003"
+  },
+  {
+    "ability_id": "3126842151",
+    "game_ability_id": "10477"
+  },
+  {
+    "ability_id": "3126842250",
+    "game_ability_id": "10167"
+  },
+  {
+    "ability_id": "3126940251",
+    "game_ability_id": "11218"
+  },
+  {
+    "ability_id": "3126941250",
+    "game_ability_id": "11166"
+  },
+  {
+    "ability_id": "3126942051",
+    "game_ability_id": "11109"
+  },
+  {
+    "ability_id": "3182546837",
+    "game_ability_id": "10421"
+  },
+  {
+    "ability_id": "3192546737",
+    "game_ability_id": "10906"
+  },
+  {
+    "ability_id": "3192546836",
+    "game_ability_id": "10408"
+  },
+  {
+    "ability_id": "3214758369",
+    "game_ability_id": "10009"
+  },
+  {
+    "ability_id": "3214857369",
+    "game_ability_id": "10989"
+  },
+  {
+    "ability_id": "3214958367",
+    "game_ability_id": "10121"
+  },
+  {
+    "ability_id": "3264175306",
+    "game_ability_id": "10886"
+  },
+  {
+    "ability_id": "3264175324",
+    "game_ability_id": "10913"
+  },
+  {
+    "ability_id": "3264175333",
+    "game_ability_id": "10898"
+  },
+  {
+    "ability_id": "3264175351",
+    "game_ability_id": "10917"
+  },
+  {
+    "ability_id": "3285194698",
+    "game_ability_id": "10511"
+  },
+  {
+    "ability_id": "3295174699",
+    "game_ability_id": "11133"
+  },
+  {
+    "ability_id": "3295184689",
+    "game_ability_id": "11159"
+  },
+  {
+    "ability_id": "3295194697",
+    "game_ability_id": "10645"
+  },
+  {
+    "ability_id": "3315467269",
+    "game_ability_id": "10639"
+  },
+  {
+    "ability_id": "3315468268",
+    "game_ability_id": "10505"
+  },
+  {
+    "ability_id": "3315469267",
+    "game_ability_id": "11032"
+  },
+  {
+    "ability_id": "3315479266",
+    "game_ability_id": "11251"
+  },
+  {
+    "ability_id": "3315497266",
+    "game_ability_id": "10746"
+  },
+  {
+    "ability_id": "3315498265",
+    "game_ability_id": "10300"
+  },
+  {
+    "ability_id": "3408465213",
+    "game_ability_id": "10055"
+  },
+  {
+    "ability_id": "3429165213",
+    "game_ability_id": "11194"
+  },
+  {
+    "ability_id": "3437265213",
+    "game_ability_id": "10901"
+  },
+  {
+    "ability_id": "3447165213",
+    "game_ability_id": "10851"
+  },
+  {
+    "ability_id": "3448065213",
+    "game_ability_id": "10363"
+  },
+  {
+    "ability_id": "3452051986",
+    "game_ability_id": "10310"
+  },
+  {
+    "ability_id": "3452061796",
+    "game_ability_id": "11247"
+  },
+  {
+    "ability_id": "3452061886",
+    "game_ability_id": "10265"
+  },
+  {
+    "ability_id": "3452071696",
+    "game_ability_id": "11025"
+  },
+  {
+    "ability_id": "3452071876",
+    "game_ability_id": "10563"
+  },
+  {
+    "ability_id": "3452081686",
+    "game_ability_id": "10496"
+  },
+  {
+    "ability_id": "3452081776",
+    "game_ability_id": "10983"
+  },
+  {
+    "ability_id": "3452091676",
+    "game_ability_id": "10628"
+  },
+  {
+    "ability_id": "3452141986",
+    "game_ability_id": "10367"
+  },
+  {
+    "ability_id": "3452151886",
+    "game_ability_id": "10320"
+  },
+  {
+    "ability_id": "3452151976",
+    "game_ability_id": "10807"
+  },
+  {
+    "ability_id": "3452161876",
+    "game_ability_id": "10758"
+  },
+  {
+    "ability_id": "3452181586",
+    "game_ability_id": "10488"
+  },
+  {
+    "ability_id": "3452181676",
+    "game_ability_id": "10979"
+  },
+  {
+    "ability_id": "3452221996",
+    "game_ability_id": "11201"
+  },
+  {
+    "ability_id": "3452231986",
+    "game_ability_id": "10412"
+  },
+  {
+    "ability_id": "3452241886",
+    "game_ability_id": "10379"
+  },
+  {
+    "ability_id": "3452261596",
+    "game_ability_id": "11237"
+  },
+  {
+    "ability_id": "3452271676",
+    "game_ability_id": "10549"
+  },
+  {
+    "ability_id": "3452281486",
+    "game_ability_id": "10523"
+  },
+  {
+    "ability_id": "3452321986",
+    "game_ability_id": "10212"
+  },
+  {
+    "ability_id": "3452331886",
+    "game_ability_id": "10420"
+  },
+  {
+    "ability_id": "3452331976",
+    "game_ability_id": "10905"
+  },
+  {
+    "ability_id": "3452351686",
+    "game_ability_id": "10294"
+  },
+  {
+    "ability_id": "3452351776",
+    "game_ability_id": "10792"
+  },
+  {
+    "ability_id": "3452361586",
+    "game_ability_id": "10236"
+  },
+  {
+    "ability_id": "3452371396",
+    "game_ability_id": "11035"
+  },
+  {
+    "ability_id": "3452371576",
+    "game_ability_id": "10545"
+  },
+  {
+    "ability_id": "3452381386",
+    "game_ability_id": "10508"
+  },
+  {
+    "ability_id": "3452381476",
+    "game_ability_id": "10997"
+  },
+  {
+    "ability_id": "3452391196",
+    "game_ability_id": "11165"
+  },
+  {
+    "ability_id": "3452391376",
+    "game_ability_id": "10642"
+  },
+  {
+    "ability_id": "3452411986",
+    "game_ability_id": "10456"
+  },
+  {
+    "ability_id": "3452421796",
+    "game_ability_id": "11188"
+  },
+  {
+    "ability_id": "3452421886",
+    "game_ability_id": "10223"
+  },
+  {
+    "ability_id": "3452421976",
+    "game_ability_id": "10701"
+  },
+  {
+    "ability_id": "3452441686",
+    "game_ability_id": "10349"
+  },
+  {
+    "ability_id": "3452441776",
+    "game_ability_id": "10844"
+  },
+  {
+    "ability_id": "3452451586",
+    "game_ability_id": "10286"
+  },
+  {
+    "ability_id": "3452461486",
+    "game_ability_id": "10259"
+  },
+  {
+    "ability_id": "3452461576",
+    "game_ability_id": "10736"
+  },
+  {
+    "ability_id": "3452471386",
+    "game_ability_id": "10010"
+  },
+  {
+    "ability_id": "3452481286",
+    "game_ability_id": "10484"
+  },
+  {
+    "ability_id": "3452481376",
+    "game_ability_id": "10990"
+  },
+  {
+    "ability_id": "3452491096",
+    "game_ability_id": "11112"
+  },
+  {
+    "ability_id": "3452491186",
+    "game_ability_id": "10155"
+  },
+  {
+    "ability_id": "3452501896",
+    "game_ability_id": "11103"
+  },
+  {
+    "ability_id": "3452501986",
+    "game_ability_id": "10066"
+  },
+  {
+    "ability_id": "3452511976",
+    "game_ability_id": "10952"
+  },
+  {
+    "ability_id": "3452521696",
+    "game_ability_id": "11186"
+  },
+  {
+    "ability_id": "3452521786",
+    "game_ability_id": "10196"
+  },
+  {
+    "ability_id": "3452521876",
+    "game_ability_id": "10715"
+  },
+  {
+    "ability_id": "3452531686",
+    "game_ability_id": "10395"
+  },
+  {
+    "ability_id": "3452551486",
+    "game_ability_id": "10317"
+  },
+  {
+    "ability_id": "3452561296",
+    "game_ability_id": "11232"
+  },
+  {
+    "ability_id": "3452561386",
+    "game_ability_id": "10252"
+  },
+  {
+    "ability_id": "3452571196",
+    "game_ability_id": "11057"
+  },
+  {
+    "ability_id": "3452591176",
+    "game_ability_id": "10669"
+  },
+  {
+    "ability_id": "3452601886",
+    "game_ability_id": "10075"
+  },
+  {
+    "ability_id": "3452611876",
+    "game_ability_id": "10962"
+  },
+  {
+    "ability_id": "3452621596",
+    "game_ability_id": "11177"
+  },
+  {
+    "ability_id": "3452621686",
+    "game_ability_id": "10185"
+  },
+  {
+    "ability_id": "3452621776",
+    "game_ability_id": "10691"
+  },
+  {
+    "ability_id": "3452631676",
+    "game_ability_id": "10884"
+  },
+  {
+    "ability_id": "3452651386",
+    "game_ability_id": "10301"
+  },
+  {
+    "ability_id": "3452671186",
+    "game_ability_id": "10029"
+  },
+  {
+    "ability_id": "3452681086",
+    "game_ability_id": "10479"
+  },
+  {
+    "ability_id": "3452701876",
+    "game_ability_id": "10609"
+  },
+  {
+    "ability_id": "3452711686",
+    "game_ability_id": "10444"
+  },
+  {
+    "ability_id": "3452711776",
+    "game_ability_id": "10941"
+  },
+  {
+    "ability_id": "3452751376",
+    "game_ability_id": "10800"
+  },
+  {
+    "ability_id": "3452761096",
+    "game_ability_id": "11223"
+  },
+  {
+    "ability_id": "3452761186",
+    "game_ability_id": "10274"
+  },
+  {
+    "ability_id": "3452761276",
+    "game_ability_id": "10731"
+  },
+  {
+    "ability_id": "3452801596",
+    "game_ability_id": "11076"
+  },
+  {
+    "ability_id": "3452811676",
+    "game_ability_id": "10937"
+  },
+  {
+    "ability_id": "3452821396",
+    "game_ability_id": "11195"
+  },
+  {
+    "ability_id": "3452831386",
+    "game_ability_id": "10405"
+  },
+  {
+    "ability_id": "3452841286",
+    "game_ability_id": "10339"
+  },
+  {
+    "ability_id": "3452841376",
+    "game_ability_id": "10852"
+  },
+  {
+    "ability_id": "3452851186",
+    "game_ability_id": "10331"
+  },
+  {
+    "ability_id": "3452901676",
+    "game_ability_id": "10586"
+  },
+  {
+    "ability_id": "3452911486",
+    "game_ability_id": "10461"
+  },
+  {
+    "ability_id": "3452911576",
+    "game_ability_id": "10928"
+  },
+  {
+    "ability_id": "3452921296",
+    "game_ability_id": "11170"
+  },
+  {
+    "ability_id": "3452921476",
+    "game_ability_id": "10707"
+  },
+  {
+    "ability_id": "3452941276",
+    "game_ability_id": "10829"
+  },
+  {
+    "ability_id": "3452961076",
+    "game_ability_id": "10722"
+  },
+  {
+    "ability_id": "3457065213",
+    "game_ability_id": "10798"
+  },
+  {
+    "ability_id": "3462571096",
+    "game_ability_id": "52601"
+  },
+  {
+    "ability_id": "3462871066",
+    "game_ability_id": "68028"
+  },
+  {
+    "ability_id": "3462991216",
+    "game_ability_id": "320901"
+  },
+  {
+    "ability_id": "3614530269",
+    "game_ability_id": "11079"
+  },
+  {
+    "ability_id": "3614530278",
+    "game_ability_id": "10050"
+  },
+  {
+    "ability_id": "3614530287",
+    "game_ability_id": "10608"
+  },
+  {
+    "ability_id": "3614531268",
+    "game_ability_id": "10443"
+  },
+  {
+    "ability_id": "3614531277",
+    "game_ability_id": "10940"
+  },
+  {
+    "ability_id": "3614532249",
+    "game_ability_id": "11208"
+  },
+  {
+    "ability_id": "3614533248",
+    "game_ability_id": "10416"
+  },
+  {
+    "ability_id": "3614533257",
+    "game_ability_id": "10881"
+  },
+  {
+    "ability_id": "3614534238",
+    "game_ability_id": "10364"
+  },
+  {
+    "ability_id": "3614535228",
+    "game_ability_id": "10282"
+  },
+  {
+    "ability_id": "3614536218",
+    "game_ability_id": "10273"
+  },
+  {
+    "ability_id": "3614536227",
+    "game_ability_id": "10730"
+  },
+  {
+    "ability_id": "3975496231",
+    "game_ability_id": "10903"
+  },
+  {
+    "ability_id": "3985486231",
+    "game_ability_id": "10413"
+  },
+  {
+    "ability_id": "4162546739",
+    "game_ability_id": "10840"
+  },
+  {
+    "ability_id": "4162546838",
+    "game_ability_id": "10355"
+  },
+  {
+    "ability_id": "4172546738",
+    "game_ability_id": "10847"
+  },
+  {
+    "ability_id": "4192546736",
+    "game_ability_id": "10855"
+  },
+  {
+    "ability_id": "4192546835",
+    "game_ability_id": "10369"
+  },
+  {
+    "ability_id": "4211626693",
+    "game_ability_id": "321101"
+  },
+  {
+    "ability_id": "4214658369",
+    "game_ability_id": "10258"
+  },
+  {
+    "ability_id": "4214659368",
+    "game_ability_id": "11260"
+  },
+  {
+    "ability_id": "4214758368",
+    "game_ability_id": "10024"
+  },
+  {
+    "ability_id": "4214759367",
+    "game_ability_id": "11045"
+  },
+  {
+    "ability_id": "4214957367",
+    "game_ability_id": "10654"
+  },
+  {
+    "ability_id": "4217605573",
+    "game_ability_id": "10534"
+  },
+  {
+    "ability_id": "4217606563",
+    "game_ability_id": "10724"
+  },
+  {
+    "ability_id": "4217612593",
+    "game_ability_id": "10670"
+  },
+  {
+    "ability_id": "4217615563",
+    "game_ability_id": "10766"
+  },
+  {
+    "ability_id": "4217616553",
+    "game_ability_id": "10819"
+  },
+  {
+    "ability_id": "4217617543",
+    "game_ability_id": "10871"
+  },
+  {
+    "ability_id": "4217623573",
+    "game_ability_id": "10537"
+  },
+  {
+    "ability_id": "4217624563",
+    "game_ability_id": "10729"
+  },
+  {
+    "ability_id": "4217627533",
+    "game_ability_id": "10877"
+  },
+  {
+    "ability_id": "4217628523",
+    "game_ability_id": "10678"
+  },
+  {
+    "ability_id": "4217630593",
+    "game_ability_id": "10641"
+  },
+  {
+    "ability_id": "4217636533",
+    "game_ability_id": "10895"
+  },
+  {
+    "ability_id": "4217637523",
+    "game_ability_id": "10696"
+  },
+  {
+    "ability_id": "4217642563",
+    "game_ability_id": "10755"
+  },
+  {
+    "ability_id": "4217644543",
+    "game_ability_id": "10860"
+  },
+  {
+    "ability_id": "4217645533",
+    "game_ability_id": "10912"
+  },
+  {
+    "ability_id": "4217647513",
+    "game_ability_id": "10956"
+  },
+  {
+    "ability_id": "4217648503",
+    "game_ability_id": "10606"
+  },
+  {
+    "ability_id": "4217650573",
+    "game_ability_id": "10544"
+  },
+  {
+    "ability_id": "4217653543",
+    "game_ability_id": "10835"
+  },
+  {
+    "ability_id": "4217655523",
+    "game_ability_id": "10683"
+  },
+  {
+    "ability_id": "4217656513",
+    "game_ability_id": "10930"
+  },
+  {
+    "ability_id": "4217657503",
+    "game_ability_id": "10582"
+  },
+  {
+    "ability_id": "4217661553",
+    "game_ability_id": "10780"
+  },
+  {
+    "ability_id": "4217662543",
+    "game_ability_id": "10841"
+  },
+  {
+    "ability_id": "4217663533",
+    "game_ability_id": "10887"
+  },
+  {
+    "ability_id": "4217665513",
+    "game_ability_id": "10935"
+  },
+  {
+    "ability_id": "4217670553",
+    "game_ability_id": "10791"
+  },
+  {
+    "ability_id": "4217671543",
+    "game_ability_id": "10846"
+  },
+  {
+    "ability_id": "4217682523",
+    "game_ability_id": "10716"
+  },
+  {
+    "ability_id": "4217692513",
+    "game_ability_id": "10953"
+  },
+  {
+    "ability_id": "4218602593",
+    "game_ability_id": "10087"
+  },
+  {
+    "ability_id": "4218604573",
+    "game_ability_id": "10000"
+  },
+  {
+    "ability_id": "4218607543",
+    "game_ability_id": "10332"
+  },
+  {
+    "ability_id": "4218608173",
+    "game_ability_id": "300009"
+  },
+  {
+    "ability_id": "4218608533",
+    "game_ability_id": "10385"
+  },
+  {
+    "ability_id": "4218609523",
+    "game_ability_id": "10163"
+  },
+  {
+    "ability_id": "4218611593",
+    "game_ability_id": "10157"
+  },
+  {
+    "ability_id": "4218613573",
+    "game_ability_id": "10031"
+  },
+  {
+    "ability_id": "4218614563",
+    "game_ability_id": "10270"
+  },
+  {
+    "ability_id": "4218615553",
+    "game_ability_id": "10329"
+  },
+  {
+    "ability_id": "4218625543",
+    "game_ability_id": "10337"
+  },
+  {
+    "ability_id": "4218628513",
+    "game_ability_id": "10432"
+  },
+  {
+    "ability_id": "4218630583",
+    "game_ability_id": "10507"
+  },
+  {
+    "ability_id": "4218632563",
+    "game_ability_id": "10253"
+  },
+  {
+    "ability_id": "4218633553",
+    "game_ability_id": "10303"
+  },
+  {
+    "ability_id": "4218634543",
+    "game_ability_id": "10361"
+  },
+  {
+    "ability_id": "4218636523",
+    "game_ability_id": "10201"
+  },
+  {
+    "ability_id": "4218640573",
+    "game_ability_id": "10020"
+  },
+  {
+    "ability_id": "4218644533",
+    "game_ability_id": "10415"
+  },
+  {
+    "ability_id": "4218645523",
+    "game_ability_id": "10221"
+  },
+  {
+    "ability_id": "4218646513",
+    "game_ability_id": "10463"
+  },
+  {
+    "ability_id": "4218654523",
+    "game_ability_id": "10177"
+  },
+  {
+    "ability_id": "4218655513",
+    "game_ability_id": "10437"
+  },
+  {
+    "ability_id": "4218660553",
+    "game_ability_id": "10293"
+  },
+  {
+    "ability_id": "4218661543",
+    "game_ability_id": "10351"
+  },
+  {
+    "ability_id": "4218662533",
+    "game_ability_id": "10396"
+  },
+  {
+    "ability_id": "4218663523",
+    "game_ability_id": "10188"
+  },
+  {
+    "ability_id": "4218670543",
+    "game_ability_id": "10357"
+  },
+  {
+    "ability_id": "4218671533",
+    "game_ability_id": "10398"
+  },
+  {
+    "ability_id": "4218672523",
+    "game_ability_id": "10197"
+  },
+  {
+    "ability_id": "4218674503",
+    "game_ability_id": "10046"
+  },
+  {
+    "ability_id": "4218680533",
+    "game_ability_id": "10419"
+  },
+  {
+    "ability_id": "4218681523",
+    "game_ability_id": "10225"
+  },
+  {
+    "ability_id": "4218691513",
+    "game_ability_id": "10458"
+  },
+  {
+    "ability_id": "4218692503",
+    "game_ability_id": "10067"
+  },
+  {
+    "ability_id": "4219602673",
+    "game_ability_id": "53301"
+  },
+  {
+    "ability_id": "4219610593",
+    "game_ability_id": "11164"
+  },
+  {
+    "ability_id": "4219612573",
+    "game_ability_id": "11058"
+  },
+  {
+    "ability_id": "4219613563",
+    "game_ability_id": "11271"
+  },
+  {
+    "ability_id": "4219621573",
+    "game_ability_id": "11013"
+  },
+  {
+    "ability_id": "4219626523",
+    "game_ability_id": "11172"
+  },
+  {
+    "ability_id": "4219628503",
+    "game_ability_id": "11069"
+  },
+  {
+    "ability_id": "4219630573",
+    "game_ability_id": "11034"
+  },
+  {
+    "ability_id": "4219640563",
+    "game_ability_id": "11259"
+  },
+  {
+    "ability_id": "4219644523",
+    "game_ability_id": "11204"
+  },
+  {
+    "ability_id": "4219655503",
+    "game_ability_id": "11074"
+  },
+  {
+    "ability_id": "4219671523",
+    "game_ability_id": "11190"
+  },
+  {
+    "ability_id": "4219673503",
+    "game_ability_id": "11082"
+  },
+  {
+    "ability_id": "4219682503",
+    "game_ability_id": "11104"
+  },
+  {
+    "ability_id": "4219691503",
+    "game_ability_id": "11093"
+  },
+  {
+    "ability_id": "4264175305",
+    "game_ability_id": "10834"
+  },
+  {
+    "ability_id": "4264175314",
+    "game_ability_id": "10862"
+  },
+  {
+    "ability_id": "4264175332",
+    "game_ability_id": "10831"
+  },
+  {
+    "ability_id": "4264185313",
+    "game_ability_id": "10362"
+  },
+  {
+    "ability_id": "4264185322",
+    "game_ability_id": "10338"
+  },
+  {
+    "ability_id": "4315478266",
+    "game_ability_id": "10261"
+  },
+  {
+    "ability_id": "4315487266",
+    "game_ability_id": "10756"
+  },
+  {
+    "ability_id": "4407465213",
+    "game_ability_id": "10601"
+  },
+  {
+    "ability_id": "4417365213",
+    "game_ability_id": "10955"
+  },
+  {
+    "ability_id": "4418265213",
+    "game_ability_id": "10468"
+  },
+  {
+    "ability_id": "4429065213",
+    "game_ability_id": "11207"
+  },
+  {
+    "ability_id": "4462591939",
+    "game_ability_id": "11151"
+  },
+  {
+    "ability_id": "4469538912",
+    "game_ability_id": "11155"
+  },
+  {
+    "ability_id": "4562691739",
+    "game_ability_id": "54601"
+  },
+  {
+    "ability_id": "4614530259",
+    "game_ability_id": "11071"
+  },
+  {
+    "ability_id": "4614530268",
+    "game_ability_id": "10043"
+  },
+  {
+    "ability_id": "4614530277",
+    "game_ability_id": "10592"
+  },
+  {
+    "ability_id": "4614532248",
+    "game_ability_id": "10216"
+  },
+  {
+    "ability_id": "4614532257",
+    "game_ability_id": "10680"
+  },
+  {
+    "ability_id": "4614534237",
+    "game_ability_id": "10849"
+  },
+  {
+    "ability_id": "4614535209",
+    "game_ability_id": "11272"
+  },
+  {
+    "ability_id": "4614535227",
+    "game_ability_id": "10773"
+  },
+  {
+    "ability_id": "4614637251",
+    "game_ability_id": "59101"
+  },
+  {
+    "ability_id": "4662581938",
+    "game_ability_id": "10106"
+  },
+  {
+    "ability_id": "4662591838",
+    "game_ability_id": "10492"
+  },
+  {
+    "ability_id": "4662591937",
+    "game_ability_id": "10626"
+  },
+  {
+    "ability_id": "4762561939",
+    "game_ability_id": "11135"
+  },
+  {
+    "ability_id": "4862551939",
+    "game_ability_id": "11157"
+  },
+  {
+    "ability_id": "4862571739",
+    "game_ability_id": "11048"
+  },
+  {
+    "ability_id": "4862571937",
+    "game_ability_id": "10661"
+  },
+  {
+    "ability_id": "4862581837",
+    "game_ability_id": "11006"
+  },
+  {
+    "ability_id": "4862591638",
+    "game_ability_id": "10264"
+  },
+  {
+    "ability_id": "4962561838",
+    "game_ability_id": "10513"
+  },
+  {
+    "ability_id": "4962571837",
+    "game_ability_id": "10995"
+  },
+  {
+    "ability_id": "4962591538",
+    "game_ability_id": "10308"
+  },
+  {
+    "ability_id": "5012364699",
+    "game_ability_id": "11077"
+  },
+  {
+    "ability_id": "5012364798",
+    "game_ability_id": "11086"
+  },
+  {
+    "ability_id": "5012364897",
+    "game_ability_id": "11102"
+  },
+  {
+    "ability_id": "5012364987",
+    "game_ability_id": "10065"
+  },
+  {
+    "ability_id": "5012364996",
+    "game_ability_id": "11092"
+  },
+  {
+    "ability_id": "5112364689",
+    "game_ability_id": "10439"
+  },
+  {
+    "ability_id": "5112364779",
+    "game_ability_id": "10938"
+  },
+  {
+    "ability_id": "5112364788",
+    "game_ability_id": "10450"
+  },
+  {
+    "ability_id": "5112364887",
+    "game_ability_id": "10472"
+  },
+  {
+    "ability_id": "5112364977",
+    "game_ability_id": "10951"
+  },
+  {
+    "ability_id": "5112364986",
+    "game_ability_id": "10457"
+  },
+  {
+    "ability_id": "5152546838",
+    "game_ability_id": "10288"
+  },
+  {
+    "ability_id": "5162546738",
+    "game_ability_id": "10786"
+  },
+  {
+    "ability_id": "5172546737",
+    "game_ability_id": "10793"
+  },
+  {
+    "ability_id": "5172546836",
+    "game_ability_id": "10297"
+  },
+  {
+    "ability_id": "5182546835",
+    "game_ability_id": "10324"
+  },
+  {
+    "ability_id": "5192546735",
+    "game_ability_id": "10811"
+  },
+  {
+    "ability_id": "5212364499",
+    "game_ability_id": "11203"
+  },
+  {
+    "ability_id": "5212364589",
+    "game_ability_id": "10176"
+  },
+  {
+    "ability_id": "5212364598",
+    "game_ability_id": "11180"
+  },
+  {
+    "ability_id": "5212364778",
+    "game_ability_id": "10693"
+  },
+  {
+    "ability_id": "5212364787",
+    "game_ability_id": "10195"
+  },
+  {
+    "ability_id": "5212364796",
+    "game_ability_id": "11189"
+  },
+  {
+    "ability_id": "5212364877",
+    "game_ability_id": "10714"
+  },
+  {
+    "ability_id": "5212364886",
+    "game_ability_id": "10224"
+  },
+  {
+    "ability_id": "5212364895",
+    "game_ability_id": "11211"
+  },
+  {
+    "ability_id": "5212364976",
+    "game_ability_id": "10702"
+  },
+  {
+    "ability_id": "5212364994",
+    "game_ability_id": "11197"
+  },
+  {
+    "ability_id": "5214657369",
+    "game_ability_id": "10735"
+  },
+  {
+    "ability_id": "5214658368",
+    "game_ability_id": "10239"
+  },
+  {
+    "ability_id": "5214857367",
+    "game_ability_id": "10972"
+  },
+  {
+    "ability_id": "5214858366",
+    "game_ability_id": "10487"
+  },
+  {
+    "ability_id": "5214957366",
+    "game_ability_id": "10622"
+  },
+  {
+    "ability_id": "5214959364",
+    "game_ability_id": "11122"
+  },
+  {
+    "ability_id": "5264175331",
+    "game_ability_id": "10822"
+  },
+  {
+    "ability_id": "5264175340",
+    "game_ability_id": "10768"
+  },
+  {
+    "ability_id": "5264185303",
+    "game_ability_id": "10302"
+  },
+  {
+    "ability_id": "5264185321",
+    "game_ability_id": "10330"
+  },
+  {
+    "ability_id": "5264185330",
+    "game_ability_id": "10278"
+  },
+  {
+    "ability_id": "5312364489",
+    "game_ability_id": "10414"
+  },
+  {
+    "ability_id": "5312364687",
+    "game_ability_id": "10394"
+  },
+  {
+    "ability_id": "5312364777",
+    "game_ability_id": "10894"
+  },
+  {
+    "ability_id": "5312364786",
+    "game_ability_id": "10397"
+  },
+  {
+    "ability_id": "5312364885",
+    "game_ability_id": "10422"
+  },
+  {
+    "ability_id": "5312364975",
+    "game_ability_id": "10907"
+  },
+  {
+    "ability_id": "5312364984",
+    "game_ability_id": "10407"
+  },
+  {
+    "ability_id": "5315467267",
+    "game_ability_id": "10542"
+  },
+  {
+    "ability_id": "5315477266",
+    "game_ability_id": "10738"
+  },
+  {
+    "ability_id": "5315487265",
+    "game_ability_id": "10777"
+  },
+  {
+    "ability_id": "5316491269",
+    "game_ability_id": "321801"
+  },
+  {
+    "ability_id": "5407365213",
+    "game_ability_id": "10581"
+  },
+  {
+    "ability_id": "5412364389",
+    "game_ability_id": "10360"
+  },
+  {
+    "ability_id": "5412364578",
+    "game_ability_id": "10839"
+  },
+  {
+    "ability_id": "5412364587",
+    "game_ability_id": "10344"
+  },
+  {
+    "ability_id": "5412364686",
+    "game_ability_id": "10350"
+  },
+  {
+    "ability_id": "5412364776",
+    "game_ability_id": "10845"
+  },
+  {
+    "ability_id": "5412364974",
+    "game_ability_id": "10854"
+  },
+  {
+    "ability_id": "5428065213",
+    "game_ability_id": "10180"
+  },
+  {
+    "ability_id": "5437065213",
+    "game_ability_id": "10880"
+  },
+  {
+    "ability_id": "5467539912",
+    "game_ability_id": "10650"
+  },
+  {
+    "ability_id": "5468538912",
+    "game_ability_id": "10151"
+  },
+  {
+    "ability_id": "5469537912",
+    "game_ability_id": "11140"
+  },
+  {
+    "ability_id": "5512364379",
+    "game_ability_id": "10797"
+  },
+  {
+    "ability_id": "5512364388",
+    "game_ability_id": "10307"
+  },
+  {
+    "ability_id": "5512364478",
+    "game_ability_id": "10813"
+  },
+  {
+    "ability_id": "5512364487",
+    "game_ability_id": "10316"
+  },
+  {
+    "ability_id": "5512364676",
+    "game_ability_id": "10779"
+  },
+  {
+    "ability_id": "5512364775",
+    "game_ability_id": "10794"
+  },
+  {
+    "ability_id": "5512364874",
+    "game_ability_id": "10815"
+  },
+  {
+    "ability_id": "5512364883",
+    "game_ability_id": "10322"
+  },
+  {
+    "ability_id": "5512364973",
+    "game_ability_id": "10809"
+  },
+  {
+    "ability_id": "5612364279",
+    "game_ability_id": "10728"
+  },
+  {
+    "ability_id": "5612364297",
+    "game_ability_id": "11231"
+  },
+  {
+    "ability_id": "5612364378",
+    "game_ability_id": "10750"
+  },
+  {
+    "ability_id": "5612364387",
+    "game_ability_id": "10251"
+  },
+  {
+    "ability_id": "5612364594",
+    "game_ability_id": "11233"
+  },
+  {
+    "ability_id": "5612364693",
+    "game_ability_id": "11242"
+  },
+  {
+    "ability_id": "5612364774",
+    "game_ability_id": "10744"
+  },
+  {
+    "ability_id": "5612364792",
+    "game_ability_id": "11250"
+  },
+  {
+    "ability_id": "5612364873",
+    "game_ability_id": "10760"
+  },
+  {
+    "ability_id": "5612364891",
+    "game_ability_id": "11264"
+  },
+  {
+    "ability_id": "5612364981",
+    "game_ability_id": "10256"
+  },
+  {
+    "ability_id": "5614530249",
+    "game_ability_id": "11099"
+  },
+  {
+    "ability_id": "5614530258",
+    "game_ability_id": "10042"
+  },
+  {
+    "ability_id": "5614530267",
+    "game_ability_id": "10588"
+  },
+  {
+    "ability_id": "5614533228",
+    "game_ability_id": "10387"
+  },
+  {
+    "ability_id": "5614533237",
+    "game_ability_id": "10900"
+  },
+  {
+    "ability_id": "5614534218",
+    "game_ability_id": "10381"
+  },
+  {
+    "ability_id": "5614535217",
+    "game_ability_id": "10823"
+  },
+  {
+    "ability_id": "5639491299",
+    "game_ability_id": "11147"
+  },
+  {
+    "ability_id": "5685496231",
+    "game_ability_id": "10289"
+  },
+  {
+    "ability_id": "5704023617",
+    "game_ability_id": "10532"
+  },
+  {
+    "ability_id": "5704123616",
+    "game_ability_id": "10725"
+  },
+  {
+    "ability_id": "5704223615",
+    "game_ability_id": "10770"
+  },
+  {
+    "ability_id": "5704323614",
+    "game_ability_id": "10827"
+  },
+  {
+    "ability_id": "5712364179",
+    "game_ability_id": "10569"
+  },
+  {
+    "ability_id": "5712364197",
+    "game_ability_id": "11056"
+  },
+  {
+    "ability_id": "5712364278",
+    "game_ability_id": "10541"
+  },
+  {
+    "ability_id": "5712364296",
+    "game_ability_id": "11012"
+  },
+  {
+    "ability_id": "5712364377",
+    "game_ability_id": "10554"
+  },
+  {
+    "ability_id": "5712364386",
+    "game_ability_id": "10011"
+  },
+  {
+    "ability_id": "5712364485",
+    "game_ability_id": "10023"
+  },
+  {
+    "ability_id": "5712364575",
+    "game_ability_id": "10547"
+  },
+  {
+    "ability_id": "5712364593",
+    "game_ability_id": "11020"
+  },
+  {
+    "ability_id": "5712364872",
+    "game_ability_id": "10567"
+  },
+  {
+    "ability_id": "5712364890",
+    "game_ability_id": "11046"
+  },
+  {
+    "ability_id": "5712364971",
+    "game_ability_id": "10556"
+  },
+  {
+    "ability_id": "5712364980",
+    "game_ability_id": "10017"
+  },
+  {
+    "ability_id": "5714123615",
+    "game_ability_id": "10820"
+  },
+  {
+    "ability_id": "5724223613",
+    "game_ability_id": "10879"
+  },
+  {
+    "ability_id": "5724323612",
+    "game_ability_id": "10675"
+  },
+  {
+    "ability_id": "5724423611",
+    "game_ability_id": "10924"
+  },
+  {
+    "ability_id": "5734123613",
+    "game_ability_id": "10896"
+  },
+  {
+    "ability_id": "5734223612",
+    "game_ability_id": "10698"
+  },
+  {
+    "ability_id": "5744223611",
+    "game_ability_id": "10958"
+  },
+  {
+    "ability_id": "5754123611",
+    "game_ability_id": "10931"
+  },
+  {
+    "ability_id": "5754223610",
+    "game_ability_id": "10584"
+  },
+  {
+    "ability_id": "5764023611",
+    "game_ability_id": "10932"
+  },
+  {
+    "ability_id": "5774023610",
+    "game_ability_id": "10595"
+  },
+  {
+    "ability_id": "5775496231",
+    "game_ability_id": "10787"
+  },
+  {
+    "ability_id": "5785486231",
+    "game_ability_id": "10299"
+  },
+  {
+    "ability_id": "5804123615",
+    "game_ability_id": "10277"
+  },
+  {
+    "ability_id": "5804223614",
+    "game_ability_id": "10334"
+  },
+  {
+    "ability_id": "5804323613",
+    "game_ability_id": "10384"
+  },
+  {
+    "ability_id": "5812364088",
+    "game_ability_id": "10482"
+  },
+  {
+    "ability_id": "5812364187",
+    "game_ability_id": "10529"
+  },
+  {
+    "ability_id": "5812364286",
+    "game_ability_id": "10485"
+  },
+  {
+    "ability_id": "5812364475",
+    "game_ability_id": "10999"
+  },
+  {
+    "ability_id": "5812364484",
+    "game_ability_id": "10519"
+  },
+  {
+    "ability_id": "5812364574",
+    "game_ability_id": "10967"
+  },
+  {
+    "ability_id": "5812364682",
+    "game_ability_id": "10498"
+  },
+  {
+    "ability_id": "5812364772",
+    "game_ability_id": "10987"
+  },
+  {
+    "ability_id": "5812364970",
+    "game_ability_id": "10993"
+  },
+  {
+    "ability_id": "5814023615",
+    "game_ability_id": "10327"
+  },
+  {
+    "ability_id": "5814223613",
+    "game_ability_id": "10426"
+  },
+  {
+    "ability_id": "5824323611",
+    "game_ability_id": "10430"
+  },
+  {
+    "ability_id": "5834123612",
+    "game_ability_id": "10202"
+  },
+  {
+    "ability_id": "5844023612",
+    "game_ability_id": "10218"
+  },
+  {
+    "ability_id": "5844123611",
+    "game_ability_id": "10464"
+  },
+  {
+    "ability_id": "5844223610",
+    "game_ability_id": "10073"
+  },
+  {
+    "ability_id": "5854023611",
+    "game_ability_id": "10434"
+  },
+  {
+    "ability_id": "5885476231",
+    "game_ability_id": "10323"
+  },
+  {
+    "ability_id": "5904023615",
+    "game_ability_id": "11275"
+  },
+  {
+    "ability_id": "5904323612",
+    "game_ability_id": "11168"
+  },
+  {
+    "ability_id": "5912364078",
+    "game_ability_id": "10619"
+  },
+  {
+    "ability_id": "5912364177",
+    "game_ability_id": "10668"
+  },
+  {
+    "ability_id": "5912364186",
+    "game_ability_id": "10156"
+  },
+  {
+    "ability_id": "5912364285",
+    "game_ability_id": "10093"
+  },
+  {
+    "ability_id": "5912364294",
+    "game_ability_id": "11118"
+  },
+  {
+    "ability_id": "5912364375",
+    "game_ability_id": "10644"
+  },
+  {
+    "ability_id": "5912364393",
+    "game_ability_id": "11142"
+  },
+  {
+    "ability_id": "5912364591",
+    "game_ability_id": "11124"
+  },
+  {
+    "ability_id": "5912364681",
+    "game_ability_id": "10100"
+  },
+  {
+    "ability_id": "5912364771",
+    "game_ability_id": "10634"
+  },
+  {
+    "ability_id": "5912364870",
+    "game_ability_id": "10659"
+  },
+  {
+    "ability_id": "5924123612",
+    "game_ability_id": "11173"
+  },
+  {
+    "ability_id": "5924323610",
+    "game_ability_id": "11067"
+  },
+  {
+    "ability_id": "5934223610",
+    "game_ability_id": "11090"
+  },
+  {
+    "ability_id": "5954023610",
+    "game_ability_id": "11073"
+  },
+  {
+    "ability_id": "5975476231",
+    "game_ability_id": "10810"
+  },
+  {
+    "ability_id": "6004623617",
+    "game_ability_id": "68034"
+  },
+  {
+    "ability_id": "6122546939",
+    "game_ability_id": "11227"
+  },
+  {
+    "ability_id": "6124123619",
+    "game_ability_id": "321201"
+  },
+  {
+    "ability_id": "6124323617",
+    "game_ability_id": "58501"
+  },
+  {
+    "ability_id": "6132546839",
+    "game_ability_id": "10249"
+  },
+  {
+    "ability_id": "6132546938",
+    "game_ability_id": "11253"
+  },
+  {
+    "ability_id": "6142546739",
+    "game_ability_id": "10753"
+  },
+  {
+    "ability_id": "6152546738",
+    "game_ability_id": "10741"
+  },
+  {
+    "ability_id": "6152546837",
+    "game_ability_id": "10237"
+  },
+  {
+    "ability_id": "6152546936",
+    "game_ability_id": "11234"
+  },
+  {
+    "ability_id": "6154023617",
+    "game_ability_id": "59401"
+  },
+  {
+    "ability_id": "6162546836",
+    "game_ability_id": "10240"
+  },
+  {
+    "ability_id": "6162546935",
+    "game_ability_id": "11244"
+  },
+  {
+    "ability_id": "6172546835",
+    "game_ability_id": "10248"
+  },
+  {
+    "ability_id": "6182546735",
+    "game_ability_id": "10762"
+  },
+  {
+    "ability_id": "6182546933",
+    "game_ability_id": "11266"
+  },
+  {
+    "ability_id": "6192546932",
+    "game_ability_id": "11256"
+  },
+  {
+    "ability_id": "6214458369",
+    "game_ability_id": "10348"
+  },
+  {
+    "ability_id": "6214557369",
+    "game_ability_id": "10778"
+  },
+  {
+    "ability_id": "6214658367",
+    "game_ability_id": "10243"
+  },
+  {
+    "ability_id": "6214659366",
+    "game_ability_id": "11241"
+  },
+  {
+    "ability_id": "6214857366",
+    "game_ability_id": "10978"
+  },
+  {
+    "ability_id": "6214957365",
+    "game_ability_id": "10631"
+  },
+  {
+    "ability_id": "6264175303",
+    "game_ability_id": "10748"
+  },
+  {
+    "ability_id": "6264175330",
+    "game_ability_id": "10727"
+  },
+  {
+    "ability_id": "6264195301",
+    "game_ability_id": "11270"
+  },
+  {
+    "ability_id": "6264195310",
+    "game_ability_id": "11221"
+  },
+  {
+    "ability_id": "6310124087",
+    "game_ability_id": "300004"
+  },
+  {
+    "ability_id": "6315428269",
+    "game_ability_id": "10105"
+  },
+  {
+    "ability_id": "6315437269",
+    "game_ability_id": "10629"
+  },
+  {
+    "ability_id": "6315439267",
+    "game_ability_id": "11026"
+  },
+  {
+    "ability_id": "6315447268",
+    "game_ability_id": "10977"
+  },
+  {
+    "ability_id": "6315449266",
+    "game_ability_id": "11240"
+  },
+  {
+    "ability_id": "6315457267",
+    "game_ability_id": "10548"
+  },
+  {
+    "ability_id": "6315468265",
+    "game_ability_id": "10291"
+  },
+  {
+    "ability_id": "6315477265",
+    "game_ability_id": "10783"
+  },
+  {
+    "ability_id": "6315487264",
+    "game_ability_id": "10842"
+  },
+  {
+    "ability_id": "6315497263",
+    "game_ability_id": "10882"
+  },
+  {
+    "ability_id": "6315498262",
+    "game_ability_id": "10183"
+  },
+  {
+    "ability_id": "6350124074",
+    "game_ability_id": "10826"
+  },
+  {
+    "ability_id": "6350124083",
+    "game_ability_id": "10383"
+  },
+  {
+    "ability_id": "6350124092",
+    "game_ability_id": "11167"
+  },
+  {
+    "ability_id": "6350124371",
+    "game_ability_id": "10921"
+  },
+  {
+    "ability_id": "6350124380",
+    "game_ability_id": "10035"
+  },
+  {
+    "ability_id": "6350124470",
+    "game_ability_id": "10570"
+  },
+  {
+    "ability_id": "6351124190",
+    "game_ability_id": "11106"
+  },
+  {
+    "ability_id": "6351124370",
+    "game_ability_id": "10613"
+  },
+  {
+    "ability_id": "6352124072",
+    "game_ability_id": "10674"
+  },
+  {
+    "ability_id": "6352124171",
+    "game_ability_id": "10926"
+  },
+  {
+    "ability_id": "6353124080",
+    "game_ability_id": "10058"
+  },
+  {
+    "ability_id": "6354124070",
+    "game_ability_id": "10604"
+  },
+  {
+    "ability_id": "6407265213",
+    "game_ability_id": "10589"
+  },
+  {
+    "ability_id": "6409065213",
+    "game_ability_id": "11078"
+  },
+  {
+    "ability_id": "6418065213",
+    "game_ability_id": "10442"
+  },
+  {
+    "ability_id": "6427993815",
+    "game_ability_id": "11156"
+  },
+  {
+    "ability_id": "6428793915",
+    "game_ability_id": "11041"
+  },
+  {
+    "ability_id": "6428883915",
+    "game_ability_id": "10517"
+  },
+  {
+    "ability_id": "6428973915",
+    "game_ability_id": "10652"
+  },
+  {
+    "ability_id": "6428983815",
+    "game_ability_id": "10153"
+  },
+  {
+    "ability_id": "6429693915",
+    "game_ability_id": "11254"
+  },
+  {
+    "ability_id": "6429783915",
+    "game_ability_id": "10014"
+  },
+  {
+    "ability_id": "6429973815",
+    "game_ability_id": "10655"
+  },
+  {
+    "ability_id": "6429983715",
+    "game_ability_id": "10107"
+  },
+  {
+    "ability_id": "6467538912",
+    "game_ability_id": "10657"
+  },
+  {
+    "ability_id": "6468537912",
+    "game_ability_id": "10109"
+  },
+  {
+    "ability_id": "6468538812",
+    "game_ability_id": "10525"
+  },
+  {
+    "ability_id": "6507531492",
+    "game_ability_id": "10767"
+  },
+  {
+    "ability_id": "6508731462",
+    "game_ability_id": "10001"
+  },
+  {
+    "ability_id": "6508931442",
+    "game_ability_id": "10083"
+  },
+  {
+    "ability_id": "6509631462",
+    "game_ability_id": "11220"
+  },
+  {
+    "ability_id": "6509731452",
+    "game_ability_id": "11011"
+  },
+  {
+    "ability_id": "6509931432",
+    "game_ability_id": "11113"
+  },
+  {
+    "ability_id": "6517431492",
+    "game_ability_id": "10867"
+  },
+  {
+    "ability_id": "6517631472",
+    "game_ability_id": "10765"
+  },
+  {
+    "ability_id": "6517831452",
+    "game_ability_id": "11009"
+  },
+  {
+    "ability_id": "6518631462",
+    "game_ability_id": "10271"
+  },
+  {
+    "ability_id": "6518731452",
+    "game_ability_id": "10033"
+  },
+  {
+    "ability_id": "6518931432",
+    "game_ability_id": "10159"
+  },
+  {
+    "ability_id": "6519231492",
+    "game_ability_id": "11214"
+  },
+  {
+    "ability_id": "6519731442",
+    "game_ability_id": "11053"
+  },
+  {
+    "ability_id": "6527431482",
+    "game_ability_id": "10832"
+  },
+  {
+    "ability_id": "6527531472",
+    "game_ability_id": "10776"
+  },
+  {
+    "ability_id": "6527731452",
+    "game_ability_id": "10539"
+  },
+  {
+    "ability_id": "6528231492",
+    "game_ability_id": "10169"
+  },
+  {
+    "ability_id": "6528531462",
+    "game_ability_id": "10280"
+  },
+  {
+    "ability_id": "6528631452",
+    "game_ability_id": "10230"
+  },
+  {
+    "ability_id": "6528931422",
+    "game_ability_id": "10094"
+  },
+  {
+    "ability_id": "6529631442",
+    "game_ability_id": "11228"
+  },
+  {
+    "ability_id": "6529731432",
+    "game_ability_id": "11015"
+  },
+  {
+    "ability_id": "6537231492",
+    "game_ability_id": "10694"
+  },
+  {
+    "ability_id": "6537331482",
+    "game_ability_id": "10902"
+  },
+  {
+    "ability_id": "6538131492",
+    "game_ability_id": "10451"
+  },
+  {
+    "ability_id": "6538531452",
+    "game_ability_id": "10305"
+  },
+  {
+    "ability_id": "6539031492",
+    "game_ability_id": "11087"
+  },
+  {
+    "ability_id": "6547331472",
+    "game_ability_id": "10911"
+  },
+  {
+    "ability_id": "6547431462",
+    "game_ability_id": "10861"
+  },
+  {
+    "ability_id": "6547631442",
+    "game_ability_id": "10754"
+  },
+  {
+    "ability_id": "6547831422",
+    "game_ability_id": "11000"
+  },
+  {
+    "ability_id": "6548131482",
+    "game_ability_id": "10469"
+  },
+  {
+    "ability_id": "6548231472",
+    "game_ability_id": "10220"
+  },
+  {
+    "ability_id": "6548431452",
+    "game_ability_id": "10373"
+  },
+  {
+    "ability_id": "6548631432",
+    "game_ability_id": "10260"
+  },
+  {
+    "ability_id": "6548831412",
+    "game_ability_id": "10521"
+  },
+  {
+    "ability_id": "6549231462",
+    "game_ability_id": "11205"
+  },
+  {
+    "ability_id": "6557031492",
+    "game_ability_id": "10576"
+  },
+  {
+    "ability_id": "6557231472",
+    "game_ability_id": "10682"
+  },
+  {
+    "ability_id": "6557431452",
+    "game_ability_id": "10837"
+  },
+  {
+    "ability_id": "6557631432",
+    "game_ability_id": "10737"
+  },
+  {
+    "ability_id": "6557831412",
+    "game_ability_id": "10969"
+  },
+  {
+    "ability_id": "6558131472",
+    "game_ability_id": "10436"
+  },
+  {
+    "ability_id": "6558231462",
+    "game_ability_id": "10178"
+  },
+  {
+    "ability_id": "6558331452",
+    "game_ability_id": "10389"
+  },
+  {
+    "ability_id": "6558631422",
+    "game_ability_id": "10238"
+  },
+  {
+    "ability_id": "6559631412",
+    "game_ability_id": "11235"
+  },
+  {
+    "ability_id": "6567031482",
+    "game_ability_id": "10590"
+  },
+  {
+    "ability_id": "6567131472",
+    "game_ability_id": "10934"
+  },
+  {
+    "ability_id": "6567331452",
+    "game_ability_id": "10889"
+  },
+  {
+    "ability_id": "6567531432",
+    "game_ability_id": "10782"
+  },
+  {
+    "ability_id": "6567831402",
+    "game_ability_id": "10980"
+  },
+  {
+    "ability_id": "6568131462",
+    "game_ability_id": "10440"
+  },
+  {
+    "ability_id": "6569231442",
+    "game_ability_id": "11182"
+  },
+  {
+    "ability_id": "6577531422",
+    "game_ability_id": "10795"
+  },
+  {
+    "ability_id": "6578031462",
+    "game_ability_id": "10047"
+  },
+  {
+    "ability_id": "6578231442",
+    "game_ability_id": "10190"
+  },
+  {
+    "ability_id": "6578331432",
+    "game_ability_id": "10401"
+  },
+  {
+    "ability_id": "6578431422",
+    "game_ability_id": "10358"
+  },
+  {
+    "ability_id": "6578531412",
+    "game_ability_id": "10298"
+  },
+  {
+    "ability_id": "6579031452",
+    "game_ability_id": "11084"
+  },
+  {
+    "ability_id": "6585496231",
+    "game_ability_id": "10232"
+  },
+  {
+    "ability_id": "6587331432",
+    "game_ability_id": "10914"
+  },
+  {
+    "ability_id": "6587531412",
+    "game_ability_id": "10816"
+  },
+  {
+    "ability_id": "6587631402",
+    "game_ability_id": "10759"
+  },
+  {
+    "ability_id": "6588231432",
+    "game_ability_id": "10227"
+  },
+  {
+    "ability_id": "6588331422",
+    "game_ability_id": "10423"
+  },
+  {
+    "ability_id": "6588531402",
+    "game_ability_id": "10321"
+  },
+  {
+    "ability_id": "6589031442",
+    "game_ability_id": "11101"
+  },
+  {
+    "ability_id": "6589231422",
+    "game_ability_id": "11212"
+  },
+  {
+    "ability_id": "6595486231",
+    "game_ability_id": "11238"
+  },
+  {
+    "ability_id": "6597031452",
+    "game_ability_id": "10599"
+  },
+  {
+    "ability_id": "6597131442",
+    "game_ability_id": "10948"
+  },
+  {
+    "ability_id": "6597231432",
+    "game_ability_id": "10704"
+  },
+  {
+    "ability_id": "6597331422",
+    "game_ability_id": "10908"
+  },
+  {
+    "ability_id": "6597431412",
+    "game_ability_id": "10856"
+  },
+  {
+    "ability_id": "6597531402",
+    "game_ability_id": "10808"
+  },
+  {
+    "ability_id": "6598331412",
+    "game_ability_id": "10409"
+  },
+  {
+    "ability_id": "6598431402",
+    "game_ability_id": "10368"
+  },
+  {
+    "ability_id": "6599231412",
+    "game_ability_id": "11199"
+  },
+  {
+    "ability_id": "6604023617",
+    "game_ability_id": "68027"
+  },
+  {
+    "ability_id": "6609731442",
+    "game_ability_id": "51801"
+  },
+  {
+    "ability_id": "6614530239",
+    "game_ability_id": "11089"
+  },
+  {
+    "ability_id": "6614530257",
+    "game_ability_id": "10578"
+  },
+  {
+    "ability_id": "6614531238",
+    "game_ability_id": "10453"
+  },
+  {
+    "ability_id": "6614532219",
+    "game_ability_id": "11216"
+  },
+  {
+    "ability_id": "6621931482",
+    "game_ability_id": "321701"
+  },
+  {
+    "ability_id": "6629731422",
+    "game_ability_id": "54301"
+  },
+  {
+    "ability_id": "6675496231",
+    "game_ability_id": "10742"
+  },
+  {
+    "ability_id": "6695476231",
+    "game_ability_id": "11243"
+  },
+  {
+    "ability_id": "6712364097",
+    "game_ability_id": "52501"
+  },
+  {
+    "ability_id": "6795466231",
+    "game_ability_id": "11245"
+  },
+  {
+    "ability_id": "6875476231",
+    "game_ability_id": "10761"
+  },
+  {
+    "ability_id": "6895456231",
+    "game_ability_id": "11268"
+  },
+  {
+    "ability_id": "7011653245",
+    "game_ability_id": "10923"
+  },
+  {
+    "ability_id": "7013633245",
+    "game_ability_id": "10872"
+  },
+  {
+    "ability_id": "7015613245",
+    "game_ability_id": "10769"
+  },
+  {
+    "ability_id": "7016603245",
+    "game_ability_id": "10726"
+  },
+  {
+    "ability_id": "7065243179",
+    "game_ability_id": "10557"
+  },
+  {
+    "ability_id": "7065243197",
+    "game_ability_id": "10635"
+  },
+  {
+    "ability_id": "7112546939",
+    "game_ability_id": "11052"
+  },
+  {
+    "ability_id": "7112633245",
+    "game_ability_id": "10720"
+  },
+  {
+    "ability_id": "7113623245",
+    "game_ability_id": "10918"
+  },
+  {
+    "ability_id": "7114613245",
+    "game_ability_id": "10868"
+  },
+  {
+    "ability_id": "7115603245",
+    "game_ability_id": "10821"
+  },
+  {
+    "ability_id": "7122546938",
+    "game_ability_id": "11019"
+  },
+  {
+    "ability_id": "7132546838",
+    "game_ability_id": "10013"
+  },
+  {
+    "ability_id": "7132546937",
+    "game_ability_id": "11036"
+  },
+  {
+    "ability_id": "7142546738",
+    "game_ability_id": "10562"
+  },
+  {
+    "ability_id": "7142546837",
+    "game_ability_id": "10022"
+  },
+  {
+    "ability_id": "7152546737",
+    "game_ability_id": "10546"
+  },
+  {
+    "ability_id": "7152646934",
+    "game_ability_id": "54701"
+  },
+  {
+    "ability_id": "7165243187",
+    "game_ability_id": "10982"
+  },
+  {
+    "ability_id": "7165243196",
+    "game_ability_id": "10627"
+  },
+  {
+    "ability_id": "7172546933",
+    "game_ability_id": "11029"
+  },
+  {
+    "ability_id": "7182546932",
+    "game_ability_id": "11050"
+  },
+  {
+    "ability_id": "7192546733",
+    "game_ability_id": "10558"
+  },
+  {
+    "ability_id": "7192546931",
+    "game_ability_id": "11037"
+  },
+  {
+    "ability_id": "7210643245",
+    "game_ability_id": "10574"
+  },
+  {
+    "ability_id": "7212623245",
+    "game_ability_id": "10677"
+  },
+  {
+    "ability_id": "7213613245",
+    "game_ability_id": "10874"
+  },
+  {
+    "ability_id": "7214259369",
+    "game_ability_id": "11187"
+  },
+  {
+    "ability_id": "7214457369",
+    "game_ability_id": "10843"
+  },
+  {
+    "ability_id": "7214458368",
+    "game_ability_id": "10359"
+  },
+  {
+    "ability_id": "7214557368",
+    "game_ability_id": "10796"
+  },
+  {
+    "ability_id": "7214603245",
+    "game_ability_id": "10830"
+  },
+  {
+    "ability_id": "7214658366",
+    "game_ability_id": "10246"
+  },
+  {
+    "ability_id": "7214857365",
+    "game_ability_id": "10986"
+  },
+  {
+    "ability_id": "7214858364",
+    "game_ability_id": "10500"
+  },
+  {
+    "ability_id": "7214957364",
+    "game_ability_id": "10632"
+  },
+  {
+    "ability_id": "7264116352",
+    "game_ability_id": "58701"
+  },
+  {
+    "ability_id": "7264166302",
+    "game_ability_id": "68031"
+  },
+  {
+    "ability_id": "7264175302",
+    "game_ability_id": "10536"
+  },
+  {
+    "ability_id": "7264181350",
+    "game_ability_id": "300007"
+  },
+  {
+    "ability_id": "7264185301",
+    "game_ability_id": "10030"
+  },
+  {
+    "ability_id": "7265243159",
+    "game_ability_id": "10812"
+  },
+  {
+    "ability_id": "7265243168",
+    "game_ability_id": "10763"
+  },
+  {
+    "ability_id": "7265243177",
+    "game_ability_id": "10551"
+  },
+  {
+    "ability_id": "7265243195",
+    "game_ability_id": "10624"
+  },
+  {
+    "ability_id": "7296496231",
+    "game_ability_id": "53501"
+  },
+  {
+    "ability_id": "7310633245",
+    "game_ability_id": "10596"
+  },
+  {
+    "ability_id": "7312613245",
+    "game_ability_id": "10695"
+  },
+  {
+    "ability_id": "7313603245",
+    "game_ability_id": "10897"
+  },
+  {
+    "ability_id": "7315409269",
+    "game_ability_id": "11137"
+  },
+  {
+    "ability_id": "7315418269",
+    "game_ability_id": "10110"
+  },
+  {
+    "ability_id": "7315437268",
+    "game_ability_id": "10984"
+  },
+  {
+    "ability_id": "7315439266",
+    "game_ability_id": "11248"
+  },
+  {
+    "ability_id": "7315448266",
+    "game_ability_id": "10245"
+  },
+  {
+    "ability_id": "7315457266",
+    "game_ability_id": "10745"
+  },
+  {
+    "ability_id": "7315467265",
+    "game_ability_id": "10789"
+  },
+  {
+    "ability_id": "7315478263",
+    "game_ability_id": "10402"
+  },
+  {
+    "ability_id": "7315488262",
+    "game_ability_id": "10198"
+  },
+  {
+    "ability_id": "7315499260",
+    "game_ability_id": "11080"
+  },
+  {
+    "ability_id": "7365243149",
+    "game_ability_id": "10858"
+  },
+  {
+    "ability_id": "7365243185",
+    "game_ability_id": "10971"
+  },
+  {
+    "ability_id": "7365243194",
+    "game_ability_id": "10653"
+  },
+  {
+    "ability_id": "7407165213",
+    "game_ability_id": "10594"
+  },
+  {
+    "ability_id": "7408065213",
+    "game_ability_id": "10049"
+  },
+  {
+    "ability_id": "7410623245",
+    "game_ability_id": "10605"
+  },
+  {
+    "ability_id": "7412603245",
+    "game_ability_id": "10709"
+  },
+  {
+    "ability_id": "7417065213",
+    "game_ability_id": "10939"
+  },
+  {
+    "ability_id": "7465243139",
+    "game_ability_id": "10904"
+  },
+  {
+    "ability_id": "7465243148",
+    "game_ability_id": "10863"
+  },
+  {
+    "ability_id": "7465243157",
+    "game_ability_id": "10788"
+  },
+  {
+    "ability_id": "7465243193",
+    "game_ability_id": "10638"
+  },
+  {
+    "ability_id": "7467538812",
+    "game_ability_id": "11003"
+  },
+  {
+    "ability_id": "7467539712",
+    "game_ability_id": "10559"
+  },
+  {
+    "ability_id": "7468536912",
+    "game_ability_id": "10103"
+  },
+  {
+    "ability_id": "7469535912",
+    "game_ability_id": "11127"
+  },
+  {
+    "ability_id": "7469537712",
+    "game_ability_id": "11030"
+  },
+  {
+    "ability_id": "7469538612",
+    "game_ability_id": "11267"
+  },
+  {
+    "ability_id": "7510613245",
+    "game_ability_id": "10579"
+  },
+  {
+    "ability_id": "7565243129",
+    "game_ability_id": "10706"
+  },
+  {
+    "ability_id": "7565243138",
+    "game_ability_id": "10916"
+  },
+  {
+    "ability_id": "7565243156",
+    "game_ability_id": "10784"
+  },
+  {
+    "ability_id": "7565243165",
+    "game_ability_id": "10739"
+  },
+  {
+    "ability_id": "7565243174",
+    "game_ability_id": "10560"
+  },
+  {
+    "ability_id": "7596466231",
+    "game_ability_id": "54801"
+  },
+  {
+    "ability_id": "7614137208",
+    "game_ability_id": "300006"
+  },
+  {
+    "ability_id": "7614530229",
+    "game_ability_id": "11068"
+  },
+  {
+    "ability_id": "7614531237",
+    "game_ability_id": "10947"
+  },
+  {
+    "ability_id": "7614532209",
+    "game_ability_id": "11169"
+  },
+  {
+    "ability_id": "7614534207",
+    "game_ability_id": "10828"
+  },
+  {
+    "ability_id": "7614637221",
+    "game_ability_id": "58601"
+  },
+  {
+    "ability_id": "7665243119",
+    "game_ability_id": "10949"
+  },
+  {
+    "ability_id": "7665243137",
+    "game_ability_id": "10890"
+  },
+  {
+    "ability_id": "7675486231",
+    "game_ability_id": "10550"
+  },
+  {
+    "ability_id": "7695466231",
+    "game_ability_id": "11023"
+  },
+  {
+    "ability_id": "7765243109",
+    "game_ability_id": "10598"
+  },
+  {
+    "ability_id": "7765243136",
+    "game_ability_id": "10888"
+  },
+  {
+    "ability_id": "7765243145",
+    "game_ability_id": "10836"
+  },
+  {
+    "ability_id": "7765243172",
+    "game_ability_id": "10538"
+  },
+  {
+    "ability_id": "7765243181",
+    "game_ability_id": "11008"
+  },
+  {
+    "ability_id": "7865243117",
+    "game_ability_id": "10944"
+  },
+  {
+    "ability_id": "7865243126",
+    "game_ability_id": "10690"
+  },
+  {
+    "ability_id": "7865243153",
+    "game_ability_id": "10803"
+  },
+  {
+    "ability_id": "7865243162",
+    "game_ability_id": "10734"
+  },
+  {
+    "ability_id": "7965243107",
+    "game_ability_id": "10591"
+  },
+  {
+    "ability_id": "7965243125",
+    "game_ability_id": "10679"
+  },
+  {
+    "ability_id": "7965243143",
+    "game_ability_id": "10848"
+  },
+  {
+    "ability_id": "7965243152",
+    "game_ability_id": "10772"
+  },
+  {
+    "ability_id": "7985446231",
+    "game_ability_id": "10015"
+  },
+  {
+    "ability_id": "7995436231",
+    "game_ability_id": "11039"
+  },
+  {
+    "ability_id": "8012633245",
+    "game_ability_id": "10165"
+  },
+  {
+    "ability_id": "8017623241",
+    "game_ability_id": "300008"
+  },
+  {
+    "ability_id": "8065243169",
+    "game_ability_id": "10257"
+  },
+  {
+    "ability_id": "8065243187",
+    "game_ability_id": "10502"
+  },
+  {
+    "ability_id": "8065243196",
+    "game_ability_id": "10101"
+  },
+  {
+    "ability_id": "8111633245",
+    "game_ability_id": "10474"
+  },
+  {
+    "ability_id": "8113613245",
+    "game_ability_id": "10424"
+  },
+  {
+    "ability_id": "8114603245",
+    "game_ability_id": "10377"
+  },
+  {
+    "ability_id": "8132546837",
+    "game_ability_id": "10509"
+  },
+  {
+    "ability_id": "8142546737",
+    "game_ability_id": "10998"
+  },
+  {
+    "ability_id": "8142546836",
+    "game_ability_id": "10520"
+  },
+  {
+    "ability_id": "8152546736",
+    "game_ability_id": "10968"
+  },
+  {
+    "ability_id": "8162546834",
+    "game_ability_id": "10493"
+  },
+  {
+    "ability_id": "8165243159",
+    "game_ability_id": "10309"
+  },
+  {
+    "ability_id": "8165243186",
+    "game_ability_id": "10495"
+  },
+  {
+    "ability_id": "8172546833",
+    "game_ability_id": "10503"
+  },
+  {
+    "ability_id": "8182546733",
+    "game_ability_id": "11002"
+  },
+  {
+    "ability_id": "8192546831",
+    "game_ability_id": "10514"
+  },
+  {
+    "ability_id": "8210633245",
+    "game_ability_id": "10040"
+  },
+  {
+    "ability_id": "8211623245",
+    "game_ability_id": "10431"
+  },
+  {
+    "ability_id": "8214259368",
+    "game_ability_id": "11213"
+  },
+  {
+    "ability_id": "8214457368",
+    "game_ability_id": "10866"
+  },
+  {
+    "ability_id": "8214458367",
+    "game_ability_id": "10376"
+  },
+  {
+    "ability_id": "8214657366",
+    "game_ability_id": "10757"
+  },
+  {
+    "ability_id": "8214658365",
+    "game_ability_id": "10269"
+  },
+  {
+    "ability_id": "8214659364",
+    "game_ability_id": "11262"
+  },
+  {
+    "ability_id": "8214757365",
+    "game_ability_id": "10566"
+  },
+  {
+    "ability_id": "8214759363",
+    "game_ability_id": "11047"
+  },
+  {
+    "ability_id": "8214857364",
+    "game_ability_id": "11001"
+  },
+  {
+    "ability_id": "8214957363",
+    "game_ability_id": "10660"
+  },
+  {
+    "ability_id": "8214958362",
+    "game_ability_id": "10152"
+  },
+  {
+    "ability_id": "8264185300",
+    "game_ability_id": "10481"
+  },
+  {
+    "ability_id": "8265243149",
+    "game_ability_id": "10370"
+  },
+  {
+    "ability_id": "8265243185",
+    "game_ability_id": "10490"
+  },
+  {
+    "ability_id": "8311613245",
+    "game_ability_id": "10454"
+  },
+  {
+    "ability_id": "8312603245",
+    "game_ability_id": "10203"
+  },
+  {
+    "ability_id": "8315417269",
+    "game_ability_id": "10658"
+  },
+  {
+    "ability_id": "8315418268",
+    "game_ability_id": "10526"
+  },
+  {
+    "ability_id": "8315427268",
+    "game_ability_id": "11005"
+  },
+  {
+    "ability_id": "8315437267",
+    "game_ability_id": "10564"
+  },
+  {
+    "ability_id": "8315438266",
+    "game_ability_id": "10267"
+  },
+  {
+    "ability_id": "8315448265",
+    "game_ability_id": "10319"
+  },
+  {
+    "ability_id": "8315458264",
+    "game_ability_id": "10378"
+  },
+  {
+    "ability_id": "8315467264",
+    "game_ability_id": "10864"
+  },
+  {
+    "ability_id": "8315477263",
+    "game_ability_id": "10915"
+  },
+  {
+    "ability_id": "8315478262",
+    "game_ability_id": "10228"
+  },
+  {
+    "ability_id": "8315487262",
+    "game_ability_id": "10717"
+  },
+  {
+    "ability_id": "8315497261",
+    "game_ability_id": "10960"
+  },
+  {
+    "ability_id": "8365243139",
+    "game_ability_id": "10411"
+  },
+  {
+    "ability_id": "8365243148",
+    "game_ability_id": "10375"
+  },
+  {
+    "ability_id": "8365243166",
+    "game_ability_id": "10242"
+  },
+  {
+    "ability_id": "8365243184",
+    "game_ability_id": "10522"
+  },
+  {
+    "ability_id": "8407065213",
+    "game_ability_id": "10607"
+  },
+  {
+    "ability_id": "8410613245",
+    "game_ability_id": "10071"
+  },
+  {
+    "ability_id": "8411603245",
+    "game_ability_id": "10465"
+  },
+  {
+    "ability_id": "8465243129",
+    "game_ability_id": "10210"
+  },
+  {
+    "ability_id": "8465243156",
+    "game_ability_id": "10290"
+  },
+  {
+    "ability_id": "8465243165",
+    "game_ability_id": "10233"
+  },
+  {
+    "ability_id": "8465243183",
+    "game_ability_id": "10504"
+  },
+  {
+    "ability_id": "8465243192",
+    "game_ability_id": "10090"
+  },
+  {
+    "ability_id": "8467537812",
+    "game_ability_id": "10988"
+  },
+  {
+    "ability_id": "8467538712",
+    "game_ability_id": "10568"
+  },
+  {
+    "ability_id": "8468535912",
+    "game_ability_id": "10098"
+  },
+  {
+    "ability_id": "8468536812",
+    "game_ability_id": "10499"
+  },
+  {
+    "ability_id": "8468539512",
+    "game_ability_id": "10313"
+  },
+  {
+    "ability_id": "8469534912",
+    "game_ability_id": "11153"
+  },
+  {
+    "ability_id": "8469536712",
+    "game_ability_id": "11027"
+  },
+  {
+    "ability_id": "8565243137",
+    "game_ability_id": "10403"
+  },
+  {
+    "ability_id": "8565243146",
+    "game_ability_id": "10353"
+  },
+  {
+    "ability_id": "8565243164",
+    "game_ability_id": "10262"
+  },
+  {
+    "ability_id": "8565243191",
+    "game_ability_id": "10161"
+  },
+  {
+    "ability_id": "8585476231",
+    "game_ability_id": "10489"
+  },
+  {
+    "ability_id": "8614530219",
+    "game_ability_id": "11110"
+  },
+  {
+    "ability_id": "8614531227",
+    "game_ability_id": "10927"
+  },
+  {
+    "ability_id": "8614532208",
+    "game_ability_id": "10168"
+  },
+  {
+    "ability_id": "8614533207",
+    "game_ability_id": "10873"
+  },
+  {
+    "ability_id": "8665243127",
+    "game_ability_id": "10191"
+  },
+  {
+    "ability_id": "8665243136",
+    "game_ability_id": "10390"
+  },
+  {
+    "ability_id": "8665243145",
+    "game_ability_id": "10340"
+  },
+  {
+    "ability_id": "8685466231",
+    "game_ability_id": "10494"
+  },
+  {
+    "ability_id": "8765243135",
+    "game_ability_id": "10388"
+  },
+  {
+    "ability_id": "8765243144",
+    "game_ability_id": "10372"
+  },
+  {
+    "ability_id": "8765243153",
+    "game_ability_id": "10304"
+  },
+  {
+    "ability_id": "8765243171",
+    "game_ability_id": "10032"
+  },
+  {
+    "ability_id": "8775466231",
+    "game_ability_id": "10981"
+  },
+  {
+    "ability_id": "8865243107",
+    "game_ability_id": "10054"
+  },
+  {
+    "ability_id": "8865243125",
+    "game_ability_id": "10182"
+  },
+  {
+    "ability_id": "8865243134",
+    "game_ability_id": "10418"
+  },
+  {
+    "ability_id": "8865243143",
+    "game_ability_id": "10365"
+  },
+  {
+    "ability_id": "8865243152",
+    "game_ability_id": "10284"
+  },
+  {
+    "ability_id": "8865243170",
+    "game_ability_id": "10008"
+  },
+  {
+    "ability_id": "8875456231",
+    "game_ability_id": "11004"
+  },
+  {
+    "ability_id": "8885446231",
+    "game_ability_id": "10524"
+  },
+  {
+    "ability_id": "8965243115",
+    "game_ability_id": "10433"
+  },
+  {
+    "ability_id": "8965243124",
+    "game_ability_id": "10215"
+  },
+  {
+    "ability_id": "9065243168",
+    "game_ability_id": "11265"
+  },
+  {
+    "ability_id": "9065243195",
+    "game_ability_id": "11125"
+  },
+  {
+    "ability_id": "9102546839",
+    "game_ability_id": "10082"
+  },
+  {
+    "ability_id": "9102546938",
+    "game_ability_id": "11116"
+  },
+  {
+    "ability_id": "9112546739",
+    "game_ability_id": "10665"
+  },
+  {
+    "ability_id": "9112546838",
+    "game_ability_id": "10162"
+  },
+  {
+    "ability_id": "9112613245",
+    "game_ability_id": "11217"
+  },
+  {
+    "ability_id": "9132546737",
+    "game_ability_id": "10643"
+  },
+  {
+    "ability_id": "9132546935",
+    "game_ability_id": "11144"
+  },
+  {
+    "ability_id": "9142546934",
+    "game_ability_id": "11152"
+  },
+  {
+    "ability_id": "9152546735",
+    "game_ability_id": "10623"
+  },
+  {
+    "ability_id": "9152546834",
+    "game_ability_id": "10097"
+  },
+  {
+    "ability_id": "9152546933",
+    "game_ability_id": "11126"
+  },
+  {
+    "ability_id": "9162546833",
+    "game_ability_id": "10102"
+  },
+  {
+    "ability_id": "9162546932",
+    "game_ability_id": "11131"
+  },
+  {
+    "ability_id": "9165243167",
+    "game_ability_id": "11246"
+  },
+  {
+    "ability_id": "9165243176",
+    "game_ability_id": "11024"
+  },
+  {
+    "ability_id": "9172546733",
+    "game_ability_id": "10636"
+  },
+  {
+    "ability_id": "9172546931",
+    "game_ability_id": "11136"
+  },
+  {
+    "ability_id": "9182546732",
+    "game_ability_id": "10663"
+  },
+  {
+    "ability_id": "9195496231",
+    "game_ability_id": "11160"
+  },
+  {
+    "ability_id": "9214257369",
+    "game_ability_id": "10700"
+  },
+  {
+    "ability_id": "9214258368",
+    "game_ability_id": "10214"
+  },
+  {
+    "ability_id": "9214357368",
+    "game_ability_id": "10909"
+  },
+  {
+    "ability_id": "9214457367",
+    "game_ability_id": "10859"
+  },
+  {
+    "ability_id": "9214458366",
+    "game_ability_id": "10366"
+  },
+  {
+    "ability_id": "9214557366",
+    "game_ability_id": "10806"
+  },
+  {
+    "ability_id": "9214658364",
+    "game_ability_id": "10255"
+  },
+  {
+    "ability_id": "9214857363",
+    "game_ability_id": "10994"
+  },
+  {
+    "ability_id": "9214957362",
+    "game_ability_id": "10651"
+  },
+  {
+    "ability_id": "9264116332",
+    "game_ability_id": "321401"
+  },
+  {
+    "ability_id": "9265243175",
+    "game_ability_id": "11021"
+  },
+  {
+    "ability_id": "9265243193",
+    "game_ability_id": "11145"
+  },
+  {
+    "ability_id": "9285496231",
+    "game_ability_id": "10089"
+  },
+  {
+    "ability_id": "9315408268",
+    "game_ability_id": "10515"
+  },
+  {
+    "ability_id": "9315409267",
+    "game_ability_id": "11038"
+  },
+  {
+    "ability_id": "9315418267",
+    "game_ability_id": "10016"
+  },
+  {
+    "ability_id": "9315437266",
+    "game_ability_id": "10751"
+  },
+  {
+    "ability_id": "9315438265",
+    "game_ability_id": "10311"
+  },
+  {
+    "ability_id": "9315447265",
+    "game_ability_id": "10805"
+  },
+  {
+    "ability_id": "9315459262",
+    "game_ability_id": "11200"
+  },
+  {
+    "ability_id": "9315468262",
+    "game_ability_id": "10211"
+  },
+  {
+    "ability_id": "9315477262",
+    "game_ability_id": "10705"
+  },
+  {
+    "ability_id": "9315479260",
+    "game_ability_id": "11094"
+  },
+  {
+    "ability_id": "9315487261",
+    "game_ability_id": "10954"
+  },
+  {
+    "ability_id": "9365243174",
+    "game_ability_id": "11044"
+  },
+  {
+    "ability_id": "9365243192",
+    "game_ability_id": "11120"
+  },
+  {
+    "ability_id": "9375496231",
+    "game_ability_id": "10637"
+  },
+  {
+    "ability_id": "9395476231",
+    "game_ability_id": "11143"
+  },
+  {
+    "ability_id": "9410603245",
+    "game_ability_id": "11096"
+  },
+  {
+    "ability_id": "9465243128",
+    "game_ability_id": "11210"
+  },
+  {
+    "ability_id": "9465243173",
+    "game_ability_id": "11031"
+  },
+  {
+    "ability_id": "9465243191",
+    "game_ability_id": "11161"
+  },
+  {
+    "ability_id": "9467539512",
+    "game_ability_id": "10804"
+  },
+  {
+    "ability_id": "9468537612",
+    "game_ability_id": "10244"
+  },
+  {
+    "ability_id": "9468538512",
+    "game_ability_id": "10318"
+  },
+  {
+    "ability_id": "9469533912",
+    "game_ability_id": "11141"
+  },
+  {
+    "ability_id": "9469536612",
+    "game_ability_id": "11239"
+  },
+  {
+    "ability_id": "9565243109",
+    "game_ability_id": "11095"
+  },
+  {
+    "ability_id": "9565243163",
+    "game_ability_id": "11252"
+  },
+  {
+    "ability_id": "9565243172",
+    "game_ability_id": "11017"
+  },
+  {
+    "ability_id": "9614530209",
+    "game_ability_id": "11060"
+  },
+  {
+    "ability_id": "9665243126",
+    "game_ability_id": "11183"
+  },
+  {
+    "ability_id": "9665243162",
+    "game_ability_id": "11229"
+  },
+  {
+    "ability_id": "9666243170",
+    "game_ability_id": "51901"
+  },
+  {
+    "ability_id": "9765243107",
+    "game_ability_id": "11083"
+  },
+  {
+    "ability_id": "9765243170",
+    "game_ability_id": "11010"
+  },
+  {
+    "ability_id": "9785446231",
+    "game_ability_id": "10108"
+  },
+  {
+    "ability_id": "9795436231",
+    "game_ability_id": "11138"
+  },
+  {
+    "ability_id": "9865243160",
+    "game_ability_id": "11226"
+  },
+  {
+    "ability_id": "9875446231",
+    "game_ability_id": "10656"
+  },
+  {
+    "ability_id": "9885436231",
+    "game_ability_id": "10149"
+  },
+  {
+    "ability_id": "9895426231",
+    "game_ability_id": "11158"
+  },
+  {
+    "ability_id": "9965243105",
+    "game_ability_id": "11070"
+  },
+  {
+    "ability_id": "9975436231",
+    "game_ability_id": "10648"
+  },
+  {
+    "ability_id": "9982136594",
+    "game_ability_id": "11154"
+  },
+  {
+    "ability_id": "9992136584",
+    "game_ability_id": "11150"
+  }
+]

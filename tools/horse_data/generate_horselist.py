@@ -222,6 +222,7 @@ COL_ACHIEVEMENT = 18
 COL_POTENTIAL = 19
 COL_STABLE = 20
 COL_ABILITY = 21
+COL_TALENT_SLOTS = 22
 COL_NAME_T = 23
 COL_NAME_TT = 24
 COL_NAME_TTT = 25
@@ -310,7 +311,6 @@ SOURCE_JSON_VERSION = 1
 DEFAULT_SOURCE_JSON_PATH = Path("data/source/workbook.json")
 SOURCE_HORSE_LIST_KEY = "horse_list"
 SOURCE_ALL_KEY = "all"
-SOURCE_SPECIAL_RARE_KEY = "special_rare"
 
 
 FULLWIDTH_DIGIT_TABLE = str.maketrans("0123456789", "０１２３４５６７８９")
@@ -462,7 +462,7 @@ def worksheet_rows(
 
 
 def load_excel_source(workbook_path: Path) -> dict[str, list[list[object]]]:
-    # エクセルファイルを開いて「種牡馬一覧」「ALL」「特別レア」の 3 シートを行データとして読み込む。
+    # エクセルファイルを開いて「種牡馬一覧」「ALL」の 2 シートを行データとして読み込む。
     if load_workbook is None:
         raise RuntimeError("openpyxl is required to read .xlsm sources.")
 
@@ -477,9 +477,6 @@ def load_excel_source(workbook_path: Path) -> dict[str, list[list[object]]]:
                 min_row=3,
                 max_col=112,
                 stop_on_blank_column=COL_SERIAL_NUMBER,
-            ),
-            SOURCE_SPECIAL_RARE_KEY: worksheet_rows(
-                workbook["特別レア"], min_row=2, max_col=3
             ),
         }
     finally:
@@ -498,7 +495,7 @@ def load_source_json(source_json_path: Path) -> dict[str, list[list[object]]]:
 
     missing_keys = [
         key
-        for key in (SOURCE_HORSE_LIST_KEY, SOURCE_ALL_KEY, SOURCE_SPECIAL_RARE_KEY)
+        for key in (SOURCE_HORSE_LIST_KEY, SOURCE_ALL_KEY)
         if key not in sheets
     ]
     if missing_keys:
@@ -509,9 +506,6 @@ def load_source_json(source_json_path: Path) -> dict[str, list[list[object]]]:
             sheets[SOURCE_HORSE_LIST_KEY], 1
         ),
         SOURCE_ALL_KEY: normalize_sheet_rows(sheets[SOURCE_ALL_KEY], 112),
-        SOURCE_SPECIAL_RARE_KEY: normalize_sheet_rows(
-            sheets[SOURCE_SPECIAL_RARE_KEY], 3
-        ),
     }
 
 
@@ -539,23 +533,6 @@ def build_url_by_serial(rows: Iterable[list[object]]) -> dict[str, str]:
         if match:
             mapping[f"{index:05d}"] = match.group(1)
     return mapping
-
-
-def build_special_rare_sets(rows: Iterable[list[object]]) -> tuple[set[str], set[str]]:
-    # 「特別レア」シートから「レア 8」と「レア 7」の馬 ID セットを作る。
-    # アイコンだけでは判定できない特別扱いの馬に使う。
-    rare_8: set[str] = set()
-    rare_7: set[str] = set()
-
-    for cells in rows:
-        if cells[0]:
-            rare_8.add(digits(cells[0]))
-        if len(cells) > 2 and cells[2]:
-            rare_7.add(digits(cells[2]))
-
-    rare_8.discard("")
-    rare_7.discard("")
-    return rare_8, rare_7
 
 
 def iter_all_rows(rows: Iterable[list[object]]) -> Iterable[list[object]]:
@@ -614,40 +591,33 @@ def build_factor_count_cells(counts: list[int], header_codes: Iterable[str]) -> 
 def compute_horse_id(
     serial_number: str, row: list[object], url_by_serial: dict[str, str]
 ) -> str:
-    recovered = digits(row[COL_HORSE_ID])
+    recovered = text(row[COL_HORSE_ID]).strip()
     if recovered:
         return recovered
     return url_by_serial.get(serial_number, "")
 
 
-def compute_rare_cd(
-    # アイコン画像番号・特別レアリスト・性別をもとに、レアリティコード（"1"〜"8" や "Z" など）を決める。
-    gender: str,
-    horse_id: str,
-    row: list[object],
-    special_rare_8: set[str],
-    special_rare_7: set[str],
-) -> str:
+def compute_rare_cd(gender: str, row: list[object]) -> str:
     if gender == "0":
         raw_rare = text(row[COL_RARE])
-        if raw_rare == "5":
-            icon_code = digits(row[COL_ICON])
-            if icon_code == "12":
+        if raw_rare != "5":
+            return raw_rare
+        icon = int(digits(row[COL_ICON]) or "0")
+        if icon == 14:
+            return "6"
+        slots = row_value(row, COL_TALENT_SLOTS)
+        if slots:
+            if int(slots) == 5:
+                factors = sum(bool(row[column]) for column in (COL_FACTOR_NAME_1, COL_FACTOR_NAME_2, COL_FACTOR_NAME_3))
+                return "8" if factors == 3 else "7"
+        else:
+            if icon == 12:
                 return "8"
-            if icon_code == "11":
+            if icon == 11:
                 return "7"
-            if icon_code == "14":
-                return "6"
-            if horse_id in special_rare_8:
-                return "8"
-            if horse_id in special_rare_7:
-                return "7"
-            return "5"
-        return raw_rare
-
+        return "5"
     if text(row[COL_RARE]):
-        icon_code = int(digits(row[COL_ICON]) or "0")
-        return BMS_RARE_CD.get(icon_code, "")
+        return BMS_RARE_CD.get(int(digits(row[COL_ICON]) or "0"), "")
     return "Z"
 
 
@@ -1088,6 +1058,20 @@ def build_skill_card_payload(value: object) -> dict[str, object] | None:
     }
 
 
+def horse_metadata_key(gender: str, horse_id: str) -> str:
+    return f"{gender}:{horse_id}"
+
+
+def metadata_for_horse(
+    horses: dict[str, dict[str, object]], gender: str, horse_id: str
+) -> dict[str, object]:
+    scoped = horses.get(horse_metadata_key(gender, horse_id))
+    if scoped is not None:
+        return scoped
+    # Official metadata contains stallion skills only, even when IDs overlap.
+    return horses.get(horse_id, {}) if gender == "0" else {}
+
+
 def build_records_from_source(
     # 元データ（エクセルや JSON）の各行を 1 件ずつ JSON レコードに変換して返す。
     # 馬名・血統・能力・因子カウント・血統表・才能データをまとめた「card」も含まれる。
@@ -1096,9 +1080,6 @@ def build_records_from_source(
     site_metadata_horses: dict[str, dict[str, object]] | None = None,
 ) -> list[dict[str, object]]:
     url_by_serial = build_url_by_serial(source[SOURCE_HORSE_LIST_KEY])
-    special_rare_8, special_rare_7 = build_special_rare_sets(
-        source[SOURCE_SPECIAL_RARE_KEY]
-    )
     resolved_site_metadata_horses = site_metadata_horses or {}
 
     records: list[dict[str, object]] = []
@@ -1117,9 +1098,7 @@ def build_records_from_source(
         )
         factor_name = "".join(self_factor_names)
         factor_flag = "1" if factor_name else "0"
-        rare_cd = compute_rare_cd(
-            gender, horse_id, row, special_rare_8, special_rare_7
-        )
+        rare_cd = compute_rare_cd(gender, row)
         counts_0, counts_1, counts_2 = build_factor_counts(row)
 
         horse_name = row_value(row, COL_HORSE_NAME)
@@ -1138,7 +1117,7 @@ def build_records_from_source(
             gender, rare_cd, row[COL_ICON]
         )
         category_ht = row_value(row, COL_SON_HT)
-        horse_site_metadata = resolved_site_metadata_horses.get(horse_id, {})
+        horse_site_metadata = metadata_for_horse(resolved_site_metadata_horses, gender, horse_id)
         ability_data = build_skill_card_payload(
             horse_site_metadata.get("extraordinaryAbility")
         )
@@ -1564,6 +1543,10 @@ def build_records_from_source(
                 "pedigree": pedigree,
             },
         }
+        if "abilityGameId" in horse_site_metadata:
+            record["card"]["abilityGameId"] = horse_site_metadata["abilityGameId"]
+            record["card"]["sourceGameId"] = horse_site_metadata["sourceGameId"]
+            record["legacy_ids"] = horse_site_metadata.get("legacy_ids", [])
         records.append(record)
 
     attach_theory(records)
@@ -1734,12 +1717,35 @@ def parse_args() -> argparse.Namespace:
         default=None,
         help="factor.json output path. Repeat to write the same content to multiple files.",
     )
+    parser.add_argument("--r2-dir", type=Path)
+    parser.add_argument("--as-of")
+    parser.add_argument("--id-ledger", type=Path, default=Path("data/source/id_ledger.json"))
+    parser.add_argument("--ability-links", type=Path, default=Path("data/source/ability_links.json"))
+    parser.add_argument("--previous", type=Path, default=Path("json/horselist.json"))
     return parser.parse_args()
 
 
 def load_records_for_args(
     args: argparse.Namespace, cwd: Path
 ) -> tuple[list[dict[str, object]], Path]:
+    if args.r2_dir is not None:
+        from tools.horse_data.r2_source import load_r2, convert_source, check_population
+        from tools.horse_data.id_ledger import load_ledger, update_ledger
+        data = load_r2(args.r2_dir)
+        source = load_source_json(args.source_json or DEFAULT_SOURCE_JSON_PATH)
+        metadata = load_site_metadata(args.site_metadata or DEFAULT_SITE_METADATA_PATH)
+        previous = json.loads(args.previous.read_text(encoding="utf-8")) if args.previous.exists() else []
+        if not args.id_ledger.exists():
+            raise ValueError("Run the initial ID ledger migration before daily generation")
+        ledger = update_ledger(load_ledger(args.id_ledger), data, source, metadata, previous=previous)
+        links = json.loads(args.ability_links.read_text(encoding="utf-8"))
+        urls = {link["game_ability_id"]: f'https://dabimas.jp/kouryaku/abilities/{link["ability_id"]}.html' for link in links}
+        converted, metadata = convert_source(data, ledger, source, metadata, args.as_of, urls, previous)
+        check_population(sum(str(row[0]) == "0" for row in converted["all"]),
+                         sum(row["Gender"] == "0" for row in previous))
+        return build_records_from_source(converted, metadata), cwd
+    if args.as_of is not None:
+        raise ValueError("--as-of requires --r2-dir")
     if args.source_json is not None:
         return build_records_from_json(args.source_json, args.site_metadata), cwd
 

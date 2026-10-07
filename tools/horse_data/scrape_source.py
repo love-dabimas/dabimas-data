@@ -51,7 +51,6 @@ from tools.horse_data.generate_horselist import (
     DEFAULT_SOURCE_JSON_PATH,
     SOURCE_ALL_KEY,
     SOURCE_HORSE_LIST_KEY,
-    SOURCE_SPECIAL_RARE_KEY,
     load_source_json,
     serialize_source_json,
     write_text,
@@ -614,14 +613,6 @@ def scrape_site_metadata_from_existing_source(
     return horses
 
 
-def load_existing_special_rare(path: Path) -> list[list[object]]:
-    if not path.exists():
-        return []
-
-    source = load_source_json(path)
-    return source[SOURCE_SPECIAL_RARE_KEY]
-
-
 def scrape_source(
     *,
     base_url: str,
@@ -660,7 +651,6 @@ def scrape_source(
         {
             SOURCE_HORSE_LIST_KEY: [[path] for path in urls],
             SOURCE_ALL_KEY: rows,
-            SOURCE_SPECIAL_RARE_KEY: load_existing_special_rare(existing_source_json),
         },
         horses,
     )
@@ -686,7 +676,7 @@ def parse_args() -> argparse.Namespace:
         "--existing-source-json",
         type=Path,
         default=DEFAULT_SOURCE_JSON_PATH,
-        help="Existing source JSON used to preserve special_rare overrides.",
+        help="Existing source JSON used for metadata-only scraping.",
     )
     parser.add_argument(
         "--metadata-only",
