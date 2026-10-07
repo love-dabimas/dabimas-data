@@ -9,7 +9,7 @@ import pytest
 from tools.horse_data import generate_horselist as g
 from tools.horse_data.ability_links import build_links
 from tools.horse_data.id_ledger import update_ledger, official_horses
-from tools.horse_data.download_r2 import download_r2
+from tools.horse_data.download_r2 import download_r2, fetch_r2_objects, is_transient
 from tools.horse_data.r2_source import (
     FILES, check_population, convert_source, is_published,
     publication_cutoff, skill_card, validate_r2, known_ability_urls, DatasetVersionMismatch, load_r2,
@@ -370,3 +370,60 @@ def test_download_retries_transport_errors(data, tmp_path, error):
     download_r2("https://example.invalid", output, attempts=2, fetch=fetch, sleep=sleeps.append, retry_delay=0)
     assert sleeps == [0]
     assert load_r2(output)["dataset_version"] == "v2"
+
+
+class FakeBody:
+    def __init__(self, payload: bytes) -> None:
+        self.payload = payload
+
+    def read(self) -> bytes:
+        return self.payload
+
+
+class FakeClient:
+    """get_object だけを持つ最小の偽 client。通信はしない。"""
+
+    def __init__(self, payloads: dict[str, bytes]) -> None:
+        self.payloads = payloads
+        self.calls: list[tuple[str, str]] = []
+
+    def get_object(self, *, Bucket: str, Key: str) -> dict[str, FakeBody]:
+        self.calls.append((Bucket, Key))
+        return {"Body": FakeBody(self.payloads[Key])}
+
+
+def test_fetch_r2_objects_reads_five_keys_from_the_bucket_root(tmp_path):
+    payloads = {filename: f"{filename}".encode() for filename in FILES.values()}
+    client = FakeClient(payloads)
+
+    fetch_r2_objects("dabimas-data", tmp_path, client=client)
+
+    assert [key for _, key in client.calls] == list(FILES.values())
+    assert {bucket for bucket, _ in client.calls} == {"dabimas-data"}
+    for filename, payload in payloads.items():
+        assert (tmp_path / filename).read_bytes() == payload
+
+
+def test_is_transient_retries_only_what_waiting_can_fix():
+    class ClientErrorLike(Exception):
+        def __init__(self, status: int) -> None:
+            super().__init__(f"status {status}")
+            self.response = {"ResponseMetadata": {"HTTPStatusCode": status}}
+
+    assert is_transient(DatasetVersionMismatch("版が揃っていない"))
+    assert is_transient(URLError("timed out"))
+    assert is_transient(ClientErrorLike(503))
+    assert is_transient(ClientErrorLike(429))
+    # 認証・鍵・キー名の誤りは待っても直らない
+    assert not is_transient(ClientErrorLike(403))
+    assert not is_transient(ClientErrorLike(404))
+    assert not is_transient(ValueError("不正な因子 ID"))
+
+
+def test_build_client_stops_before_calling_r2_when_credentials_are_missing(monkeypatch):
+    from tools.horse_data.download_r2 import build_client
+
+    monkeypatch.delenv("R2_ACCESS_KEY_ID", raising=False)
+    monkeypatch.delenv("R2_SECRET_ACCESS_KEY", raising=False)
+    with pytest.raises(RuntimeError, match="R2 の認証情報"):
+        build_client("https://example.invalid")

@@ -51,7 +51,10 @@ jobs:
 
       - name: Download R2 masters
         env:
-          R2_BASE_URL: ${{ secrets.R2_BASE_URL || vars.R2_BASE_URL }}
+          R2_ENDPOINT_URL: ${{ secrets.R2_ENDPOINT_URL }}
+          R2_BUCKET: ${{ secrets.R2_BUCKET }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
         run: python -m tools.horse_data.download_r2 --output "$RUNNER_TEMP/r2"
 
       - name: Update ID ledger and ability links

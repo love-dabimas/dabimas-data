@@ -2,7 +2,18 @@
 
 ## GitHub の設定
 
-リポジトリの Actions Secret または Variable `R2_BASE_URL` に、5つの公開 JSON を置く HTTPS ディレクトリの URL を設定する（末尾のファイル名は不要）。
+R2 のバケットは非公開なので、取得には認証情報が要る。リポジトリの Actions Secret に次の4つを設定する（ダビふぁくのリポジトリと同じ値）。
+
+| 名前 | 中身 |
+| --- | --- |
+| `R2_ENDPOINT_URL` | R2 の S3 互換エンドポイント（例 `https://<アカウントID>.r2.cloudflarestorage.com`） |
+| `R2_BUCKET` | バケット名（既定は `dabimas-data`） |
+| `R2_ACCESS_KEY_ID` | 読み取り権限のあるアクセスキー |
+| `R2_SECRET_ACCESS_KEY` | 同じくシークレット |
+
+5つのマスターはバケット直下に置かれている（`masters/` のような接頭辞は付かない）。取得は boto3 の SigV4 で行う。
+
+手動実行には `dry_run` がある。`true` にすると生成とテストだけを行い、コミットも公開もしない。`main` 以外の枝から実行したときも公開しない。
 
 - `stallion_master.game.json`
 - `broodmare_master.game.json`
@@ -17,6 +28,9 @@
 R2 取得は5ファイルの取得と検証を1回の試行とし、版の食い違い・欠落と通信エラーの場合に最大3回試行する。再試行前に120秒待ち、試行回数と理由を標準エラーに記録する。参照切れや不正な因子IDなどは再試行せず停止する。検証に成功するまで出力先には書き込まない。
 
 ## ローカル生成
+
+認証情報は環境変数（`R2_ENDPOINT_URL` / `R2_BUCKET` / `R2_ACCESS_KEY_ID` / `R2_SECRET_ACCESS_KEY`）で渡す。
+手元にマスターのコピーがあるなら、取得を飛ばして `--r2-dir` にそのフォルダを渡せばよい。
 
 ```sh
 python -m tools.horse_data.download_r2 --output .tools/r2
