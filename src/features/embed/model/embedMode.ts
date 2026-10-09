@@ -49,6 +49,32 @@ export const PICKER_SEX: PickerSex = (() => {
 export const horseKeyOf = (horse: Pick<HorseRecord, "HorseId" | "Gender">) =>
   `${horse.HorseId}-${horse.Gender}`;
 
+// ゲーム内 ID（ゲーム本体が持つ番号）で作るキー。採取や全書の更新のタイミングに
+// 左右されないので、両アプリで最も安定して一致する。
+export const gameKeyOf = (horse: Pick<HorseRecord, "card" | "Gender">) => {
+  const gameId = horse.card?.sourceGameId;
+  return gameId ? `g${gameId}-${horse.Gender}` : null;
+};
+
+// 親（ダビふぁく）が持っているかを調べるときに使うキーの一覧。
+// 1. ゲーム内 ID のキー（親が対応していれば最優先で当たる）
+// 2. いまの HorseId
+// 3. 以前の HorseId（legacy_ids）。R2 を正本にした時点で採番が変わった馬は、
+//    親側がまだ古い ID で持っているので、これが無いと ❤ が出ない。
+export const matchKeysOf = (
+  horse: Pick<HorseRecord, "HorseId" | "Gender" | "legacy_ids" | "card">
+): string[] => [
+  gameKeyOf(horse),
+  horseKeyOf(horse),
+  ...(horse.legacy_ids ?? []).map((id) => `${id}-${horse.Gender}`),
+].filter((key): key is string => key !== null);
+
+// 親が知っているキーのうち、最初に当たったものを返す（無ければ null）。
+export const matchedKeyIn = (
+  supportedKeys: Set<string>,
+  horse: Pick<HorseRecord, "HorseId" | "Gender" | "legacy_ids" | "card">
+): string | null => matchKeysOf(horse).find((key) => supportedKeys.has(key)) ?? null;
+
 // 埋め込み用のスタイル（src/styles/embed.css）を効かせるため、<html> にモードのクラスを付ける。
 export const applyEmbedModeClass = () => {
   if (!IS_EMBEDDED) {

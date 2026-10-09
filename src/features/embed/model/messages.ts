@@ -38,9 +38,9 @@ export const EMBED_PROTOCOL_VERSION = 1;
 export type MessageToParent =
   | { type: "dabimas:candidates"; v: number; rows: [string, string, string, string, string][] }
   | { type: "dabimas:hello"; v: number; mode: "embed" | "picker" }
-  | { type: "dabimas:favorite-toggle"; v: number; horseId: string; gender: GenderTab }
+  | { type: "dabimas:favorite-toggle"; v: number; horseId: string; gender: GenderTab; gameId?: string }
   | { type: "dabimas:favorites-only"; v: number; value: boolean }
-  | { type: "dabimas:select"; v: number; horseId: string; gender: GenderTab; name: string };
+  | { type: "dabimas:select"; v: number; horseId: string; gender: GenderTab; name: string; gameId?: string };
 
 // 親 → ダビ娘
 export type MessageFromParent =

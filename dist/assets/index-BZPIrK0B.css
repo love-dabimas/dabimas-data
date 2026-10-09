@@ -11526,6 +11526,17 @@ button {
   grid-template-columns: repeat(3, minmax(70px, 1fr));
 }
 
+.filter-modal__option-grid--count {
+  grid-template-columns: repeat(4, minmax(56px, 1fr));
+}
+
+.filter-modal__section-note {
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
 .filter-modal__choice {
   justify-content: center;
   min-height: 34px;
@@ -12854,4 +12865,413 @@ button {
   .loading-card__step.is-active::after {
     animation: none;
   }
+}
+/*
+ * このファイルは、ダビ娘がダビふぁくの中に埋め込まれているときだけ効くスタイル。
+ * <html> に付く .embed-mode（馬選択のときは .embed-mode--picker も）で囲うか、
+ * 埋め込みのときにしか描かれない部品のクラスにだけ当てる。普通に開いたダビ娘の見た目は変えない。
+ * 見た目の数値は、ダビふぁく側の docs/dabimusume-integration-design.md の §6.5 で決めたもの。
+ */
+
+/* ===== カード: 枠で囲み、1 頭ぶんの範囲を見えるようにする ===== */
+
+/* カード同士の空きは、グリッドの隙間ではなく仮想スクロールの行の下の余白で取る。
+   仮想スクロールは行の実測の高さを積み上げて位置を出すので、行の中の余白なら計算がずれない。
+   グリッドの隙間を広げると、先頭の高さ 0 のスペーサーとの間にも空きが入って 1 枚目の上が空きすぎ、
+   スクロール中に表示範囲が入れ替わるたびに位置もずれる。 */
+.embed-mode .results-list__virtual-row {
+  padding-bottom: 14px;
+}
+
+.embed-mode .result-card {
+  position: relative;
+  padding: 8px;
+  border: 2px solid #cfd8e3;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  /* 角の ❤ がカードの外にはみ出すので、切り取らせない。
+     仮想スクロールで描くカードは元々数枚なので、描画の省略をやめても重くならない。 */
+  content-visibility: visible;
+}
+
+/* ===== ❤: カードの右上の角に掛かる白い丸ボタン ===== */
+
+/* 押せる範囲は 44px。見た目の丸（32px）の下端をカード上端から +14px に置き、
+   配合理論の見出し（+16px）に掛けない。 */
+.result-card__favorite {
+  position: absolute;
+  top: -26px;
+  right: -12px;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.result-card__favorite-circle {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid #e5e7eb;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+}
+
+.result-card__favorite-icon {
+  width: 18px;
+  height: 18px;
+  fill: transparent;
+  stroke: #9aa4b2;
+  stroke-width: 2;
+  stroke-linejoin: round;
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: fill 0.15s ease, stroke 0.15s ease;
+}
+
+.result-card__favorite.is-on .result-card__favorite-icon,
+.result-card__favorite.is-anim-in .result-card__favorite-icon {
+  fill: #e0245e;
+  stroke: #e0245e;
+}
+
+/* 付ける: ハートが弾む（1 → 1.4 → 0.9 → 1 倍）＋ピンクの輪が広がって消える */
+.result-card__favorite.is-anim-in .result-card__favorite-icon {
+  animation: embed-heart-pop 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.4);
+}
+
+.result-card__favorite.is-anim-in .result-card__favorite-circle::after {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border: 2px solid #e0245e;
+  border-radius: 50%;
+  opacity: 0;
+  animation: embed-heart-ring 0.5s ease-out;
+}
+
+/* 外す: 小さく縮む */
+.result-card__favorite.is-anim-out .result-card__favorite-icon {
+  animation: embed-heart-shrink 0.25s ease-out;
+}
+
+@keyframes embed-heart-pop {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.4); }
+  60% { transform: scale(0.9); }
+  100% { transform: scale(1); }
+}
+
+@keyframes embed-heart-ring {
+  0% { transform: scale(0.7); opacity: 0.8; }
+  100% { transform: scale(1.7); opacity: 0; }
+}
+
+@keyframes embed-heart-shrink {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.75); }
+  100% { transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .result-card__favorite .result-card__favorite-icon,
+  .result-card__favorite .result-card__favorite-circle::after {
+    animation: none !important;
+  }
+}
+
+/* ===== 「お気に入りのみ」: キーワード欄の右 ===== */
+
+.embed-mode .keyword-block {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.embed-mode .keyword-block .text-input {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.favorites-only-toggle {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 4px;
+  min-height: 40px;
+  padding: 0 12px;
+  border: 1px solid #cfd8e3;
+  border-radius: 999px;
+  background: #fff;
+  color: #374151;
+  font-size: 13px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.favorites-only-toggle__icon {
+  width: 14px;
+  height: 14px;
+  fill: transparent;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+.favorites-only-toggle.is-on {
+  border-color: #e0245e;
+  background: #fff0f5;
+  color: #e0245e;
+  font-weight: 700;
+}
+
+.favorites-only-toggle.is-on .favorites-only-toggle__icon {
+  fill: currentColor;
+}
+
+/* ===== 馬選択: カードをタップして選び、下部バーで確定する ===== */
+
+/* 確定バーで最後のカードが隠れないよう、下に余白を足す */
+.embed-mode--picker body {
+  padding-bottom: 88px;
+}
+
+.embed-mode--picker .result-card {
+  cursor: pointer;
+}
+
+.embed-mode--picker .result-card.is-picked {
+  border-color: #1e6bd6;
+  background: #f3f8ff;
+  box-shadow: 0 0 0 3px rgba(30, 107, 214, 0.35);
+}
+
+/* 選択中の覆いと解除ボタンは、760px の縮小領域の外に置く。 */
+.embed-mode--picker .result-card__selection-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: rgba(60, 60, 70, .5);
+}
+
+.embed-mode--picker .result-card__deselect {
+  width: 153px;
+  min-height: 52px;
+  padding: 11px 12px;
+  border: 2px solid #fff5e0;
+  border-radius: 10px;
+  background: linear-gradient(#f7b34a, #e8821e);
+  color: #fff;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(120, 60, 0, .8);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, .4);
+  cursor: pointer;
+}
+
+.embed-mode--picker .result-card__deselect:focus-visible {
+  outline: 3px solid #1e6bd6;
+  outline-offset: 2px;
+}
+
+/* ダビ娘のポップアップ（z-index 70）より下、結果一覧より上に出す */
+.picker-bar {
+  position: fixed;
+  right: 8px;
+  bottom: 8px;
+  left: 8px;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 8px 8px 12px;
+  border-radius: 12px;
+  background: #111827;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  color: #fff;
+}
+
+.picker-bar__name {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.picker-bar__cancel {
+  flex: 0 0 auto;
+  min-height: 40px;
+  padding: 0 10px;
+  border: 1px solid #6b7280;
+  border-radius: 8px;
+  background: transparent;
+  color: #fff;
+}
+
+.picker-bar__confirm {
+  flex: 0 0 auto;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 8px;
+  background: #1e6bd6;
+  color: #fff;
+  font-weight: 700;
+}
+
+/* 面白・見事は馬名と同じ20px基準。見事3枠の牝馬も自然幅で並べる。 */
+.embed-mode--picker .result-card__summary-cell {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.embed-mode--picker .result-card__lines {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.embed-mode--picker .result-card__lines-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.embed-mode--picker .result-card__lines-label,
+.embed-mode--picker .result-card__lines-code {
+  font-size: 20px;
+  font-weight: 700;
+  border-radius: 4px;
+  text-align: center;
+  line-height: 1.25;
+}
+
+.embed-mode--picker .result-card__lines-label {
+  padding: 3px 6px;
+  min-width: 52px;
+  color: #fff;
+}
+
+.embed-mode--picker .result-card__lines-row--omoshiro .result-card__lines-label {
+  background: #c2703a;
+}
+
+.embed-mode--picker .result-card__lines-row--migoto .result-card__lines-label {
+  background: #2f6fb5;
+}
+
+.embed-mode--picker .result-card__lines-code {
+  padding: 3px 2px;
+  min-width: 38px;
+  color: #2a2a33;
+  background: #f2f4f8;
+  border: 1px solid #d7dce5;
+}
+
+.embed-mode .result-card__pedigree-toggle {
+  display: block;
+  width: 100%;
+  margin-top: 6px;
+  padding: 10px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  color: #5b4b8a;
+  background: #f0eaff;
+  border: 1px solid #d8cdf5;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.embed-mode .result-card__pedigree-toggle:hover {
+  background: #e4d9fb;
+}
+
+.embed-mode .result-card__pedigree-toggle:focus-visible {
+  outline: 2px solid #6b4fbb;
+  outline-offset: 2px;
+}
+
+/* 開閉ボタンをスクロールアンカーにしないことで、展開した高さだけ画面が動くのを防ぐ。 */
+.embed-mode .results-list {
+  overflow-anchor: none;
+}
+
+/* 配合理論は親が指定した順で表示する。長いラベルも375pxに収める。 */
+.embed-mode--picker .pair-theory-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.embed-mode--picker .pair-theory-chips button {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  flex: 1 1 68px; min-width: 0; min-height: 44px; padding: 6px 4px;
+  font: inherit; font-size: 13px; border: 1px solid #899b90; border-radius: 14px;
+  color: #244538; background: #fff; overflow-wrap: anywhere;
+}
+.embed-mode--picker .pair-theory-chips button[aria-pressed="true"] { background: #244538; color: #fff; }
+.embed-mode--picker .pair-theory-chips button:disabled { color: #626b65; background: #edf0ed; cursor: default; }
+.embed-mode .custom-horse-badge {
+  display: inline-block; margin-left: 6px; padding: 1px 5px;
+  border: 1px solid currentColor; border-radius: 4px; font-size: 12px; vertical-align: middle;
+}
+
+/* 馬選択で開かれたとき、入れられない性別のタブは押せなくする。
+   押せてしまうと、確定したあとに親から「このセルには…しか入りません」と
+   返されるまで分からない。押せないことが見て分かる薄さにする。 */
+.embed-mode--picker .tab-button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.embed-mode--picker .tab-button:disabled span {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* カード内部のレイアウトを外へ波及させない。旧カードは 760px 幅の大きな table で、
+   1枚の組版が他のカードの再計算を誘発する。paint は含めない（角の ❤ が
+   カードの外にはみ出しており、切り取られてしまうため）。 */
+.embed-mode .result-card__legacy {
+  contain: layout style;
+}
+
+/* 自家製馬の父は因子を3個持つ（マスターの祖先は最大2個）。左の因子セルに2個
+   入るので、1個ぶん（10px）のままだと2個目が隣のセルへはみ出して3個目に
+   ぴったり重なり、3個目が見えなくなる。2個ぶんの幅を確保する。
+   自家製馬は埋め込みのときにしか出ないので、ここに置く。 */
+.embed-mode .result-card__legacy .pedigree td.result-card__factor-cell--multi {
+  /* 旧カードは 760px 幅で組んでからカード幅へ縮小して表示している。ここは
+     縮小前の座標なので、因子アイコン1個ぶんは 22px。2個で 46px 要る。 */
+  min-width: 48px;
+}
+
+/* 上の min-width は列そのものを2個ぶんに広げるので、因子が1個しか入らない行
+   （マスターの祖先はほとんどこれ）は、左のセルの中でアイコンが左に寄って
+   右隣のアイコンとの間に1個ぶんの隙間ができていた。因子はダビふぁくの
+   血統表と同じく右へ詰めたいので、因子セルの中身を右寄せにする。
+   3個持ちの行は元から埋まっているので見た目は変わらない。
+   系統名のセル（.factor_02_img）は別物なので触らない。 */
+.embed-mode .result-card__legacy .pedigree td.factor_horse,
+.embed-mode .result-card__legacy .pedigree td.factor_omoshiro,
+.embed-mode .result-card__legacy .pedigree td.factor_omoshiro_mare,
+.embed-mode .result-card__legacy .pedigree td.factor_migoto {
+  text-align: right;
+}
+
+/* 自家製馬のレア枠。マスターのレア色とぶつからない紫にして、
+   カードの「自」バッジ（.custom-horse-badge）と同じ意味だと分かるようにする。 */
+.embed-mode .header01_custom {
+  background: #5b4b8a;
 }

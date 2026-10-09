@@ -11,7 +11,7 @@ import {
   type HorseCardHighlightCriteria
 } from "@/features/search/lib/createHorseCardHighlighter";
 import { renderHighlightedText } from "@/features/search/lib/renderHighlightedText";
-import { COLLAPSE_PEDIGREE, IS_EMBEDDED, IS_PICKER, horseKeyOf } from "@/features/embed/model/embedMode";
+import { COLLAPSE_PEDIGREE, IS_EMBEDDED, IS_PICKER, horseKeyOf, matchedKeyIn } from "@/features/embed/model/embedMode";
 import { requestFavoriteToggle } from "@/features/embed/lib/embedBridge";
 import { useEmbedStore } from "@/features/embed/store/useEmbedStore";
 import { FavoriteButton } from "@/features/embed/ui/FavoriteButton";
@@ -592,10 +592,13 @@ const HorseResultCardBase = ({ horse, criteria, pedigreeOpen, onTogglePedigree, 
   // ダビふぁくに埋め込まれているときだけ使う。❤ はダビふぁくのデータにいる馬にだけ出す。
   // 普通に開いたときは常に false / 何もしない。
   const horseKey = horseKeyOf(horse);
+  // 親が持っているかは、ゲーム内 ID・いまの ID・以前の ID の順で照合する
+  // （R2 を正本にしたときに採番が変わった馬を取りこぼさないため）。
   const canFavorite = useEmbedStore(
-    (state) => IS_EMBEDDED && !horse.HorseId.startsWith("ch_") && state.supportedKeys !== null && state.supportedKeys.has(horseKey)
+    (state) => IS_EMBEDDED && !horse.HorseId.startsWith("ch_") && state.supportedKeys !== null
+      && matchedKeyIn(state.supportedKeys, horse) !== null
   );
-  const isFavorite = useEmbedStore((state) => state.favoriteKeys.has(horseKey));
+  const isFavorite = useEmbedStore((state) => matchedKeyIn(state.favoriteKeys, horse) !== null);
   const isPicked = useEmbedStore(
     (state) =>
       IS_PICKER && state.pickedHorse !== null && horseKeyOf(state.pickedHorse) === horseKey

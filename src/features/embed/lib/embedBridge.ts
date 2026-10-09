@@ -2,7 +2,7 @@
 // 親から届くメッセージを受け取ってストアに反映し、ダビ娘からのお願いを親へ送る。
 
 import type { HorseRecord } from "@/features/horses/model/types";
-import { IS_EMBEDDED, IS_PICKER, horseKeyOf } from "@/features/embed/model/embedMode";
+import { IS_EMBEDDED, IS_PICKER, gameKeyOf, horseKeyOf, matchedKeyIn } from "@/features/embed/model/embedMode";
 import { postToParent, readMessageFromParent } from "@/features/embed/model/messages";
 import { useEmbedStore } from "@/features/embed/store/useEmbedStore";
 import { useSearchStore } from "@/features/search/store/useSearchStore";
@@ -84,17 +84,39 @@ export const announceReady = () => {
   postToParent({ type: "dabimas:hello", mode: IS_PICKER ? "picker" : "embed" });
 };
 
+// 親に伝える ID を決める。親が持っているのは親自身の採番なので、
+// 親が知っているキーで当たったならその ID を送る。R2 を正本にしたときに
+// 採番が変わった馬は、親側はまだ以前の ID で持っている。
+const parentHorseIdFor = (horse: HorseRecord): string => {
+  const supportedKeys = useEmbedStore.getState().supportedKeys;
+  const matched = supportedKeys ? matchedKeyIn(supportedKeys, horse) : null;
+  // ゲーム内 ID で当たったときは、親がその番号から引けるので自分の ID を送る。
+  if (!matched || matched.startsWith("g")) {
+    return horse.HorseId;
+  }
+  return matched.slice(0, matched.lastIndexOf("-"));
+};
+
+// ゲーム内 ID は常に添える。親が対応していれば、採番のずれに関係なく引ける。
+const gameIdOf = (horse: HorseRecord) => horse.card?.sourceGameId;
+
 // ❤ の切り替えを親に頼む。正本は親にあるので、画面の点灯は親から配り直された値で行う。
 export const requestFavoriteToggle = (horse: HorseRecord) => {
-  postToParent({ type: "dabimas:favorite-toggle", horseId: horse.HorseId, gender: horse.Gender });
+  postToParent({
+    type: "dabimas:favorite-toggle",
+    horseId: parentHorseIdFor(horse),
+    gender: horse.Gender,
+    gameId: gameIdOf(horse)
+  });
 };
 
 // 下部バーの「この馬を入れる」。セルに入れてよいかの判定と実際の反映は親が行う。
 export const confirmPickedHorse = (horse: HorseRecord) => {
   postToParent({
     type: "dabimas:select",
-    horseId: horse.HorseId,
+    horseId: parentHorseIdFor(horse),
     gender: horse.Gender,
-    name: horse.card.name
+    name: horse.card.name,
+    gameId: gameIdOf(horse)
   });
 };
