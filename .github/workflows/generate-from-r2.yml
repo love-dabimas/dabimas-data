@@ -1,10 +1,8 @@
 name: Generate horse data from R2
 
 on:
-  # 初回の公開では自動実行を止めておく。R2 からの取得が本番で通ることを
-  # dry_run で確かめてから、この schedule を戻す。
-  # schedule:
-  #   - cron: "30 2 * * *" # 11:30 JST
+  schedule:
+    - cron: "30 2 * * *" # 11:30 JST
   workflow_dispatch:
     inputs:
       as_of:
