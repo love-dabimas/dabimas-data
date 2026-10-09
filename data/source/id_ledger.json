@@ -12692,17 +12692,26 @@
     "101319": {
       "HorseId": "r101319",
       "SerialNumber": "02523",
-      "source": "r2"
+      "source": "r2",
+      "legacy_ids": [
+        "2234175382"
+      ]
     },
     "101320": {
       "HorseId": "r101320",
       "SerialNumber": "02524",
-      "source": "r2"
+      "source": "r2",
+      "legacy_ids": [
+        "1524729353"
+      ]
     },
     "101321": {
       "HorseId": "r101321",
       "SerialNumber": "02525",
-      "source": "r2"
+      "source": "r2",
+      "legacy_ids": [
+        "5427435213"
+      ]
     },
     "101322": {
       "HorseId": "r101322",
