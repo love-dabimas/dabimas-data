@@ -141,6 +141,13 @@ def convert_source(data: dict, ledger: dict, official: dict, metadata: dict,
     ability_urls = {**known_ability_urls(data["abilities"], metadata), **(ability_urls or {})}
     previous_serials = {(row["Gender"], row["HorseId"]): row["SerialNumber"] for row in previous or []}
     official_urls = g.build_url_by_serial(official["horse_list"])
+    # 祖先名の表記は全書を正とする（ダビふぁくも同じ）。同じ馬でもゲームのマスターと
+    # 綴りが違うこと（ビッグゲーム / Big Game）があり、マスターへ寄せると公開中の表示と
+    # キーワード検索が変わってしまう。全書に無い馬・祖先だけマスターの名前を使う。
+    official_rows = {}
+    for row in g.iter_all_rows(official["all"]):
+        horse_id = g.compute_horse_id(g.row_value(row, g.COL_SERIAL_NUMBER), row, official_urls)
+        official_rows.setdefault((g.row_value(row, g.COL_GENDER), str(horse_id)), row)
 
     def lineage(pedigree_id: str) -> dict:
         visited = set()
@@ -190,6 +197,7 @@ def convert_source(data: dict, ledger: dict, official: dict, metadata: dict,
                 if not grade["exchange_ticket_eligible"]:
                     put(g.COL_RARE, 1)
                     put(g.COL_ICON, f'list_icn_cat_sale_{dict(X="05", W="06", V="07", U="08", Y="09")[grade["code"]]}.png')
+            official_row = official_rows.get((gender, str(identity["HorseId"])))
             for slot, path in enumerate(SLOTS):
                 ancestor_id = str(horse["pedigree_id"])
                 for step in path:
@@ -199,7 +207,9 @@ def convert_source(data: dict, ledger: dict, official: dict, metadata: dict,
                     LOG.warning("Missing ancestor: %s %s", identity["HorseId"], path)
                     continue
                 line = lineage(ancestor_id)
-                put(g.COL_NAME_T + slot, ancestor.get("pedigree_name") or ancestor.get("canonical_name", ""))
+                official_name = g.row_value(official_row, g.COL_NAME_T + slot) if official_row else None
+                put(g.COL_NAME_T + slot, official_name if isinstance(official_name, str) and official_name
+                    else (ancestor.get("pedigree_name") or ancestor.get("canonical_name", "")))
                 put(g.COL_PARENT_LINE_T + slot, (line.get("parent_sire_line") or {}).get("name", ""))
                 put(g.COL_SON_T + slot, (line.get("child_sire_line") or {}).get("name", ""))
                 for i, factor in enumerate((nodes.get(ancestor_id + "-00", {}).get("pedigree_effect_ids") or [])[:3]):
