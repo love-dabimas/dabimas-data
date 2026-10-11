@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import json
 import logging
+import re
 from datetime import date, datetime, time, timedelta, timezone
 from pathlib import Path
 
@@ -14,6 +15,8 @@ FILES = {
     "abilities": "ability_master.game.json",
 }
 SLOTS = "t tt ttt tttt ttht tht thtt thht ht htt httt htht hht hhtt hhht".split()
+# 馬名の後ろにつく因名（漢字2文字）と年号（数字4桁）。ダビふぁく側と同じ規則。
+SUB_NAME_RE = re.compile(r"[0-9]...|[一-龠].")
 JST = timezone(timedelta(hours=9))
 LOG = logging.getLogger(__name__)
 
@@ -47,6 +50,12 @@ def load_r2(directory: Path) -> dict:
     data["dataset_version"] = next(iter(versions))
     validate_r2(data)
     return data
+
+
+def base_horse_name(name: str) -> str:
+    """種牡馬の馬名から因名「-霆煉-」や年号「2000」を落とす。血統表はこの形で出る。"""
+    match = SUB_NAME_RE.search(name)
+    return name.replace(match.group(0), "").replace("-", "") if match else name
 
 
 def index_rows(rows: list[dict], key: str) -> dict:
@@ -149,6 +158,10 @@ def convert_source(data: dict, ledger: dict, official: dict, metadata: dict,
         horse_id = g.compute_horse_id(g.row_value(row, g.COL_SERIAL_NUMBER), row, official_urls)
         official_rows.setdefault((g.row_value(row, g.COL_GENDER), str(horse_id)), row)
 
+    chart_names = {}
+    for horse in data["stallions"]:
+        chart_names.setdefault(str(horse["pedigree_id"]), base_horse_name(horse["name"]))
+
     def lineage(pedigree_id: str) -> dict:
         visited = set()
         while pedigree_id in pedigrees and pedigree_id not in visited:
@@ -198,6 +211,7 @@ def convert_source(data: dict, ledger: dict, official: dict, metadata: dict,
                     put(g.COL_RARE, 1)
                     put(g.COL_ICON, f'list_icn_cat_sale_{dict(X="05", W="06", V="07", U="08", Y="09")[grade["code"]]}.png')
             official_row = official_rows.get((gender, str(identity["HorseId"])))
+            ancestor_aliases: dict[str, str] = {}
             for slot, path in enumerate(SLOTS):
                 ancestor_id = str(horse["pedigree_id"])
                 for step in path:
@@ -207,9 +221,15 @@ def convert_source(data: dict, ledger: dict, official: dict, metadata: dict,
                     LOG.warning("Missing ancestor: %s %s", identity["HorseId"], path)
                     continue
                 line = lineage(ancestor_id)
-                official_name = g.row_value(official_row, g.COL_NAME_T + slot) if official_row else None
-                put(g.COL_NAME_T + slot, official_name if isinstance(official_name, str) and official_name
-                    else (ancestor.get("pedigree_name") or ancestor.get("canonical_name", "")))
+                # 血統表の祖先名はゲームの表記に合わせる。種牡馬として買える馬は
+                # 血統表にもその馬名（因名・年号を除く）で出るので最優先にする。
+                # 載っていない馬は全書の表記、それも無ければマスターの名前。
+                official_name = g.row_value(official_row, g.COL_NAME_T + slot) if official_row else ""
+                name = (chart_names.get(ancestor_id) or official_name
+                        or ancestor.get("pedigree_name") or ancestor.get("canonical_name", ""))
+                if official_name and official_name != name:
+                    ancestor_aliases[name] = official_name
+                put(g.COL_NAME_T + slot, name)
                 put(g.COL_PARENT_LINE_T + slot, (line.get("parent_sire_line") or {}).get("name", ""))
                 put(g.COL_SON_T + slot, (line.get("child_sire_line") or {}).get("name", ""))
                 for i, factor in enumerate((nodes.get(ancestor_id + "-00", {}).get("pedigree_effect_ids") or [])[:3]):
@@ -228,6 +248,9 @@ def convert_source(data: dict, ledger: dict, official: dict, metadata: dict,
                 "sourceGameId": str(horse[id_field]),
                 "legacy_ids": identity.get("legacy_ids", []),
             }
+            if ancestor_aliases:
+                metadata_key = g.horse_metadata_key(gender, identity["HorseId"])
+                horse_metadata[metadata_key]["ancestorAliases"] = ancestor_aliases
             rows.append(row)
         used_serials = {int(entry["SerialNumber"]) for entry in ledger[kind].values()}
         next_serial = max([0, *used_serials, *[int(serial) for (sex, _), serial in previous_serials.items() if sex == gender]])

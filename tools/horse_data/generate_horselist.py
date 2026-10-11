@@ -1072,6 +1072,19 @@ def metadata_for_horse(
     return horses.get(horse_id, {}) if gender == "0" else {}
 
 
+def ancestor_alias_tokens(paternal_name: str, aliases: dict[str, object]) -> str:
+    # 血統表はゲーム内の表記で出す。全書だけ別表記の祖先は、その位置の
+    # トークンを別表記で複製して Ped_All の末尾へ足し、検索だけ旧表記でも
+    # 当たるようにする。位置ラベルはどれも 2 文字なので [..名前] で拾える。
+    tokens: list[str] = []
+    for name, alias in aliases.items():
+        if not name or not isinstance(alias, str) or not alias:
+            continue
+        for token in re.findall(rf"\[.{{2}}{re.escape(name)}\]", paternal_name):
+            tokens.append(f"{token[:3]}{alias}]")
+    return "".join(dict.fromkeys(tokens))
+
+
 def build_records_from_source(
     # 元データ（エクセルや JSON）の各行を 1 件ずつ JSON レコードに変換して返す。
     # 馬名・血統・能力・因子カウント・血統表・才能データをまとめた「card」も含まれる。
@@ -1518,7 +1531,11 @@ def build_records_from_source(
             "Paternal_ht": paternal_ht,
             "Paternal_jik": paternal_jik,
             "Paternal_mig": paternal_mig,
-            "Ped_All": paternal_name + "".join(self_factor_names),
+            "Ped_All": paternal_name
+            + "".join(self_factor_names)
+            + ancestor_alias_tokens(
+                paternal_name, horse_site_metadata.get("ancestorAliases") or {}
+            ),
             "card": {
                 "name": horse_name,
                 "ability": ability_name,

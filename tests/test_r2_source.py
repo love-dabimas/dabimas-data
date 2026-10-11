@@ -66,8 +66,43 @@ def test_adapter_excludes_future_before_theory_and_preserves_r_ids(data):
     assert horse["RareCd"] == "8"
     assert horse["card"]["abilityGameId"] == "10"
     assert horse["card"]["abilityData"]["detailTabs"][0]["effects"] == ["・効果", "続き"]
-    assert horse["card"]["pedigree"][0][0] == "祖先"
+    # この fixture は自分自身が祖先なので、血統表にも種牡馬の馬名が出る。
+    assert horse["card"]["pedigree"][0][0] == "テスト"
     assert g.serialize_records(records) == g.serialize_records(g.build_records_from_source(*convert_source(data, ledger, source, {}, "2026-10-13")))
+
+
+def with_ancestor_pedigree(data):
+    """父を別血統にして、祖先の表記を単独で見られるようにする。"""
+    data["pedigrees"][0] = {**data["pedigrees"][0], "father_pedigree_id": "a"}
+    data["pedigrees"].append({**data["pedigrees"][0], "pedigree_id": "a",
+                              "canonical_name": "マスターの祖先", "father_pedigree_id": "a",
+                              "mother_pedigree_id": "a"})
+    data["nodes"].append({"node_id": "a-00", "pedigree_id": "a", "pedigree_effect_ids": []})
+    return data
+
+
+def ancestor_slot(data, official_name="全書の祖先"):
+    source = official()
+    source["all"][0][g.COL_NAME_T - 1] = official_name
+    ledger = update_ledger(empty_ledger(), data, source, {}, initial=True)
+    records = g.build_records_from_source(*convert_source(data, ledger, source, {}, "2026-10-13"))
+    horse = next(record for record in records if record["card"]["name"] == "テスト")
+    return horse["card"]["pedigree"][0][0], horse["Ped_All"]
+
+
+def test_ancestor_without_a_stallion_entry_keeps_the_official_spelling(data):
+    name, _ = ancestor_slot(with_ancestor_pedigree(data))
+    assert name == "全書の祖先", "種牡馬に載っていない祖先は全書の表記"
+
+
+def test_ancestor_name_prefers_the_stallion_entry_and_keeps_the_official_spelling_for_search(data):
+    with_ancestor_pedigree(data)
+    data["stallions"].append({**data["stallions"][0], "game_stallion_id": "2", "node_id": "a-00",
+                              "pedigree_id": "a", "name": "ソセンウマ-瞬闘-"})
+    name, ped_all = ancestor_slot(data)
+    assert name == "ソセンウマ", "種牡馬として買える祖先は因名を外した馬名で出す"
+    assert "[１父ソセンウマ]" in ped_all
+    assert "[１父全書の祖先]" in ped_all, "全書の表記でも検索に当たる"
 
 
 @pytest.mark.parametrize("slots,factors,icon,expected", [
