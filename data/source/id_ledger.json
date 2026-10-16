@@ -12481,17 +12481,26 @@
     "1062": {
       "HorseId": "r1062",
       "SerialNumber": "02494",
-      "source": "r2"
+      "source": "r2",
+      "legacy_ids": [
+        "2671439657"
+      ]
     },
     "1063": {
       "HorseId": "r1063",
       "SerialNumber": "02495",
-      "source": "r2"
+      "source": "r2",
+      "legacy_ids": [
+        "5712364971"
+      ]
     },
     "1064": {
       "HorseId": "r1064",
       "SerialNumber": "02496",
-      "source": "r2"
+      "source": "r2",
+      "legacy_ids": [
+        "7065243179"
+      ]
     },
     "100025": {
       "HorseId": "r100025",
@@ -12732,17 +12741,26 @@
     "101324": {
       "HorseId": "r101324",
       "SerialNumber": "02528",
-      "source": "r2"
+      "source": "r2",
+      "legacy_ids": [
+        "3355124072"
+      ]
     },
     "101325": {
       "HorseId": "r101325",
       "SerialNumber": "02529",
-      "source": "r2"
+      "source": "r2",
+      "legacy_ids": [
+        "5754323312"
+      ]
     },
     "101326": {
       "HorseId": "r101326",
       "SerialNumber": "02530",
-      "source": "r2"
+      "source": "r2",
+      "legacy_ids": [
+        "7314532257"
+      ]
     },
     "200049": {
       "HorseId": "r200049",
@@ -12752,6 +12770,26 @@
     "300011": {
       "HorseId": "r300011",
       "SerialNumber": "02532",
+      "source": "r2"
+    },
+    "1065": {
+      "HorseId": "r1065",
+      "SerialNumber": "02533",
+      "source": "r2"
+    },
+    "1066": {
+      "HorseId": "r1066",
+      "SerialNumber": "02534",
+      "source": "r2"
+    },
+    "101327": {
+      "HorseId": "r101327",
+      "SerialNumber": "02535",
+      "source": "r2"
+    },
+    "101328": {
+      "HorseId": "r101328",
+      "SerialNumber": "02536",
       "source": "r2"
     }
   },

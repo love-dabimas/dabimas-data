@@ -1568,6 +1568,10 @@
     "game_ability_id": "10367"
   },
   {
+    "ability_id": "3452151796",
+    "game_ability_id": "11299"
+  },
+  {
     "ability_id": "3452151886",
     "game_ability_id": "10320"
   },
@@ -1598,6 +1602,10 @@
   {
     "ability_id": "3452241886",
     "game_ability_id": "10379"
+  },
+  {
+    "ability_id": "3452251696",
+    "game_ability_id": "11295"
   },
   {
     "ability_id": "3452261596",
@@ -2860,6 +2868,10 @@
     "game_ability_id": "10289"
   },
   {
+    "ability_id": "5695486231",
+    "game_ability_id": "11296"
+  },
+  {
     "ability_id": "5704023617",
     "game_ability_id": "10532"
   },
@@ -3274,6 +3286,10 @@
   {
     "ability_id": "6315457267",
     "game_ability_id": "10548"
+  },
+  {
+    "ability_id": "6315459265",
+    "game_ability_id": "11294"
   },
   {
     "ability_id": "6315468265",
@@ -3920,6 +3936,10 @@
     "game_ability_id": "10796"
   },
   {
+    "ability_id": "7214559366",
+    "game_ability_id": "11298"
+  },
+  {
     "ability_id": "7214603245",
     "game_ability_id": "10830"
   },
@@ -4010,6 +4030,10 @@
   {
     "ability_id": "7315448266",
     "game_ability_id": "10245"
+  },
+  {
+    "ability_id": "7315449265",
+    "game_ability_id": "11297"
   },
   {
     "ability_id": "7315457266",
