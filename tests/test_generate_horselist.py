@@ -99,8 +99,10 @@ def test_generated_factor_json_shape() -> None:
     assert payload == {"factor": FACTOR_OPTIONS}
     assert FACTOR_OPTIONS[:5] == [
         {"name": "Abernant", "id": "Abernant", "badges": ["短"]},
-        {"name": "Admiral Drake", "id": "Admiral Drake", "badges": ["長"]},
         {"name": "Alizier", "id": "Alizier", "badges": ["長"]},
         {"name": "Alycidon", "id": "Alycidon", "badges": ["長"]},
         {"name": "Aureole", "id": "Aureole", "badges": ["底", "難"]},
+        {"name": "Bahram", "id": "Bahram", "badges": ["底"]},
     ]
+    # 全書の表記が Admiral Drake からカタカナに変わった（2026-10-16 の週次更新）。
+    assert {"name": "アドミラルドレイク", "id": "アドミラルドレイク", "badges": ["長"]} in FACTOR_OPTIONS
