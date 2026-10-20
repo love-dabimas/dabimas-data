@@ -232,7 +232,11 @@ def convert_source(data: dict, ledger: dict, official: dict, metadata: dict,
                 put(g.COL_NAME_T + slot, name)
                 put(g.COL_PARENT_LINE_T + slot, (line.get("parent_sire_line") or {}).get("name", ""))
                 put(g.COL_SON_T + slot, (line.get("child_sire_line") or {}).get("name", ""))
-                for i, factor in enumerate((nodes.get(ancestor_id + "-00", {}).get("pedigree_effect_ids") or [])[:3]):
+                # 祖先の因子は pedigree 行から取る。無印版が無く年号版（-01）が基本扱いの馬
+                # （ネヴァービートなど）は -00 ノードを持たないので、ノードだけ見ると因子が落ちる。
+                ancestor_factors = (ancestor.get("pedigree_effect_ids")
+                                    or nodes.get(ancestor_id + "-00", {}).get("pedigree_effect_ids") or [])
+                for i, factor in enumerate(ancestor_factors[:3]):
                     put(g.COL_FACTOR_T1 + slot * 3 + i, f"{factor:02}")
             ability_id = str(horse.get("nonordinary_ability_id") or "0")
             ability = abilities.get(ability_id)

@@ -105,6 +105,21 @@ def test_ancestor_name_prefers_the_stallion_entry_and_keeps_the_official_spellin
     assert "[１父全書の祖先]" in ped_all, "全書の表記でも検索に当たる"
 
 
+def test_ancestor_factors_come_from_the_pedigree_even_without_a_base_node(data):
+    # ネヴァービートのように無印版が無く、年号版（-01）が基本扱いの馬は -00 ノードを持たない。
+    # 因子は pedigree 行に入っているので、そこから取る。
+    with_ancestor_pedigree(data)
+    data["nodes"] = [node for node in data["nodes"] if node["node_id"] != "a-00"]
+    data["nodes"].append({"node_id": "a-01", "pedigree_id": "a", "variant_type": "year",
+                          "is_base_equivalent": True, "pedigree_effect_ids": [4, 9]})
+    data["pedigrees"][1]["pedigree_effect_ids"] = [4, 9]
+    source = official()
+    ledger = update_ledger(empty_ledger(), data, source, {}, initial=True)
+    records = g.build_records_from_source(*convert_source(data, ledger, source, {}, "2026-10-13"))
+    horse = next(record for record in records if record["card"]["name"] == "テスト")
+    assert sorted(horse["card"]["pedigree"][0][3]) == ["04", "09"]
+
+
 @pytest.mark.parametrize("slots,factors,icon,expected", [
     (5, 3, "list_icn_cat_1057.png", "8"), (5, 2, "", "7"), (5, 0, "", "7"),
     (4, 3, "list_icn_cat_12.png", "5"), (5, 3, "list_icn_cat_14.png", "6"),
