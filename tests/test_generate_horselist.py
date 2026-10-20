@@ -4,6 +4,7 @@ from pathlib import Path
 import pytest
 
 from tools.horse_data.generate_horselist import (
+    FACTOR_BADGE_LABELS,
     build_factor_options,
     build_records,
     build_records_from_json,
@@ -90,19 +91,34 @@ def test_generated_factor_options_match_pedigree_entries_with_factors() -> None:
     assert all("(" not in option["name"] for option in FACTOR_OPTIONS)
     assert all("badges" in option for option in FACTOR_OPTIONS)
     assert all(option["badges"] for option in FACTOR_OPTIONS)
-    assert len(FACTOR_OPTIONS) == 248
+    # 件数や馬名は全書の更新（英語表記のカタカナ化、馬の追加）で変わるので固定しない。
+    assert FACTOR_OPTIONS
 
 
 def test_generated_factor_json_shape() -> None:
     payload = json.loads(GENERATED_FACTOR)
 
     assert payload == {"factor": FACTOR_OPTIONS}
-    assert FACTOR_OPTIONS[:5] == [
-        {"name": "Abernant", "id": "Abernant", "badges": ["短"]},
-        {"name": "Alizier", "id": "Alizier", "badges": ["長"]},
-        {"name": "Alycidon", "id": "Alycidon", "badges": ["長"]},
-        {"name": "Aureole", "id": "Aureole", "badges": ["底", "難"]},
-        {"name": "Bahram", "id": "Bahram", "badges": ["底"]},
-    ]
-    # 全書の表記が Admiral Drake からカタカナに変わった（2026-10-16 の週次更新）。
-    assert {"name": "アドミラルドレイク", "id": "アドミラルドレイク", "badges": ["長"]} in FACTOR_OPTIONS
+    assert all(set(option) == {"name", "id", "badges"} for option in FACTOR_OPTIONS)
+
+
+def test_factor_option_names_are_unique_and_english_first() -> None:
+    names = [option["name"] for option in FACTOR_OPTIONS]
+    assert len(names) == len(set(names))
+
+    # 英語表記の馬が先、カタカナ表記の馬が後。それぞれの中は大文字小文字を区別せず辞書順。
+    english = [name for name in names if name[:1].isascii()]
+    katakana = [name for name in names if not name[:1].isascii()]
+    assert names == english + katakana
+    assert english == sorted(english, key=str.casefold)
+    assert katakana == sorted(katakana, key=str.casefold)
+
+
+def test_factor_badges_are_known_labels_in_factor_order() -> None:
+    label_order = list(FACTOR_BADGE_LABELS.values())
+
+    for option in FACTOR_OPTIONS:
+        badges = option["badges"]
+        assert set(badges) <= set(label_order), option
+        positions = [label_order.index(badge) for badge in badges]
+        assert positions == sorted(set(positions)), option
