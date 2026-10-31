@@ -21,9 +21,9 @@ R2 のバケットは非公開なので、取得には認証情報が要る。�
 - `pedigree_master.game.json`
 - `ability_master.game.json`
 
-公開は main ブランチ配信の GitHub Pages（`main` の `/`）で、利用者は `/dabimas-data/dist/` にアクセスする。日次は毎日 11:30 JST、週次の公式取得は金曜 18:00 JST。両ワークフローは `horse-data-main` の concurrency グループで直列化し、週次終了時は日次を dispatch する。
+公開は main ブランチ配信の GitHub Pages（`main` の `/`）で、利用者は `/dabimas-data/dist/` にアクセスする。更新は金曜 18:00 JST の週次だけ（2026-10-31 に日次の定期実行をやめた）。週次（`update-horse-data.yml`）が公式取得の終わりに生成（`generate-from-r2.yml`）を dispatch する。生成は手動でも起動でき、両ワークフローは `horse-data-main` の concurrency グループで直列化する。
 
-日次は生成後に pytest と TypeScript のテストを実行し、成功した場合だけ `VITE_BASE_PATH=/dabimas-data/dist/`、`VITE_DEPLOY_MODE=artifact-root` で `dist/` をビルドする。`json/horselist.json`、`json/factor.json`、`dist/` に差分があればコミットして main に push する。テストやビルドが失敗した場合はコミットしない。週次の非凡検索データだけの変更も `dist/json/` にコピーされ、公開される。`deploy-pages.yml` は日次・週次から起動しない。
+生成は生成後に pytest と TypeScript のテストを実行し、成功した場合だけ `VITE_BASE_PATH=/dabimas-data/dist/`、`VITE_DEPLOY_MODE=artifact-root` で `dist/` をビルドする。`json/horselist.json`、`json/factor.json`、`dist/` に差分があればコミットして main に push する。テストやビルドが失敗した場合はコミットしない。週次の非凡検索データだけの変更も `dist/json/` にコピーされ、公開される。`deploy-pages.yml` は生成・週次から起動しない。
 
 R2 取得は5ファイルの取得と検証を1回の試行とし、版の食い違い・欠落と通信エラーの場合に最大3回試行する。再試行前に120秒待ち、試行回数と理由を標準エラーに記録する。参照切れや不正な因子IDなどは再試行せず停止する。検証に成功するまで出力先には書き込まない。
 
@@ -37,9 +37,9 @@ python -m tools.horse_data.download_r2 --output .tools/r2
 python -m tools.horse_data.generate_horselist --r2-dir .tools/r2 --as-of 2026-10-07
 ```
 
-`--as-of` は JST の基準日。省略時は実行日の 11:30 JST。`--previous` は前回の horselist（既定 `json/horselist.json`）で、1%超の頭数減少検出と、週次台帳にまだない日次追加馬の ID・通し番号の維持に使う。検証前の出力を消さないこと。既知の入力検証エラーでは出力ファイルに書き込まない。
+`--as-of` は JST の基準日で、その日の 11:30 JST までに公開開始した馬を出す。省略時は実際に動いた時刻が基準になる（金曜 12:00 開始の馬を週次で出すため）。`--previous` は前回の horselist（既定 `json/horselist.json`）で、1%超の頭数減少検出と、週次台帳にまだない追加馬の ID・通し番号の維持に使う。検証前の出力を消さないこと。既知の入力検証エラーでは出力ファイルに書き込まない。
 
-日次は台帳を読み取り専用で使う。新しい馬はメモリ上で割り当て、公開レコードの `card.sourceGameId` にゲームIDを保存する。翌日と週次はその割り当てを引き継ぐ。種牡馬・牝馬とも `display_start_at` で公開判定し、空（null またはキーなし）なら公開扱いとする。公開前の馬は血統・配合理論の計算前に除外し、同名の公式データで補完しない。1%超の頭数減少チェックは種牡馬のみを対象とする。
+生成は台帳を読み取り専用で使う（台帳は週次が先に更新する）。新しい馬はメモリ上で割り当て、公開レコードの `card.sourceGameId` にゲームIDを保存する。次回の生成はその割り当てを引き継ぐ。種牡馬・牝馬とも `display_start_at` で公開判定し、空（null またはキーなし）なら公開扱いとする。公開前の馬は血統・配合理論の計算前に除外し、同名の公式データで補完しない。1%超の頭数減少チェックは種牡馬のみを対象とする。
 
 ## 台帳と非凡対応の更新
 

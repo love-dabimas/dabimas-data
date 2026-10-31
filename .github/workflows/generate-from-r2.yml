@@ -1,12 +1,11 @@
 name: Generate horse data from R2
 
 on:
-  schedule:
-    - cron: "30 2 * * *" # 11:30 JST
+  # 定期実行は持たない。金曜の週次（update-horse-data.yml）が最後にこれを起動する。
   workflow_dispatch:
     inputs:
       as_of:
-        description: "Publication date in JST (YYYY-MM-DD; empty means today)"
+        description: "Publication date in JST (YYYY-MM-DD, cutoff 11:30; empty means now)"
         required: false
         type: string
       dry_run:

@@ -53,6 +53,16 @@ def test_publication_boundary(timestamp, expected):
     assert is_published({"display_start_at": timestamp}, publication_cutoff("2026-10-13")) is expected
 
 
+def test_cutoff_without_date_is_run_time():
+    # 金曜の週次（18:00 JST 起動）で、同じ日の 12:00 開始の馬が出る。
+    from datetime import datetime, timedelta, timezone
+    now = datetime(2026, 10, 30, 9, 10, tzinfo=timezone.utc)
+    cutoff = publication_cutoff(now=now)
+    assert cutoff.utcoffset() == timedelta(hours=9) and cutoff == now
+    assert is_published({"display_start_at": "2026-10-30T12:00:00+09:00"}, cutoff)
+    assert not is_published({"display_start_at": "2026-10-30T18:11:00+09:00"}, cutoff)
+
+
 def test_adapter_excludes_future_before_theory_and_preserves_r_ids(data):
     source = official()
     data["stallions"].append({**data["stallions"][0], "game_stallion_id": "2", "name": "未来",

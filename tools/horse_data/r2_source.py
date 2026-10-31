@@ -25,9 +25,13 @@ class DatasetVersionMismatch(ValueError):
     """The five masters do not belong to one complete published dataset."""
 
 
-def publication_cutoff(as_of: str | None = None) -> datetime:
-    day = date.fromisoformat(as_of) if as_of else datetime.now(JST).date()
-    return datetime.combine(day, time(11, 30), JST)
+def publication_cutoff(as_of: str | None = None, now: datetime | None = None) -> datetime:
+    # 日付を指定したときは、その日の 11:30 JST（手動で作り直すとき用）。
+    # 指定が無いときは実際に動いた時刻。生成は金曜の週次（18:00 JST 起動）だけなので、
+    # 11:30 に固定すると金曜 12:00 開始の馬が翌週まで出なくなる。
+    if as_of:
+        return datetime.combine(date.fromisoformat(as_of), time(11, 30), JST)
+    return (now or datetime.now(JST)).astimezone(JST)
 
 
 def is_published(horse: dict, cutoff: datetime) -> bool:
