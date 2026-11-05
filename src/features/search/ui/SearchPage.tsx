@@ -47,6 +47,21 @@ type QuickFilterTab = "father" | "damSire" | "migoto" | "thin" | "rare";
 
 // 「ページ先頭へ戻る」ボタンを表示し始めるスクロール量（ピクセル）。
 const SCROLL_TOP_BUTTON_THRESHOLD = 180;
+// 「ページ先頭へ戻る」ボタンの縁に描く、スクロール位置の輪の半径と円周（viewBox 56 の座標）。
+const SCROLL_PROGRESS_RADIUS = 25;
+const SCROLL_PROGRESS_CIRCUMFERENCE = 2 * Math.PI * SCROLL_PROGRESS_RADIUS;
+
+// 今読み込まれている分のページのどこまで来たかを、ボタンの縁の輪に描く（一番下で一周）。
+// 続きを読み足すとページが伸びるので、そのときは輪が戻る。
+function drawScrollProgress(circle: SVGCircleElement | null) {
+  if (!circle) {
+    return;
+  }
+  const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+  const progress = scrollable > 0 ? Math.min(1, Math.max(0, window.scrollY / scrollable)) : 0;
+  circle.style.strokeDashoffset = String(SCROLL_PROGRESS_CIRCUMFERENCE * (1 - progress));
+}
+
 // 非凡検索の「検索中」表示を最低でも何ミリ秒維持するか。
 // あまりに素早く消えると点滅して見苦しいので、最短表示時間を設けている。
 const SEARCH_FEEDBACK_MIN_MS = 260;
@@ -240,6 +255,8 @@ export const SearchPage = ({
   const [isSearchFeedbackVisible, setIsSearchFeedbackVisible] = useState(false);
   // 「ページ先頭へ戻る」ボタンを表示しているか。
   const [isScrollTopVisible, setIsScrollTopVisible] = useState(false);
+  // ボタンの縁の輪。スクロールのたびに SearchPage 全体を描き直さないよう、state にせず直接書き換える。
+  const scrollProgressRef = useRef<SVGCircleElement>(null);
   // 基本条件タブ（自身・母父・見事…）で今選ばれているタブ。
   const [activeQuickTab, setActiveQuickTab] = useState<QuickFilterTab>("father");
   // 種牡馬リストと牝馬リスト、それぞれの「もっと読み込む」トリガー要素への参照。
@@ -462,15 +479,26 @@ export const SearchPage = ({
       const shouldShow = window.scrollY > SCROLL_TOP_BUTTON_THRESHOLD;
       // 値が変わっていないときは setState を呼ばないことで余計な再描画を防ぐ。
       setIsScrollTopVisible((current) => (current === shouldShow ? current : shouldShow));
+      drawScrollProgress(scrollProgressRef.current);
     };
+    const updateScrollProgress = () => drawScrollProgress(scrollProgressRef.current);
 
     updateScrollTopVisibility();
     window.addEventListener("scroll", updateScrollTopVisibility, { passive: true });
+    window.addEventListener("resize", updateScrollProgress);
 
     return () => {
       window.removeEventListener("scroll", updateScrollTopVisibility);
+      window.removeEventListener("resize", updateScrollProgress);
     };
   }, []);
+
+  // ボタンが出た直後は輪がまだ描かれていないので、その時点の位置で一度描く。
+  useEffect(() => {
+    if (isScrollTopVisible) {
+      drawScrollProgress(scrollProgressRef.current);
+    }
+  }, [isScrollTopVisible]);
 
   // 検索条件が変わるたびに表示件数をリセットし、criteriaKey の ref を最新にする。
   useEffect(() => {
@@ -714,6 +742,18 @@ export const SearchPage = ({
           type="button"
           onClick={scrollToTop}
         >
+          <svg aria-hidden="true" className="scroll-top-button__progress" viewBox="0 0 56 56">
+            <circle className="scroll-top-button__track" cx="28" cy="28" r={SCROLL_PROGRESS_RADIUS} />
+            <circle
+              ref={scrollProgressRef}
+              className="scroll-top-button__bar"
+              cx="28"
+              cy="28"
+              r={SCROLL_PROGRESS_RADIUS}
+              strokeDasharray={SCROLL_PROGRESS_CIRCUMFERENCE}
+              strokeDashoffset={SCROLL_PROGRESS_CIRCUMFERENCE}
+            />
+          </svg>
           {"\u2191"}
         </button>
       ) : null}

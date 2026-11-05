@@ -1035,6 +1035,33 @@ button {
   width: 74%;
 }
 
+/* 縁の輪。今読み込まれている分のページのどこまで来たかを示す（一番下で一周）。
+   12 時から時計回りに伸ばす。 */
+.scroll-top-button__progress {
+  height: 100%;
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+  transform: rotate(-90deg);
+  width: 100%;
+}
+
+.scroll-top-button__track,
+.scroll-top-button__bar {
+  fill: none;
+  stroke-width: 3;
+}
+
+.scroll-top-button__track {
+  stroke: rgba(255, 255, 255, 0.16);
+}
+
+.scroll-top-button__bar {
+  stroke: #f0b54a;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 80ms linear;
+}
+
 .scroll-top-button:hover,
 .scroll-top-button:focus-visible {
   background: #56595b;
