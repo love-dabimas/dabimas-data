@@ -716,6 +716,10 @@
     "game_ability_id": "11257"
   },
   {
+    "ability_id": "1925949635",
+    "game_ability_id": "11305"
+  },
+  {
     "ability_id": "1934820356",
     "game_ability_id": "10410"
   },
@@ -930,6 +934,10 @@
   {
     "ability_id": "2651438957",
     "game_ability_id": "10814"
+  },
+  {
+    "ability_id": "2651439659",
+    "game_ability_id": "11307"
   },
   {
     "ability_id": "2651439758",
@@ -1502,6 +1510,10 @@
   {
     "ability_id": "3315479266",
     "game_ability_id": "11251"
+  },
+  {
+    "ability_id": "3315489265",
+    "game_ability_id": "11304"
   },
   {
     "ability_id": "3315497266",
@@ -2312,6 +2324,10 @@
     "game_ability_id": "11034"
   },
   {
+    "ability_id": "4219632553",
+    "game_ability_id": "11303"
+  },
+  {
     "ability_id": "4219640563",
     "game_ability_id": "11259"
   },
@@ -2564,6 +2580,10 @@
     "game_ability_id": "10811"
   },
   {
+    "ability_id": "5192546933",
+    "game_ability_id": "11310"
+  },
+  {
     "ability_id": "5212364499",
     "game_ability_id": "11203"
   },
@@ -2760,6 +2780,10 @@
     "game_ability_id": "10307"
   },
   {
+    "ability_id": "5512364397",
+    "game_ability_id": "11302"
+  },
+  {
     "ability_id": "5512364478",
     "game_ability_id": "10813"
   },
@@ -2790,6 +2814,10 @@
   {
     "ability_id": "5512364973",
     "game_ability_id": "10809"
+  },
+  {
+    "ability_id": "5512364991",
+    "game_ability_id": "11308"
   },
   {
     "ability_id": "5612364279",
@@ -4136,6 +4164,10 @@
     "game_ability_id": "11267"
   },
   {
+    "ability_id": "7469539512",
+    "game_ability_id": "11311"
+  },
+  {
     "ability_id": "7510613245",
     "game_ability_id": "10579"
   },
@@ -4644,6 +4676,10 @@
     "game_ability_id": "10215"
   },
   {
+    "ability_id": "9065243159",
+    "game_ability_id": "11309"
+  },
+  {
     "ability_id": "9065243168",
     "game_ability_id": "11265"
   },
@@ -4750,6 +4786,10 @@
   {
     "ability_id": "9214557366",
     "game_ability_id": "10806"
+  },
+  {
+    "ability_id": "9214559364",
+    "game_ability_id": "11306"
   },
   {
     "ability_id": "9214658364",
