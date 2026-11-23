@@ -1,4 +1,7 @@
-const CACHE_NAME = "dabimas-data-v13";
+// 同じ love-dabimas.github.io のダビふぁく（dabimas-factor-…）とキャッシュの置き場を
+// 共有しているので、消すのは自分の名前で始まる古いキャッシュだけにする。
+const CACHE_PREFIX = "dabimas-data-";
+const CACHE_NAME = `${CACHE_PREFIX}v14`;
 
 // 因子アイコンは連番なので、precache 対象をプログラムで生成する。
 const FACTOR_ICON_PATHS = Array.from({ length: 12 }, (_, index) => {
@@ -150,7 +153,7 @@ self.addEventListener("install", (event) => {
   event.waitUntil(precache().then(() => self.skipWaiting()));
 });
 
-// activate 時には古い版 cache を消し、現在ページも新 worker 配下へ取り込む。
+// activate 時には自分の古い版 cache だけを消し、現在ページも新 worker 配下へ取り込む。
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches
@@ -158,7 +161,7 @@ self.addEventListener("activate", (event) => {
       .then((cacheNames) =>
         Promise.all(
           cacheNames
-            .filter((cacheName) => cacheName !== CACHE_NAME)
+            .filter((cacheName) => cacheName.startsWith(CACHE_PREFIX) && cacheName !== CACHE_NAME)
             .map((cacheName) => caches.delete(cacheName))
         )
       )
